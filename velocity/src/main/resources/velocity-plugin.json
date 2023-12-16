@@ -1,0 +1,12 @@
+{
+  "id": "nexuspowered",
+  "name": "NexusPowered",
+  "version": "${project.version}",
+  "description": "${project.description}",
+  "url": "${project.url}",
+  "authors": [
+    "kubbidev"
+  ],
+  "dependencies": [],
+  "main": "com.kubbidev.nexuspowered.velocity.VelocityNexusEngine"
+}
