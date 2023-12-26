@@ -11,6 +11,29 @@ import java.util.List;
  */
 public interface Dependency {
 
+    // Default required dependencies for jar relocator system.
+
+    Dependency ASM = new SimpleDependency(
+            "org.ow2.asm",
+            "asm",
+            "9.1",
+            "zaTeRV+rSP8Ly3xItGOUR9TehZp6/DCglKmG8JNr66I="
+    );
+
+    Dependency ASM_COMMONS = new SimpleDependency(
+            "org.ow2.asm",
+            "asm-commons",
+            "9.1",
+            "r8sm3B/BLAxKma2mcJCN2C4Y38SIyvXuklRplrRwwAw="
+    );
+
+    Dependency JAR_RELOCATOR = new SimpleDependency(
+            "me.lucko",
+            "jar-relocator",
+            "1.7",
+            "b30RhOF6kHiHl+O5suNLh/+eAr1iOFEFLXhwkHHDu4I="
+    );
+
     /**
      * Gets the dependency artifact id.
      *

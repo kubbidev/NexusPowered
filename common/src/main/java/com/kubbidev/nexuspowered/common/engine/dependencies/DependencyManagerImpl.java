@@ -6,7 +6,6 @@ import com.kubbidev.java.util.FileUtil;
 import com.kubbidev.nexuspowered.common.NexusEngine;
 import com.kubbidev.nexuspowered.common.engine.dependencies.classloader.IsolatedClassLoader;
 import com.kubbidev.nexuspowered.common.engine.dependencies.dependency.Dependency;
-import com.kubbidev.nexuspowered.common.engine.dependencies.dependency.SimpleDependency;
 import com.kubbidev.nexuspowered.common.engine.dependencies.relocation.Relocation;
 import com.kubbidev.nexuspowered.common.engine.dependencies.relocation.RelocationHandler;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -70,9 +69,9 @@ public class DependencyManagerImpl implements DependencyManager {
     public boolean shouldAutoLoad(Dependency dependency) {
         // all used within 'isolated' classloaders, and are therefore not
         // relocated.
-        return !dependency.equals(SimpleDependency.ASM) &&
-                !dependency.equals(SimpleDependency.ASM_COMMONS) &&
-                !dependency.equals(SimpleDependency.JAR_RELOCATOR);
+        return !dependency.equals(Dependency.ASM) &&
+                !dependency.equals(Dependency.ASM_COMMONS) &&
+                !dependency.equals(Dependency.JAR_RELOCATOR);
     }
 
     @Override

@@ -1,16 +1,18 @@
 package com.kubbidev.nexuspowered.common.engine.dependencies.relocation;
 
-import com.kubbidev.nexuspowered.common.engine.dependencies.dependency.Dependency;
-import com.kubbidev.nexuspowered.common.engine.dependencies.dependency.SimpleDependency;
 import com.kubbidev.nexuspowered.common.engine.dependencies.DependencyManager;
 import com.kubbidev.nexuspowered.common.engine.dependencies.classloader.IsolatedClassLoader;
+import com.kubbidev.nexuspowered.common.engine.dependencies.dependency.Dependency;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Handles class runtime relocation of packages in downloaded dependencies
@@ -18,9 +20,9 @@ import java.util.*;
 public class RelocationHandler {
 
     public static final Set<Dependency> DEPENDENCIES = Set.of(
-            SimpleDependency.ASM,
-            SimpleDependency.ASM_COMMONS,
-            SimpleDependency.JAR_RELOCATOR
+            Dependency.ASM,
+            Dependency.ASM_COMMONS,
+            Dependency.JAR_RELOCATOR
     );
 
     private static final String JAR_RELOCATOR_CLASS = "me.lucko.jarrelocator.JarRelocator";
