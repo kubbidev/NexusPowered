@@ -2,6 +2,7 @@ plugins {
     id("java")
     id("java-library")
     alias(libs.plugins.shadow)
+    id("maven-publish")
 }
 
 // store the version as a variable,
@@ -35,6 +36,42 @@ dependencies {
 
     // optional dependencies
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            artifactId = "nexuspowered"
+
+            from(components["java"])
+            pom {
+                name = "NexusPowered"
+                description = "A Minecraft plugin utility to reduce boilerplate code in Bukkit plugins."
+                url = "https://kubbidev.com"
+
+                licenses {
+                    license {
+                        name = "Apache-2.0"
+                        url = "https://www.apache.org/licenses/LICENSE-2.0"
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = "kubbidev"
+                        name = "kubbi"
+                        url = "https://kubbidev.com"
+                        email = "kubbidev@gmail.com"
+                    }
+                }
+
+                issueManagement {
+                    system = "Github"
+                    url = "https://github.com/kubbidev/NexusPowered/issues"
+                }
+            }
+        }
+    }
 }
 
 // building task operations

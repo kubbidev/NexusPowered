@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import me.kubbidev.nexuspowered.item.ItemStackBuilder;
 import me.kubbidev.nexuspowered.menu.Menu;
 import me.kubbidev.nexuspowered.menu.Item;
-import me.kubbidev.nexuspowered.menu.scheme.MenuScheme;
+import me.kubbidev.nexuspowered.menu.pattern.MenuPattern;
 import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -20,29 +20,28 @@ import java.util.function.Function;
 @NotNullByDefault
 public class PaginatedMenu extends Menu {
 
-    private final MenuScheme scheme;
-    private final List<Integer> itemSlots;
+    private final MenuPattern pattern;
+    private final List<Integer> contentSlots;
 
-    private final int nextPageSlot;
+    private final int followingPageSlot;
     private final int previousPageSlot;
-    private final Function<PageInfo, ItemStack> nextPageItem;
-    private final Function<PageInfo, ItemStack> previousPageItem;
+    private final Function<PaginatedInfo, ItemStack> followingPageItem;
+    private final Function<PaginatedInfo, ItemStack> previousPageItem;
 
     private List<Item> content;
     private int page = 1;
 
     public PaginatedMenu(Function<PaginatedMenu, List<Item>> content, Player player, PaginatedMenuBuilder model) {
         super(player, model.getLines(), model.getTitle());
-
         this.content = ImmutableList.copyOf(content.apply(this));
-        this.itemSlots = ImmutableList.copyOf(model.getItemSlots());
+        this.contentSlots = ImmutableList.copyOf(model.getContentSlots());
 
-        this.nextPageSlot = model.getNextPageSlot();
+        this.followingPageSlot = model.getFollowingPageSlot();
         this.previousPageSlot = model.getPreviousPageSlot();
 
-        this.nextPageItem = model.getNextPageItem();
+        this.followingPageItem = model.getFollowingPageItem();
         this.previousPageItem = model.getPreviousPageItem();
-        this.scheme = model.getScheme();
+        this.pattern = model.getPattern();
     }
 
     public void updateContent(List<Item> content) {
@@ -51,38 +50,37 @@ public class PaginatedMenu extends Menu {
 
     @Override
     public void redraw() {
-        this.scheme.apply(this);
-        List<Integer> slots = new ArrayList<>(this.itemSlots);
+        this.pattern.apply(this);
+        List<Integer> slots = new ArrayList<>(this.contentSlots);
 
-        // work out the items to display on this page
+        // calculate pages and pagination info
         List<List<Item>> pages = Lists.partition(this.content, slots.size());
-        normalizePage(pages.size());
+        PaginatedInfo info = new PaginatedInfo(this.page, pages.size());
+        normalizePage(info.size());
 
-        List<Item> page = pages.isEmpty() ? new ArrayList<>() : pages.get(this.page - 1);
-        drawPageItems(pages.size());
-
-        // remove previous items
+        // clear old items if not the first draw
         if (!isFirstDraw()) {
             slots.forEach(this::removeItem);
         }
-
-        // place the actual items
-        for (Item item : page) {
+        // draw items for the current page
+        List<Item> currentPage = pages.isEmpty() ? new ArrayList<>() : pages.get(this.page - 1);
+        for (Item item : currentPage) {
             setItem(slots.removeFirst(), item);
         }
+        // draw pagination controls
+        drawPageItems(info);
     }
 
     private void normalizePage(int maxPages) {
         if (this.page < 1) {
             this.page = 1;
-        }
-        if (this.page > maxPages) {
+        } else if (this.page > maxPages) {
             this.page = Math.max(1, maxPages);
         }
     }
 
-    private void drawPageItems(int maxPages) {
-        setItem(this.previousPageSlot, ItemStackBuilder.of(this.previousPageItem.apply(PageInfo.create(this.page, maxPages)))
+    private void drawPageItems(PaginatedInfo info) {
+        setItem(this.previousPageSlot, ItemStackBuilder.of(this.previousPageItem.apply(info))
                 .build(() -> {
                     if (this.page > 1) {
                         this.page--;
@@ -90,9 +88,9 @@ public class PaginatedMenu extends Menu {
                     }
                 }));
 
-        setItem(this.nextPageSlot, ItemStackBuilder.of(this.nextPageItem.apply(PageInfo.create(this.page, maxPages)))
+        setItem(this.followingPageSlot, ItemStackBuilder.of(this.followingPageItem.apply(info))
                 .build(() -> {
-                    if (this.page < maxPages) {
+                    if (this.page < info.size()) {
                         this.page++;
                         redraw();
                     }

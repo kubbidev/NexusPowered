@@ -68,7 +68,7 @@ public abstract class Menu implements TerminableConsumer {
     private final Inventory inventory;
 
     // the initial title set when the inventory was made.
-    private final Component initialTitle;
+    private final Component title;
 
     // the slots in the menu, lazily loaded
     private final Map<Integer, SimpleSlot> slots;
@@ -89,8 +89,9 @@ public abstract class Menu implements TerminableConsumer {
 
     public Menu(Player player, int lines, Component title) {
         this.player = Objects.requireNonNull(player, "player");
-        this.initialTitle = Objects.requireNonNull(title, "title");
-        this.inventory = Bukkit.createInventory(player, lines * 9, this.initialTitle);
+        this.title = Objects.requireNonNull(title, "title");
+
+        this.inventory = Bukkit.createInventory(player, lines * 9, this.title);
         this.slots = new HashMap<>();
     }
 
@@ -123,8 +124,8 @@ public abstract class Menu implements TerminableConsumer {
      *
      * @return the initial title used when this Menu was made
      */
-    public Component getInitialTitle() {
-        return this.initialTitle;
+    public Component getTitle() {
+        return this.title;
     }
 
     @Nullable
@@ -310,9 +311,10 @@ public abstract class Menu implements TerminableConsumer {
                 .handler(p -> invalidate())
                 .bindWith(this);
 
+        //noinspection DataFlowIssue
         Events.subscribe(InventoryDragEvent.class)
                 .filter(e -> e.getInventory().getHolder() != null)
-                .filter(e -> Objects.equals(e.getInventory().getHolder(), this.player))
+                .filter(e -> e.getInventory().getHolder().equals(this.player))
                 .handler(e -> {
                     e.setCancelled(true);
                     if (!isValid()) {
@@ -320,9 +322,10 @@ public abstract class Menu implements TerminableConsumer {
                     }
                 }).bindWith(this);
 
+        //noinspection DataFlowIssue
         Events.subscribe(InventoryClickEvent.class)
                 .filter(e -> e.getInventory().getHolder() != null)
-                .filter(e -> Objects.equals(e.getInventory().getHolder(), this.player))
+                .filter(e -> e.getInventory().getHolder().equals(this.player))
                 .handler(e -> {
                     e.setCancelled(true);
 

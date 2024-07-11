@@ -3,8 +3,8 @@ package me.kubbidev.nexuspowered.menu.paginated;
 import com.google.common.collect.ImmutableList;
 import me.kubbidev.nexuspowered.item.ItemStackBuilder;
 import me.kubbidev.nexuspowered.menu.Item;
-import me.kubbidev.nexuspowered.menu.scheme.MenuScheme;
-import me.kubbidev.nexuspowered.menu.scheme.StandardSchemeMappings;
+import me.kubbidev.nexuspowered.menu.pattern.MenuPattern;
+import me.kubbidev.nexuspowered.menu.pattern.PatternMapping;
 import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -22,60 +22,52 @@ import java.util.function.Function;
  */
 @NotNullByDefault
 public class PaginatedMenuBuilder {
-
     public static final int DEFAULT_LINES = 6;
+    public static final int DEFAULT_FOLLOWING_PAGE_SLOT = new MenuPattern()
+            .shapeEmpty(5)
+            .shape("000000010")
+            .getShapedIndexes().getFirst();
 
-    public static final int DEFAULT_NEXT_PAGE_SLOT = new MenuScheme()
-            .maskEmpty(5)
-            .mask("000000010")
-            .getMaskedIndexes().getFirst();
+    public static final int DEFAULT_PREVIOUS_PAGE_SLOT = new MenuPattern()
+            .shapeEmpty(5)
+            .shape("010000000")
+            .getShapedIndexes().getFirst();
 
-    public static final int DEFAULT_PREVIOUS_PAGE_SLOT = new MenuScheme()
-            .maskEmpty(5)
-            .mask("010000000")
-            .getMaskedIndexes().getFirst();
+    public static final List<Integer> DEFAULT_CONTENT_SLOTS = new MenuPattern()
+            .shape("011111110")
+            .shape("011111110")
+            .shape("011111110")
+            .shape("011111110")
+            .shape("011111110")
+            .getShapedIndexesImmutable();
 
-    public static final List<Integer> DEFAULT_ITEM_SLOTS = new MenuScheme()
-            .mask("011111110")
-            .mask("011111110")
-            .mask("011111110")
-            .mask("011111110")
-            .mask("011111110")
-            .getMaskedIndexesImmutable();
+    public static final MenuPattern DEFAULT_PATTERN = new MenuPattern(PatternMapping.of(Material.LIGHT_BLUE_STAINED_GLASS))
+            .shape("100000001")
+            .shape("100000001")
+            .shape("100000001")
+            .shape("100000001")
+            .shape("100000001")
+            .shape("100000001");
 
-    public static final MenuScheme DEFAULT_SCHEME = new MenuScheme(StandardSchemeMappings.STAINED_GLASS)
-            .mask("100000001")
-            .mask("100000001")
-            .mask("100000001")
-            .mask("100000001")
-            .mask("100000001")
-            .mask("100000001")
-            .scheme(3, 3)
-            .scheme(3, 3)
-            .scheme(3, 3)
-            .scheme(3, 3)
-            .scheme(3, 3)
-            .scheme(3, 3);
-
-    public static final Function<PageInfo, ItemStack> DEFAULT_NEXT_PAGE_ITEM = pageInfo -> ItemStackBuilder.of(Material.ARROW)
+    public static final Function<PaginatedInfo, ItemStack> DEFAULT_FOLLOWING_PAGE_ITEM = page -> ItemStackBuilder.of(Material.ARROW)
             .name(Component.text()
                     .color(NamedTextColor.AQUA)
                     .append(Component.text("--").decorate(TextDecoration.STRIKETHROUGH))
                     .append(Component.text(">"))
                     .build())
-            .lore(Component.text("Switch to the next page.", NamedTextColor.WHITE))
+            .lore(Component.text("Switch to the following page.", NamedTextColor.WHITE))
             .lore(Component.empty())
             .lore(Component.empty())
             .lore(Component.text()
                     .color(NamedTextColor.GRAY)
                     .append(Component.text("Currently viewing page "))
-                    .append(Component.text(pageInfo.getCurrent(), NamedTextColor.AQUA))
+                    .append(Component.text(page.current(), NamedTextColor.AQUA))
                     .append(Component.text('/'))
-                    .append(Component.text(pageInfo.getSize(), NamedTextColor.AQUA))
+                    .append(Component.text(page.size(), NamedTextColor.AQUA))
                     .build())
             .build();
 
-    public static final Function<PageInfo, ItemStack> DEFAULT_PREVIOUS_PAGE_ITEM = pageInfo -> ItemStackBuilder.of(Material.ARROW)
+    public static final Function<PaginatedInfo, ItemStack> DEFAULT_PREVIOUS_PAGE_ITEM = page -> ItemStackBuilder.of(Material.ARROW)
             .name(Component.text()
                     .decoration(TextDecoration.ITALIC, false)
                     .color(NamedTextColor.AQUA)
@@ -88,9 +80,9 @@ public class PaginatedMenuBuilder {
             .lore(Component.text()
                     .color(NamedTextColor.GRAY)
                     .append(Component.text("Currently viewing page "))
-                    .append(Component.text(pageInfo.getCurrent(), NamedTextColor.AQUA))
+                    .append(Component.text(page.current(), NamedTextColor.AQUA))
                     .append(Component.text('/'))
-                    .append(Component.text(pageInfo.getSize(), NamedTextColor.AQUA))
+                    .append(Component.text(page.size(), NamedTextColor.AQUA))
                     .build())
             .build();
 
@@ -98,38 +90,24 @@ public class PaginatedMenuBuilder {
         return new PaginatedMenuBuilder();
     }
 
-    private int lines;
+    private int lines = DEFAULT_LINES;
     private Component title;
-    private List<Integer> itemSlots;
+    private List<Integer> contentSlots = DEFAULT_CONTENT_SLOTS;
 
-    private int nextPageSlot;
-    private int previousPageSlot;
+    private int followingPageSlot
+            = DEFAULT_FOLLOWING_PAGE_SLOT;
 
-    private MenuScheme scheme;
-    private Function<PageInfo, ItemStack> nextPageItem;
-    private Function<PageInfo, ItemStack> previousPageItem;
+    private int previousPageSlot
+            = DEFAULT_PREVIOUS_PAGE_SLOT;
+
+    private MenuPattern pattern = DEFAULT_PATTERN;
+    private Function<PaginatedInfo, ItemStack> followingPageItem
+            = DEFAULT_FOLLOWING_PAGE_ITEM;
+
+    private Function<PaginatedInfo, ItemStack> previousPageItem
+            = DEFAULT_PREVIOUS_PAGE_ITEM;
 
     private PaginatedMenuBuilder() {
-        this.lines = DEFAULT_LINES;
-        this.itemSlots = DEFAULT_ITEM_SLOTS;
-        this.nextPageSlot = DEFAULT_NEXT_PAGE_SLOT;
-        this.previousPageSlot = DEFAULT_PREVIOUS_PAGE_SLOT;
-        this.scheme = DEFAULT_SCHEME;
-        this.nextPageItem = DEFAULT_NEXT_PAGE_ITEM;
-        this.previousPageItem = DEFAULT_PREVIOUS_PAGE_ITEM;
-    }
-
-    public PaginatedMenuBuilder copy() {
-        PaginatedMenuBuilder copy = new PaginatedMenuBuilder();
-        copy.lines = this.lines;
-        copy.title = this.title;
-        copy.itemSlots = this.itemSlots;
-        copy.nextPageSlot = this.nextPageSlot;
-        copy.previousPageSlot = this.previousPageSlot;
-        copy.scheme = this.scheme.copy();
-        copy.nextPageItem = this.nextPageItem;
-        copy.previousPageItem = this.previousPageItem;
-        return copy;
     }
 
     public PaginatedMenuBuilder lines(int lines) {
@@ -142,13 +120,13 @@ public class PaginatedMenuBuilder {
         return this;
     }
 
-    public PaginatedMenuBuilder itemSlots(List<Integer> itemSlots) {
-        this.itemSlots = ImmutableList.copyOf(itemSlots);
+    public PaginatedMenuBuilder contentSlots(List<Integer> contentSlots) {
+        this.contentSlots = ImmutableList.copyOf(contentSlots);
         return this;
     }
 
-    public PaginatedMenuBuilder nextPageSlot(int nextPageSlot) {
-        this.nextPageSlot = nextPageSlot;
+    public PaginatedMenuBuilder followingPageSlot(int followingPageSlot) {
+        this.followingPageSlot = followingPageSlot;
         return this;
     }
 
@@ -157,17 +135,17 @@ public class PaginatedMenuBuilder {
         return this;
     }
 
-    public PaginatedMenuBuilder scheme(MenuScheme scheme) {
-        this.scheme = Objects.requireNonNull(scheme, "scheme");
+    public PaginatedMenuBuilder pattern(MenuPattern pattern) {
+        this.pattern = Objects.requireNonNull(pattern, "pattern");
         return this;
     }
 
-    public PaginatedMenuBuilder nextPageItem(Function<PageInfo, ItemStack> nextPageItem) {
-        this.nextPageItem = Objects.requireNonNull(nextPageItem, "nextPageItem");
+    public PaginatedMenuBuilder followingPageItem(Function<PaginatedInfo, ItemStack> followingPageItem) {
+        this.followingPageItem = Objects.requireNonNull(followingPageItem, "followingPageItem");
         return this;
     }
 
-    public PaginatedMenuBuilder previousPageItem(Function<PageInfo, ItemStack> previousPageItem) {
+    public PaginatedMenuBuilder previousPageItem(Function<PaginatedInfo, ItemStack> previousPageItem) {
         this.previousPageItem = Objects.requireNonNull(previousPageItem, "previousPageItem");
         return this;
     }
@@ -180,27 +158,27 @@ public class PaginatedMenuBuilder {
         return this.title;
     }
 
-    public List<Integer> getItemSlots() {
-        return this.itemSlots;
+    public List<Integer> getContentSlots() {
+        return this.contentSlots;
     }
 
-    public int getNextPageSlot() {
-        return this.nextPageSlot;
+    public int getFollowingPageSlot() {
+        return this.followingPageSlot;
     }
 
     public int getPreviousPageSlot() {
         return this.previousPageSlot;
     }
 
-    public MenuScheme getScheme() {
-        return this.scheme;
+    public MenuPattern getPattern() {
+        return this.pattern;
     }
 
-    public Function<PageInfo, ItemStack> getNextPageItem() {
-        return this.nextPageItem;
+    public Function<PaginatedInfo, ItemStack> getFollowingPageItem() {
+        return this.followingPageItem;
     }
 
-    public Function<PageInfo, ItemStack> getPreviousPageItem() {
+    public Function<PaginatedInfo, ItemStack> getPreviousPageItem() {
         return this.previousPageItem;
     }
 
@@ -208,11 +186,10 @@ public class PaginatedMenuBuilder {
         Objects.requireNonNull(player, "player");
         Objects.requireNonNull(content, "content");
         Objects.requireNonNull(this.title, "title");
-        Objects.requireNonNull(this.itemSlots, "itemSlots");
-        Objects.requireNonNull(this.scheme, "scheme");
-        Objects.requireNonNull(this.nextPageItem, "nextPageItem");
+        Objects.requireNonNull(this.contentSlots, "contentSlots");
+        Objects.requireNonNull(this.pattern, "pattern");
+        Objects.requireNonNull(this.followingPageItem, "followingPageItem");
         Objects.requireNonNull(this.previousPageItem, "previousPageItem");
-
         return new PaginatedMenu(content, player, this);
     }
 }
