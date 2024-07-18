@@ -3,7 +3,7 @@ package me.kubbidev.nexuspowered.cooldown;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.OptionalLong;
 import java.util.concurrent.TimeUnit;
 
@@ -15,24 +15,14 @@ import java.util.concurrent.TimeUnit;
 public interface CooldownMap<T> {
 
     /**
-     * Creates a new collection with the cooldown properties defined by the base instance
-     *
-     * @param base the cooldown to base off
+     * Creates a new collection.
+
      * @return a new collection
      */
     @NotNull
-    static <T> CooldownMap<T> create(@NotNull Cooldown base) {
-        Objects.requireNonNull(base, "base");
-        return new CooldownMapImpl<>(base);
+    static <T> CooldownMap<T> create() {
+        return new CooldownMapImpl<>();
     }
-
-    /**
-     * Gets the base cooldown
-     *
-     * @return the base cooldown
-     */
-    @NotNull
-    Cooldown getBase();
 
     /**
      * Gets the internal cooldown instance associated with the given key.
@@ -44,7 +34,7 @@ public interface CooldownMap<T> {
      * @return a cooldown instance
      */
     @NotNull
-    Cooldown get(@NotNull T key);
+    Optional<Cooldown> get(T key);
 
     void put(@NotNull T key, @NotNull Cooldown cooldown);
 
@@ -58,37 +48,36 @@ public interface CooldownMap<T> {
 
     /* methods from Cooldown */
 
-    default boolean test(@NotNull T key) {
-        return get(key).test();
+    default boolean test(T key) {
+        return get(key).map(Cooldown::test).orElse(true);
     }
 
-    default boolean testSilently(@NotNull T key) {
-        return get(key).testSilently();
+    default boolean testSilently(T key) {
+        return get(key).map(Cooldown::test).orElse(true);
     }
 
-    default long elapsed(@NotNull T key) {
-        return get(key).elapsed();
+    default long elapsed(T key) {
+        return get(key).map(Cooldown::elapsed).orElse(0L);
     }
 
-    default void reset(@NotNull T key) {
-        get(key).reset();
+    default void reset(T key) {
+        get(key).ifPresent(Cooldown::reset);
     }
 
-    default long remainingMillis(@NotNull T key) {
-        return get(key).remainingMillis();
+    default long remainingMillis(T key) {
+        return get(key).map(Cooldown::remainingMillis).orElse(0L);
     }
 
-    default long remainingTime(@NotNull T key, @NotNull TimeUnit unit) {
-        return get(key).remainingTime(unit);
+    default long remainingTime(T key, TimeUnit unit) {
+        return get(key).map(cooldown -> cooldown.remainingTime(unit)).orElse(0L);
     }
 
-    @NotNull
-    default OptionalLong getLastTested(@NotNull T key) {
-        return get(key).getLastTested();
+    default OptionalLong getLastTested(T key) {
+        return get(key).map(Cooldown::getLastTested).orElse(OptionalLong.empty());
     }
 
-    default void setLastTested(@NotNull T key, long time) {
-        get(key).setLastTested(time);
+    default void setLastTested(T key, long time) {
+        get(key).ifPresent(cooldown -> cooldown.setLastTested(time));
     }
 
 }
