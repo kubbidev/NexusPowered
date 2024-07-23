@@ -15,6 +15,8 @@ public interface ConfigurationAdapter {
 
     int getInteger(String path, int def);
 
+    double getDouble(String path, double def);
+
     boolean getBoolean(String path, boolean def);
 
     List<String> getStringList(String path, List<String> def);

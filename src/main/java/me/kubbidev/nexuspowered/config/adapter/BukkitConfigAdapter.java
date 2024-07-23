@@ -36,6 +36,11 @@ public class BukkitConfigAdapter implements ConfigurationAdapter {
     }
 
     @Override
+    public double getDouble(String path, double def) {
+        return this.configuration.getDouble(path, def);
+    }
+
+    @Override
     public boolean getBoolean(String path, boolean def) {
         return this.configuration.getBoolean(path, def);
     }

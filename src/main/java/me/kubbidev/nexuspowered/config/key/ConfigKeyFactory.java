@@ -12,6 +12,7 @@ public interface ConfigKeyFactory<T> {
 
     ConfigKeyFactory<Boolean> BOOLEAN = ConfigurationAdapter::getBoolean;
     ConfigKeyFactory<Integer> INTEGER = ConfigurationAdapter::getInteger;
+    ConfigKeyFactory<Double> DOUBLE = ConfigurationAdapter::getDouble;
     ConfigKeyFactory<String> STRING = ConfigurationAdapter::getString;
     ConfigKeyFactory<List<String>> STRING_LIST = ConfigurationAdapter::getStringList;
     ConfigKeyFactory<String> LOWERCASE_STRING = (adapter, path, def) -> adapter.getString(path, def).toLowerCase(Locale.ROOT);
@@ -32,6 +33,10 @@ public interface ConfigKeyFactory<T> {
 
     static SimpleConfigKey<Integer> integerKey(String path, int def) {
         return key(new Bound<>(INTEGER, path, def));
+    }
+
+    static SimpleConfigKey<Double> doubleKey(String path, double def) {
+        return key(new Bound<>(DOUBLE, path, def));
     }
 
     static SimpleConfigKey<String> stringKey(String path, String def) {
