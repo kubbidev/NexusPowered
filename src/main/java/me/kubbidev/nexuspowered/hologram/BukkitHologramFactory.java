@@ -225,13 +225,27 @@ public class BukkitHologramFactory implements HologramFactory {
         @Override
         public void updatePosition(@NotNull Position position) {
             Objects.requireNonNull(position, "position");
-            if (this.position.equals(position)) {
-                return;
-            }
 
             this.position = position;
-            despawn();
-            spawn();
+            if (!isSpawned()) {
+                spawn();
+            } else {
+                double offset = 0.0;
+                for (int i = 0; i < this.spawnedEntities.size(); i++) {
+                    ArmorStand as = this.spawnedEntities.get(i);
+                    Location location = position.toLocation().clone().add(0, offset, 0);
+
+                    if (i < this.spawnedPassengers.size()) {
+                        Pig pig = this.spawnedPassengers.get(i);
+                        if (pig != null) {
+                            pig.teleport(location);
+                        }
+                    }
+
+                    as.teleport(location);
+                    offset += 0.25;
+                }
+            }
         }
 
         @Override
