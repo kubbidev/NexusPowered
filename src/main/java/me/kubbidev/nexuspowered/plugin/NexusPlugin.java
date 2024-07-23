@@ -128,6 +128,14 @@ public interface NexusPlugin extends Plugin, TerminableConsumer {
     YamlConfiguration loadConfig(@NotNull String file);
 
     /**
+     * Gets the plugin jar file instance.
+     *
+     * @return the jar file
+     */
+    @NotNull
+    File getJarFile();
+
+    /**
      * Gets the plugin's class loader.
      *
      * @return the class loader
