@@ -2,6 +2,10 @@ package me.kubbidev.nexuspowered.plugin;
 
 import me.kubbidev.nexuspowered.Schedulers;
 import me.kubbidev.nexuspowered.Services;
+import me.kubbidev.nexuspowered.config.KeyedConfiguration;
+import me.kubbidev.nexuspowered.config.adapter.BukkitConfigAdapter;
+import me.kubbidev.nexuspowered.config.adapter.ConfigurationAdapter;
+import me.kubbidev.nexuspowered.config.key.ConfigKey;
 import me.kubbidev.nexuspowered.internal.LoaderUtils;
 import me.kubbidev.nexuspowered.scheduler.NexusExecutors;
 import me.kubbidev.nexuspowered.terminable.composite.CompositeTerminable;
@@ -17,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -157,6 +162,23 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements NexusPlug
     public @NotNull YamlConfiguration loadConfig(@NotNull String file) {
         Objects.requireNonNull(file, "file");
         return YamlConfiguration.loadConfiguration(getBundledFile(file));
+    }
+
+    @Override
+    public @NotNull KeyedConfiguration loadKeyedConfig(@NotNull String file, @NotNull List<? extends ConfigKey<?>> keys) {
+        Objects.requireNonNull(file, "file");
+        return loadKeyedConfig(new BukkitConfigAdapter(this, getBundledFile(file)), keys);
+    }
+
+    @Override
+    public @NotNull KeyedConfiguration loadKeyedConfig(@NotNull ConfigurationAdapter adapter, @NotNull List<? extends ConfigKey<?>> keys) {
+        Objects.requireNonNull(adapter, "adapter");
+        return new KeyedConfiguration(adapter, keys);
+    }
+
+    @Override
+    public @NotNull File getJarFile() {
+        return super.getFile();
     }
 
     @Override

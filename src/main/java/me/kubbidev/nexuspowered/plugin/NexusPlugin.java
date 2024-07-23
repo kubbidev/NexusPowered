@@ -1,5 +1,8 @@
 package me.kubbidev.nexuspowered.plugin;
 
+import me.kubbidev.nexuspowered.config.KeyedConfiguration;
+import me.kubbidev.nexuspowered.config.adapter.ConfigurationAdapter;
+import me.kubbidev.nexuspowered.config.key.ConfigKey;
 import me.kubbidev.nexuspowered.terminable.TerminableConsumer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandExecutor;
@@ -11,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.List;
 
 public interface NexusPlugin extends Plugin, TerminableConsumer {
 
@@ -126,6 +130,28 @@ public interface NexusPlugin extends Plugin, TerminableConsumer {
      */
     @NotNull
     YamlConfiguration loadConfig(@NotNull String file);
+
+    /**
+     * Loads a keyed config file from an {@link ConfigurationAdapter}.
+     *
+     * <p>Behaves in the same was as {@link #getBundledFile(String)} when the file is not present.</p>
+     *
+     * @param file the name of the file
+     * @param keys the config key entry list
+     * @return the keyed config instance
+     */
+    @NotNull
+    KeyedConfiguration loadKeyedConfig(@NotNull String file, @NotNull List<? extends ConfigKey<?>> keys);
+
+    /**
+     * Loads a keyed config file from an {@link ConfigurationAdapter}.
+     *
+     * @param adapter the adapter of the config
+     * @param keys    the config key entry list
+     * @return the keyed config instance
+     */
+    @NotNull
+    KeyedConfiguration loadKeyedConfig(@NotNull ConfigurationAdapter adapter, @NotNull List<? extends ConfigKey<?>> keys);
 
     /**
      * Gets the plugin jar file instance.
