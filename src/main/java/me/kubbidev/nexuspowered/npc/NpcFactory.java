@@ -5,11 +5,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.kubbidev.nexuspowered.gson.GsonSerializable;
 import me.kubbidev.nexuspowered.serialize.Position;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents an object which can create {@link Npc}s.
  */
+@ApiStatus.Experimental
 public interface NpcFactory {
 
     /**

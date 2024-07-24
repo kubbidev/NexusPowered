@@ -8,6 +8,7 @@ import me.kubbidev.nexuspowered.serialize.Position;
 import me.kubbidev.nexuspowered.terminable.Terminable;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +18,7 @@ import java.util.function.Consumer;
 /**
  * Represents a NPC (non-player character)
  */
+@ApiStatus.Experimental
 public interface Npc extends Terminable, GsonSerializable {
 
     /**

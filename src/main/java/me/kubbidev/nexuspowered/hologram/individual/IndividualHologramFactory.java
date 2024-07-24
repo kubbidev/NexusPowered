@@ -1,6 +1,7 @@
 package me.kubbidev.nexuspowered.hologram.individual;
 
 import me.kubbidev.nexuspowered.serialize.Position;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 /**
  * A object which can create {@link IndividualHologram}s.
  */
+@ApiStatus.Experimental
 public interface IndividualHologramFactory {
 
     /**

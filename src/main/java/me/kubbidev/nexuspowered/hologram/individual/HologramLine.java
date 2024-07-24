@@ -3,6 +3,7 @@ package me.kubbidev.nexuspowered.hologram.individual;
 import com.google.common.collect.ImmutableList;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.function.Function;
 /**
  * Represents a line in a hologram.
  */
+@ApiStatus.Experimental
 public interface HologramLine {
 
     /**

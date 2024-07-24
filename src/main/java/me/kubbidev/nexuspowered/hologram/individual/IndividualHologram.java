@@ -4,11 +4,13 @@ import me.kubbidev.nexuspowered.Services;
 import me.kubbidev.nexuspowered.hologram.BaseHologram;
 import me.kubbidev.nexuspowered.serialize.Position;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
 
+@ApiStatus.Experimental
 public interface IndividualHologram extends BaseHologram {
 
     /**
