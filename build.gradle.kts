@@ -18,7 +18,7 @@ plugins {
     id("maven-publish")
 }
 
-group = "me.kubbidev.nexuspowered"
+group = "me.kubbidev"
 version = "1.0-SNAPSHOT"
 
 base {
