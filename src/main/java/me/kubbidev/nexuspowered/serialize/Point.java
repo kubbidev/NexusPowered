@@ -65,10 +65,6 @@ public final class Point implements GsonSerializable {
         return this.bukkitLocation.clone();
     }
 
-    public VectorPoint toVectorPoint() {
-        return VectorPoint.of(this);
-    }
-
     public Point add(double x, double y, double z) {
         return this.position.add(x, y, z).withDirection(this.direction);
     }

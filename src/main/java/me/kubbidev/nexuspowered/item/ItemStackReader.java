@@ -48,7 +48,7 @@ public class ItemStackReader {
     }
 
     protected Material parseMaterial(ConfigurationSection config) {
-        return parseMaterial(Objects.requireNonNull(config.getString("Material"), "Could not found ItemStack type"));
+        return parseMaterial(Objects.requireNonNull(config.getString("material"), "Could not found ItemStack type"));
     }
 
     protected Material parseMaterial(String name) {
@@ -60,22 +60,22 @@ public class ItemStackReader {
     }
 
     protected OptionalInt parseData(ConfigurationSection config) {
-        if (config.contains("Data")) {
-            return OptionalInt.of(config.getInt("Data"));
+        if (config.contains("data")) {
+            return OptionalInt.of(config.getInt("data"));
         }
         return OptionalInt.empty();
     }
 
     protected Optional<String> parseName(ConfigurationSection config) {
-        if (config.contains("Name")) {
-            return Optional.of(config.getString("Name"));
+        if (config.contains("name")) {
+            return Optional.of(config.getString("name"));
         }
         return Optional.empty();
     }
 
     protected Optional<List<String>> parseLore(ConfigurationSection config) {
-        if (config.contains("Lore")) {
-            return Optional.of(config.getStringList("Lore"));
+        if (config.contains("lore")) {
+            return Optional.of(config.getStringList("lore"));
         }
         return Optional.empty();
     }
