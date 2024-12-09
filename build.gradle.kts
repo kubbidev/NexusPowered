@@ -1,16 +1,6 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import java.io.ByteArrayOutputStream
 
-/**
- * Returns the string itself if it's not null or blank. Otherwise, returns the result
- * of the provided [defaultValueProvider] function.
- *
- * @param defaultValueProvider A function that provides a default value when the string is null or blank.
- * @return The original string if it's not null or blank; otherwise, the result of [defaultValueProvider].
- */
-infix fun String?.ifNullOrBlank(defaultValueProvider: () -> String?): String? =
-    if (this.isNullOrBlank()) defaultValueProvider() else this
-
 plugins {
     id("java")
     id("java-library")
@@ -108,7 +98,16 @@ publishing {
         }
     }
     repositories {
-        mavenLocal()
+        maven(url = "https://nexus.kubbidev.me/repository/maven-releases/") {
+            name = "kubbidev-releases"
+            credentials(PasswordCredentials::class) {
+                username = System.getenv("GRADLE_KUBBIDEV_RELEASES_USER")
+                    ?: property("kubbidev-releases-user") as String?
+
+                password = System.getenv("GRADLE_KUBBIDEV_RELEASES_PASS")
+                    ?: property("kubbidev-releases-pass") as String?
+            }
+        }
     }
 }
 

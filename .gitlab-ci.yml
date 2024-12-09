@@ -2,33 +2,16 @@ variables:
   GRADLE_USER_HOME: ".gradle"
   GIT_DEPTH: 0
 
-default:
-  cache:
-    key: "$CI_BUILD_REF_SLUG"
-    policy: pull-push
-    paths:
-      - $GRADLE_USER_HOME/caches/
-      - $GRADLE_USER_HOME/wrapper/
-      - $GRADLE_USER_HOME/build-cache/
+cache:
+  key: "$CI_BUILD_REF_SLUG"
+  policy: pull-push
+  paths:
+    - $GRADLE_USER_HOME/caches/
+    - $GRADLE_USER_HOME/wrapper/
+    - $GRADLE_USER_HOME/build-cache/
 
 build:
   stage: build
-  image: gradle:8.10-jdk21
+  image: gradle:8.10-jdk8
   script:
-    - gradle --build-cache build
-  artifacts:
-    paths:
-      - ./build/libs/Laboratory-*.jar
-    expire_in: 5 days
-
-test:
-  stage: test
-  image: gradle:8.10-jdk21
-  script:
-    - gradle test
-  artifacts:
-    reports:
-      junit:
-        - build/test-results/test/*.xml
-  needs:
-    - build
+    - gradle --build-cache publish
