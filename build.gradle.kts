@@ -72,12 +72,12 @@ publishing {
             pom {
                 name = "NexusPowered"
                 description = "A Minecraft plugin utility to reduce boilerplate code in Bukkit plugins."
-                url = "https://kubbidev.me"
+                url = "https://gitlab.com/kubbidev/nexuspowered"
 
                 licenses {
                     license {
-                        name = "Apache-2.0"
-                        url = "https://www.apache.org/licenses/LICENSE-2.0"
+                        name = "CC BY-NC-SA 4.0"
+                        url = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
                     }
                 }
 
@@ -85,7 +85,6 @@ publishing {
                     developer {
                         id = "kubbidev"
                         name = "kubbi"
-                        email = "nicoladelaroche@gmail.com"
                         url = "https://kubbidev.me"
                     }
                 }
@@ -125,7 +124,7 @@ tasks.shadowJar {
     archiveFileName = "NexusPowered-${projectVersion}.jar"
     mergeServiceFiles()
     dependencies {
-        include(dependency("me.kubbidev.nexuspowered:.*"))
+        include(dependency("me.kubbidev:.*"))
     }
 }
 
