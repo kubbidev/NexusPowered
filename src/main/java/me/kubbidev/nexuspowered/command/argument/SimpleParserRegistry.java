@@ -20,7 +20,7 @@ public class SimpleParserRegistry implements ArgumentParserRegistry {
             return Optional.empty();
         }
 
-        return Optional.of((ArgumentParser<T>) parsers.getFirst());
+        return Optional.of((ArgumentParser<T>) parsers.get(0));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
