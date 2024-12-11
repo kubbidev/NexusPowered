@@ -4,6 +4,9 @@
 
 # Log file
 *.log
+*.pid
+*.swp
+*.swo
 
 # Package Files #
 *.jar
@@ -13,6 +16,10 @@
 *.zip
 *.tar.gz
 *.rar
+
+# Local environment files
+.env
+.env.*
 
 ### Gradle template
 **/.gradle
