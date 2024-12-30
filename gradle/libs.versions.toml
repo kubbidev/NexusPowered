@@ -1,5 +1,5 @@
 [versions]
-shadow = "8.1.1"
+shadow = "9.0.0-beta4"
 
 [plugins]
-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
