@@ -35,11 +35,13 @@ dependencies {
     compileOnly("org.jetbrains:annotations:24.1.0")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
 
-    // tests
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
-    testImplementation("org.testcontainers:junit-jupiter:1.19.8")
+    // test
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.4")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.11.4")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.4")
+    testImplementation("org.testcontainers:junit-jupiter:1.20.4")
+    testImplementation("org.mockito:mockito-core:5.14.2")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.14.2")
 }
 
 fun determinePatchVersion(): Int {
