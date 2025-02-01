@@ -5,7 +5,7 @@ import java.util.Random;
 /**
  * Utility for quickly performing Maths calculations.
  */
-public final class Mx {
+public final class Mth {
     private static final int[] MULTIPLY_DE_BRUIJN_BIT_POSITION = new int[]{
             0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8,
             31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
@@ -177,7 +177,7 @@ public final class Mx {
         return ceilLog2(value) - (isPowerOfTwo(value) ? 0 : 1);
     }
 
-    private Mx() {
+    private Mth() {
         throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 }

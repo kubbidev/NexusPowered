@@ -1,6 +1,6 @@
 package me.kubbidev.nexuspowered.util.math.intprovider;
 
-import me.kubbidev.nexuspowered.util.math.Mx;
+import me.kubbidev.nexuspowered.util.math.Mth;
 
 import java.util.Random;
 
@@ -23,7 +23,7 @@ public class UniformIntProvider implements IntProvider {
 
     @Override
     public int get(Random random) {
-        return Mx.nextBetween(random, this.min, this.max);
+        return Mth.nextBetween(random, this.min, this.max);
     }
 
     @Override

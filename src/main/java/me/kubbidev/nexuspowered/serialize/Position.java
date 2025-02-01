@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 import me.kubbidev.nexuspowered.Nexus;
 import me.kubbidev.nexuspowered.gson.GsonSerializable;
 import me.kubbidev.nexuspowered.gson.JsonBuilder;
-import me.kubbidev.nexuspowered.util.math.Mx;
+import me.kubbidev.nexuspowered.util.math.Mth;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -201,9 +201,9 @@ public final class Position implements GsonSerializable {
 
     public BlockPosition floor() {
         return BlockPosition.of(
-                Mx.floor(this.x),
-                Mx.floor(this.y),
-                Mx.floor(this.z), this.world);
+                Mth.floor(this.x),
+                Mth.floor(this.y),
+                Mth.floor(this.z), this.world);
     }
 
     /**
@@ -327,7 +327,7 @@ public final class Position implements GsonSerializable {
      * less than {@code radius}.
      */
     public boolean isInRange(Position pos, double radius) {
-        return this.squaredDistanceTo(pos.x, pos.y, pos.z) < Mx.square(radius);
+        return this.squaredDistanceTo(pos.x, pos.y, pos.z) < Mth.square(radius);
     }
 
     /**
@@ -376,7 +376,7 @@ public final class Position implements GsonSerializable {
         double d = pos.x - this.x;
         double e = pos.y - this.y;
         double f = pos.z - this.z;
-        return Mx.squaredHypot(d, f) < Mx.square(horizontalRange) && Math.abs(e) < verticalRange;
+        return Mth.squaredHypot(d, f) < Mth.square(horizontalRange) && Math.abs(e) < verticalRange;
     }
 
     /**
@@ -482,9 +482,9 @@ public final class Position implements GsonSerializable {
      */
     public Position lerp(Position to, double delta) {
         return Position.of(
-                Mx.lerp(delta, this.x, to.x),
-                Mx.lerp(delta, this.y, to.y),
-                Mx.lerp(delta, this.z, to.z), this.world);
+                Mth.lerp(delta, this.x, to.x),
+                Mth.lerp(delta, this.y, to.y),
+                Mth.lerp(delta, this.z, to.z), this.world);
     }
 
     /**
@@ -493,8 +493,8 @@ public final class Position implements GsonSerializable {
      * @param angle the angle in radians
      */
     public Position rotateX(float angle) {
-        double f = Mx.cos(angle);
-        double g = Mx.sin(angle);
+        double f = Mth.cos(angle);
+        double g = Mth.sin(angle);
         double e = this.y * f + this.z * g;
         double h = this.z * f - this.y * g;
         return Position.of(this.x, e, h, this.world);
@@ -506,8 +506,8 @@ public final class Position implements GsonSerializable {
      * @param angle the angle in radians
      */
     public Position rotateY(float angle) {
-        double f = Mx.cos(angle);
-        double g = Mx.sin(angle);
+        double f = Mth.cos(angle);
+        double g = Mth.sin(angle);
         double d = this.x * f + this.z * g;
         double h = this.z * f - this.x * g;
         return Position.of(d, this.y, h, this.world);
@@ -519,8 +519,8 @@ public final class Position implements GsonSerializable {
      * @param angle the angle in radians
      */
     public Position rotateZ(float angle) {
-        double f = Mx.cos(angle);
-        double g = Mx.sin(angle);
+        double f = Mth.cos(angle);
+        double g = Mth.sin(angle);
         double d = this.x * f + this.y * g;
         double e = this.y * f - this.x * g;
         return Position.of(d, e, this.z, this.world);

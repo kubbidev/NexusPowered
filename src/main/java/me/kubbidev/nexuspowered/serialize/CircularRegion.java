@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.kubbidev.nexuspowered.gson.GsonSerializable;
 import me.kubbidev.nexuspowered.gson.JsonBuilder;
-import me.kubbidev.nexuspowered.util.math.Mx;
+import me.kubbidev.nexuspowered.util.math.Mth;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +48,7 @@ public final class CircularRegion implements GsonSerializable {
      */
     public boolean inRegion(Position pos) {
         Objects.requireNonNull(pos, "pos");
-        return pos.toVector().distanceSquared(this.center.toVector()) < Mx.square(this.radius);
+        return pos.toVector().distanceSquared(this.center.toVector()) < Mth.square(this.radius);
     }
 
     /**
@@ -58,7 +58,7 @@ public final class CircularRegion implements GsonSerializable {
      */
     public boolean inRegion(Block block) {
         Objects.requireNonNull(block, "block");
-        return block.getLocation().distanceSquared(this.center.toLocation()) < Mx.square(this.radius);
+        return block.getLocation().distanceSquared(this.center.toLocation()) < Mth.square(this.radius);
     }
 
     /**
@@ -103,8 +103,8 @@ public final class CircularRegion implements GsonSerializable {
         for (int degree = 0; degree < 360; degree++) {
             double radian = Math.toRadians(degree);
 
-            double x = Mx.cos(radian) * this.radius;
-            double z = Mx.sin(radian) * this.radius;
+            double x = Mth.cos(radian) * this.radius;
+            double z = Mth.sin(radian) * this.radius;
 
             positions.add(this.center.add((int) x, 0, (int) z).floor());
         }

@@ -8,7 +8,7 @@ import com.google.gson.JsonObject;
 import me.kubbidev.nexuspowered.Nexus;
 import me.kubbidev.nexuspowered.gson.GsonSerializable;
 import me.kubbidev.nexuspowered.gson.JsonBuilder;
-import me.kubbidev.nexuspowered.util.math.Mx;
+import me.kubbidev.nexuspowered.util.math.Mth;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -27,7 +27,7 @@ import java.util.function.Function;
  */
 @Unmodifiable
 public final class BlockPosition implements GsonSerializable {
-    public static final int SIZE_BITS_XZ = 1 + Mx.floorLog2(Mx.smallestEncompassingPowerOfTwo(30000000));
+    public static final int SIZE_BITS_XZ = 1 + Mth.floorLog2(Mth.smallestEncompassingPowerOfTwo(30000000));
     public static final int SIZE_BITS_Y = 64 - 2 * SIZE_BITS_XZ;
 
     private static final long BITS_X = (1L << SIZE_BITS_XZ) - 1L;
@@ -55,7 +55,7 @@ public final class BlockPosition implements GsonSerializable {
     }
 
     public static BlockPosition ofFloored(double x, double y, double z, String world) {
-        return of(Mx.floor(x), Mx.floor(y), Mx.floor(z), world);
+        return of(Mth.floor(x), Mth.floor(y), Mth.floor(z), world);
     }
 
     public static BlockPosition ofFloored(Position position) {
@@ -274,23 +274,23 @@ public final class BlockPosition implements GsonSerializable {
 
     public BlockPosition add(Vector vector) {
         return this.add(
-                Mx.floor(vector.getX()),
-                Mx.floor(vector.getY()),
-                Mx.floor(vector.getZ()));
+                Mth.floor(vector.getX()),
+                Mth.floor(vector.getY()),
+                Mth.floor(vector.getZ()));
     }
 
     public BlockPosition add(Location location) {
         return this.add(
-                Mx.floor(location.getX()),
-                Mx.floor(location.getY()),
-                Mx.floor(location.getZ()));
+                Mth.floor(location.getX()),
+                Mth.floor(location.getY()),
+                Mth.floor(location.getZ()));
     }
 
     public BlockPosition add(Position position) {
         return this.add(
-                Mx.floor(position.getX()),
-                Mx.floor(position.getY()),
-                Mx.floor(position.getZ()));
+                Mth.floor(position.getX()),
+                Mth.floor(position.getY()),
+                Mth.floor(position.getZ()));
     }
 
     public BlockPosition add(BlockPosition position) {
@@ -312,23 +312,23 @@ public final class BlockPosition implements GsonSerializable {
 
     public BlockPosition subtract(Vector vector) {
         return this.subtract(
-                Mx.floor(vector.getX()),
-                Mx.floor(vector.getY()),
-                Mx.floor(vector.getZ()));
+                Mth.floor(vector.getX()),
+                Mth.floor(vector.getY()),
+                Mth.floor(vector.getZ()));
     }
 
     public BlockPosition subtract(Location location) {
         return this.subtract(
-                Mx.floor(location.getX()),
-                Mx.floor(location.getY()),
-                Mx.floor(location.getZ()));
+                Mth.floor(location.getX()),
+                Mth.floor(location.getY()),
+                Mth.floor(location.getZ()));
     }
 
     public BlockPosition subtract(Position position) {
         return this.subtract(
-                Mx.floor(position.getX()),
-                Mx.floor(position.getY()),
-                Mx.floor(position.getZ()));
+                Mth.floor(position.getX()),
+                Mth.floor(position.getY()),
+                Mth.floor(position.getZ()));
     }
 
     public BlockPosition subtract(BlockPosition position) {
@@ -358,23 +358,23 @@ public final class BlockPosition implements GsonSerializable {
 
     public BlockPosition multiply(Vector vector) {
         return this.multiply(
-                Mx.floor(vector.getX()),
-                Mx.floor(vector.getY()),
-                Mx.floor(vector.getZ()));
+                Mth.floor(vector.getX()),
+                Mth.floor(vector.getY()),
+                Mth.floor(vector.getZ()));
     }
 
     public BlockPosition multiply(Location location) {
         return this.multiply(
-                Mx.floor(location.getX()),
-                Mx.floor(location.getY()),
-                Mx.floor(location.getZ()));
+                Mth.floor(location.getX()),
+                Mth.floor(location.getY()),
+                Mth.floor(location.getZ()));
     }
 
     public BlockPosition multiply(Position position) {
         return this.multiply(
-                Mx.floor(position.getX()),
-                Mx.floor(position.getY()),
-                Mx.floor(position.getZ()));
+                Mth.floor(position.getX()),
+                Mth.floor(position.getY()),
+                Mth.floor(position.getZ()));
     }
 
     public BlockPosition multiply(BlockPosition position) {
