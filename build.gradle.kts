@@ -32,8 +32,8 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
 
     // optional dependencies
-    compileOnly("org.jetbrains:annotations:24.1.0")
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
+    compileOnly("org.jetbrains:annotations:26.0.2")
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.3.0")
 
     // test
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.4")
