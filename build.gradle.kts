@@ -24,7 +24,6 @@ java {
 repositories {
     mavenCentral()
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-    maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://repo.dmulloy2.net/repository/public/")
 }
 
@@ -74,7 +73,7 @@ publishing {
             pom {
                 name = "NexusPowered"
                 description = "A Minecraft plugin utility to reduce boilerplate code in Bukkit plugins."
-                url = "https://gitlab.com/kubbidev/nexuspowered"
+                url = "https://github.com/kubbidev/NexusPowered"
 
                 licenses {
                     license {
@@ -92,8 +91,8 @@ publishing {
                 }
 
                 issueManagement {
-                    system = "Gitlab"
-                    url = "https://gitlab.com/kubbidev/nexuspowered/-/issues"
+                    system = "GitHub"
+                    url = "https://github.com/kubbidev/NexusPowered/issues"
                 }
             }
         }

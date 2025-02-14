@@ -124,7 +124,7 @@ class FunctionalCommandBuilderImpl<T extends CommandSender> implements Functiona
 
         int requiredArgs = 0;
         for (String usagePart : usageParts) {
-            if (!usagePart.startsWith("[") && !usagePart.endsWith("]")) {
+            if (!usagePart.startsWith("<") && !usagePart.endsWith(">")) {
                 // assume it's a required argument
                 requiredArgs++;
             }

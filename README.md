@@ -29,8 +29,8 @@ NexusPowered uses Gradle to handle dependencies & building.
 #### Compiling from source
 
 ```sh
-git clone https://gitlab.com/kubbidev/nexuspowered.git
-cd nexuspowered/
+git clone https://github.com/kubbidev/NexusPowered.git
+cd NexusPowered/
 ./gradlew build
 ```
 
@@ -38,4 +38,4 @@ You can find the output jars in the `build/libs` directory.
 
 ## License
 
-NexusPowered © 2024 by kubbidev is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+NexusPowered © 2025 by kubbidev is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
