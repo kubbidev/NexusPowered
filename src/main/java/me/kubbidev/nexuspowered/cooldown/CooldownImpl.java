@@ -2,8 +2,8 @@ package me.kubbidev.nexuspowered.cooldown;
 
 import com.google.gson.JsonElement;
 import me.kubbidev.nexuspowered.gson.JsonBuilder;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 
 import java.util.OptionalLong;
 import java.util.concurrent.TimeUnit;

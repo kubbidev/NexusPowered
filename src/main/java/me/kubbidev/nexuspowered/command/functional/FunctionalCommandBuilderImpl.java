@@ -4,10 +4,10 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import me.kubbidev.nexuspowered.command.Command;
 import me.kubbidev.nexuspowered.command.context.CommandContext;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

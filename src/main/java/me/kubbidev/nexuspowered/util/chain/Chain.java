@@ -1,7 +1,7 @@
 package me.kubbidev.nexuspowered.util.chain;
 
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;

@@ -9,10 +9,10 @@ import me.kubbidev.nexuspowered.scheduler.Scheduler;
 import me.kubbidev.nexuspowered.scheduler.Task;
 import me.kubbidev.nexuspowered.scheduler.Ticks;
 import me.kubbidev.nexuspowered.scheduler.builder.TaskBuilder;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 
 import java.util.Objects;
 import java.util.concurrent.ScheduledFuture;

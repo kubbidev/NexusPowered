@@ -4,10 +4,10 @@ import me.kubbidev.nexuspowered.Events;
 import me.kubbidev.nexuspowered.Nexus;
 import me.kubbidev.nexuspowered.event.MergedSubscription;
 import me.kubbidev.nexuspowered.terminable.Terminable;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import org.bukkit.event.server.ServiceEvent;
 import org.bukkit.event.server.ServiceRegisterEvent;
 import org.bukkit.event.server.ServiceUnregisterEvent;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;

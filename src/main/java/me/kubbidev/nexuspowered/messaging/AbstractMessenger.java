@@ -11,8 +11,8 @@ import me.kubbidev.nexuspowered.messaging.codec.GZipCodec;
 import me.kubbidev.nexuspowered.messaging.codec.GsonCodec;
 import me.kubbidev.nexuspowered.messaging.codec.Message;
 import me.kubbidev.nexuspowered.promise.Promise;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Base64;

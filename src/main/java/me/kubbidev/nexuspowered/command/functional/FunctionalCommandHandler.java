@@ -3,8 +3,8 @@ package me.kubbidev.nexuspowered.command.functional;
 import me.kubbidev.nexuspowered.command.Command;
 import me.kubbidev.nexuspowered.command.CommandInterruptException;
 import me.kubbidev.nexuspowered.command.context.CommandContext;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNullByDefault;
 
 /**
  * Represents a handler for a {@link Command}.

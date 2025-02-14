@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
+import org.jetbrains.annotations.NotNullByDefault;
 
 import java.util.Comparator;
 import java.util.EnumMap;

@@ -3,7 +3,7 @@ package me.kubbidev.nexuspowered.gson.converter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
 @NotNullByDefault

@@ -1,7 +1,6 @@
 package me.kubbidev.nexuspowered.item;
 
 import me.kubbidev.nexuspowered.util.Text;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -10,6 +9,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.jetbrains.annotations.NotNullByDefault;
 
 import java.util.ArrayList;
 import java.util.List;

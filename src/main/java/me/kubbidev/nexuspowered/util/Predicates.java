@@ -1,8 +1,8 @@
 package me.kubbidev.nexuspowered.util;
 
 import com.google.common.collect.Range;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 
 import java.util.Locale;
 import java.util.function.Predicate;

@@ -1,8 +1,8 @@
 package me.kubbidev.nexuspowered.command.argument;
 
 import me.kubbidev.nexuspowered.command.CommandInterruptException;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 
 import java.util.Optional;
 import java.util.function.Function;

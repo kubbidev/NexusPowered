@@ -1,7 +1,7 @@
 package me.kubbidev.nexuspowered.scheduler;
 
 import me.kubbidev.nexuspowered.terminable.Terminable;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
+import org.jetbrains.annotations.NotNullByDefault;
 
 /**
  * Represents a scheduled repeating task

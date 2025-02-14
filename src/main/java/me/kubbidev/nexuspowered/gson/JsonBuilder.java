@@ -1,7 +1,7 @@
 package me.kubbidev.nexuspowered.gson;
 
 import com.google.gson.*;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;

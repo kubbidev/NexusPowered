@@ -2,7 +2,6 @@ package me.kubbidev.nexuspowered.util;
 
 import com.google.common.collect.ImmutableList;
 import me.kubbidev.nexuspowered.Nexus;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -11,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.Permissible;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;

@@ -3,8 +3,8 @@ package me.kubbidev.nexuspowered.metadata;
 import com.google.common.reflect.TypeToken;
 import me.kubbidev.nexuspowered.cooldown.Cooldown;
 import me.kubbidev.nexuspowered.interfaces.TypeAware;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 
 import java.util.Objects;
 import java.util.UUID;

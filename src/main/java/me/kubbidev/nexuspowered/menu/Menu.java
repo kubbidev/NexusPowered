@@ -4,7 +4,6 @@ import me.kubbidev.nexuspowered.Events;
 import me.kubbidev.nexuspowered.Schedulers;
 import me.kubbidev.nexuspowered.terminable.TerminableConsumer;
 import me.kubbidev.nexuspowered.terminable.composite.CompositeTerminable;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -20,6 +19,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;

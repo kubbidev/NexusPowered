@@ -12,10 +12,10 @@ import me.kubbidev.nexuspowered.plugin.NexusPlugin;
 import me.kubbidev.nexuspowered.promise.Promise;
 import me.kubbidev.nexuspowered.terminable.composite.CompositeTerminable;
 import me.kubbidev.nexuspowered.util.Players;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;

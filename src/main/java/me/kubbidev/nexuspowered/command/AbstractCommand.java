@@ -4,11 +4,11 @@ import me.kubbidev.nexuspowered.command.context.CommandContext;
 import me.kubbidev.nexuspowered.command.context.ImmutableCommandContext;
 import me.kubbidev.nexuspowered.internal.LoaderUtils;
 import me.kubbidev.nexuspowered.util.CommandMapUtil;
-import me.kubbidev.nexuspowered.util.annotation.NotNullByDefault;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
