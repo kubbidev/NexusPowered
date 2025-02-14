@@ -7,6 +7,7 @@ import me.kubbidev.nexuspowered.command.context.CommandContext;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,7 +95,7 @@ class FunctionalCommandBuilderImpl<T extends CommandSender> implements Functiona
             return false;
         });
         // cast the generic type
-        return (FunctionalCommandBuilder<Player>) new FunctionalCommandBuilderImpl<>(
+        return (FunctionalCommandBuilder<@NotNull Player>) new FunctionalCommandBuilderImpl<>(
                 this.predicates, this.tabHandler, this.permission, this.description, this.permissionMessage);
     }
 
@@ -111,7 +112,7 @@ class FunctionalCommandBuilderImpl<T extends CommandSender> implements Functiona
             return false;
         });
         // cast the generic type
-        return (FunctionalCommandBuilder<ConsoleCommandSender>) new FunctionalCommandBuilderImpl<>(
+        return (FunctionalCommandBuilder<@NotNull ConsoleCommandSender>) new FunctionalCommandBuilderImpl<>(
                 this.predicates, this.tabHandler, this.permission, this.description, this.permissionMessage);
     }
 
@@ -144,7 +145,7 @@ class FunctionalCommandBuilderImpl<T extends CommandSender> implements Functiona
     }
 
     @Override
-    public FunctionalCommandBuilder<T> assertArgument(int index, Predicate<String> test, String failureMessage) {
+    public FunctionalCommandBuilder<T> assertArgument(int index, Predicate<@Nullable String> test, String failureMessage) {
         Objects.requireNonNull(test, "test");
         Objects.requireNonNull(failureMessage, "failureMessage");
         this.predicates.add(context -> {

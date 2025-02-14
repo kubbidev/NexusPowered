@@ -181,7 +181,7 @@ public interface FunctionalCommandBuilder<T extends CommandSender> {
      * @param test  the test predicate
      * @return the builder instance
      */
-    default FunctionalCommandBuilder<T> assertArgument(int index, Predicate<String> test) {
+    default FunctionalCommandBuilder<T> assertArgument(int index, Predicate<@Nullable String> test) {
         return assertArgument(index, test, DEFAULT_INVALID_ARGUMENT_MESSAGE);
     }
 
@@ -198,7 +198,7 @@ public interface FunctionalCommandBuilder<T extends CommandSender> {
      * @param failureMessage the failure message to send if the predicate fails
      * @return the builder instance
      */
-    FunctionalCommandBuilder<T> assertArgument(int index, Predicate<String> test, String failureMessage);
+    FunctionalCommandBuilder<T> assertArgument(int index, Predicate<@Nullable String> test, String failureMessage);
 
     /**
      * Tests the sender with the provided predicate.
