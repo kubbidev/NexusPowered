@@ -141,7 +141,7 @@ public final class Players {
      * @param messages the messages to send
      */
     public static void msg(CommandSender sender, String... messages) {
-        Arrays.stream(messages).forEach(sender::sendMessage);
+        Arrays.stream(messages).map(Text::colorize).forEach(sender::sendMessage);
     }
 
     @NotNull
