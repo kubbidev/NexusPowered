@@ -6,11 +6,6 @@ import java.util.Random;
  * Utility for quickly performing Maths calculations.
  */
 public final class Mth {
-    private static final int[] MULTIPLY_DE_BRUIJN_BIT_POSITION = new int[]{
-            0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8,
-            31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
-    };
-
     private static final int SIN_BITS;
     private static final int SIN_MASK;
     private static final int SIN_COUNT;
@@ -42,16 +37,6 @@ public final class Mth {
             sin[(int) (i * degToIndex) & SIN_MASK] = Math.sin(i * Math.PI / 180.0);
             cos[(int) (i * degToIndex) & SIN_MASK] = Math.cos(i * Math.PI / 180.0);
         }
-    }
-
-    public static float normalizeYaw(float yaw) {
-        yaw %= 360;
-        if (yaw < -180.0f) {
-            yaw += 360.0f;
-        } else if (yaw > 180.0f) {
-            yaw -= 360.0f;
-        }
-        return yaw;
     }
 
     /**
@@ -96,14 +81,6 @@ public final class Mth {
         return n * n;
     }
 
-    public static int squaredHypot(int a, int b) {
-        return a * a + b * b;
-    }
-
-    public static double squaredHypot(double a, double b) {
-        return a * a + b * b;
-    }
-
     public static double lerp(double delta, double start, double end) {
         return start + delta * (end - start);
     }
@@ -134,47 +111,6 @@ public final class Mth {
         int ca = a >= 0 ? 2 * a : -2 * a - 1;
         int cb = b >= 0 ? 2 * b : -2 * b - 1;
         return (ca + cb + 1) * (ca + cb) / 2 + cb;
-    }
-
-    public static int smallestEncompassingPowerOfTwo(int value) {
-        int i = value - 1;
-        i |= i >> 1;
-        i |= i >> 2;
-        i |= i >> 4;
-        i |= i >> 8;
-        i |= i >> 16;
-        return i + 1;
-    }
-
-    public static boolean isPowerOfTwo(int value) {
-        return value != 0 && (value & value - 1) == 0;
-    }
-
-    /**
-     * {@return ceil(log < sub > 2 < / sub > ( { @ code value }))}
-     *
-     * <p>The vanilla implementation uses the de Bruijn sequence.
-     *
-     * @see Integer#numberOfLeadingZeros(int)
-     *
-     * @param value the input value
-     */
-    public static int ceilLog2(int value) {
-        value = isPowerOfTwo(value) ? value : smallestEncompassingPowerOfTwo(value);
-        return MULTIPLY_DE_BRUIJN_BIT_POSITION[(int) ((long) value * 125613361L >> 27) & 31];
-    }
-
-    /**
-     * {@return floor(log < sub > 2 < / sub > ( { @ code value }))}
-     *
-     * <p>The vanilla implementation uses the de Bruijn sequence.
-     *
-     * @see Integer#numberOfLeadingZeros(int)
-     *
-     * @param value the input value
-     */
-    public static int floorLog2(int value) {
-        return ceilLog2(value) - (isPowerOfTwo(value) ? 0 : 1);
     }
 
     private Mth() {
