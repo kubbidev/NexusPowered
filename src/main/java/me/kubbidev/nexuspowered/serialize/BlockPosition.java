@@ -27,16 +27,6 @@ import java.util.function.Function;
  */
 @Unmodifiable
 public final class BlockPosition implements GsonSerializable {
-    public static final int SIZE_BITS_XZ = 1 + Mth.floorLog2(Mth.smallestEncompassingPowerOfTwo(30000000));
-    public static final int SIZE_BITS_Y = 64 - 2 * SIZE_BITS_XZ;
-
-    private static final long BITS_X = (1L << SIZE_BITS_XZ) - 1L;
-    private static final long BITS_Y = (1L << SIZE_BITS_Y) - 1L;
-    private static final long BITS_Z = (1L << SIZE_BITS_XZ) - 1L;
-
-    private static final int BIT_SHIFT_Z = SIZE_BITS_Y;
-    private static final int BIT_SHIFT_X = SIZE_BITS_Y + SIZE_BITS_XZ;
-
     public static BlockPosition deserialize(JsonElement element) {
         Preconditions.checkArgument(element.isJsonObject());
         JsonObject object = element.getAsJsonObject();
@@ -58,8 +48,8 @@ public final class BlockPosition implements GsonSerializable {
         return of(Mth.floor(x), Mth.floor(y), Mth.floor(z), world);
     }
 
-    public static BlockPosition ofFloored(Position position) {
-        return Objects.requireNonNull(position, "position").floor();
+    public static BlockPosition ofFloored(double x, double y, double z, World world) {
+        return ofFloored(x, y, z, world.getName());
     }
 
     public static BlockPosition of(int x, int y, int z, String world) {
@@ -80,6 +70,11 @@ public final class BlockPosition implements GsonSerializable {
                 vector.getZ(), world);
     }
 
+    public static BlockPosition of(Vector vector, World world) {
+        Objects.requireNonNull(world, "world");
+        return of(vector, world.getName());
+    }
+
     public static BlockPosition of(Location location) {
         Objects.requireNonNull(location, "location");
         return ofFloored(
@@ -91,18 +86,6 @@ public final class BlockPosition implements GsonSerializable {
     public static BlockPosition of(Block block) {
         Objects.requireNonNull(block, "block");
         return of(block.getLocation());
-    }
-
-    /**
-     * Copies the given position.
-     */
-    public static BlockPosition of(BlockPosition blockPos) {
-        Objects.requireNonNull(blockPos, "blockPos");
-        return of(
-                blockPos.getX(),
-                blockPos.getY(),
-                blockPos.getZ(),
-                blockPos.getWorld());
     }
 
     public static BlockPosition min(BlockPosition a, BlockPosition b) {
@@ -117,33 +100,6 @@ public final class BlockPosition implements GsonSerializable {
                 Math.max(a.getX(), b.getX()),
                 Math.max(a.getY(), b.getY()),
                 Math.max(a.getZ(), b.getZ()), a.getWorld());
-    }
-
-    public static int unpackLongX(long packedPos) {
-        return (int) (packedPos << 64 - BIT_SHIFT_X - SIZE_BITS_XZ >> 64 - SIZE_BITS_XZ);
-    }
-
-    public static int unpackLongY(long packedPos) {
-        return (int) (packedPos << 64 - SIZE_BITS_Y >> 64 - SIZE_BITS_Y);
-    }
-
-    public static int unpackLongZ(long packedPos) {
-        return (int) (packedPos << 64 - BIT_SHIFT_Z - SIZE_BITS_XZ >> 64 - SIZE_BITS_XZ);
-    }
-
-    public static BlockPosition fromLong(long packedPos, String world) {
-        return of(
-                unpackLongX(packedPos),
-                unpackLongY(packedPos),
-                unpackLongZ(packedPos), world
-        );
-    }
-
-    public static long asLong(int x, int y, int z) {
-        long l = 0L;
-        l |= ((long) x & BITS_X) << BIT_SHIFT_X;
-        l |= ((long) y & BITS_Y);
-        return l | ((long) z & BITS_Z) << BIT_SHIFT_Z;
     }
 
     /**
@@ -201,26 +157,6 @@ public final class BlockPosition implements GsonSerializable {
         return this.toLocation().getBlock();
     }
 
-    public Position toPosition() {
-        return Position.of(this);
-    }
-
-    public Position toPositionCenter() {
-        return Position.ofCenter(this);
-    }
-
-    public Position toPositionBottomCenter() {
-        return Position.ofBottomCenter(this);
-    }
-
-    public long asLong() {
-        return asLong(this.getX(), this.getY(), this.getZ());
-    }
-
-    public ChunkPosition toChunk() {
-        return ChunkPosition.of(this.x >> 4, this.z >> 4, this.world);
-    }
-
     /**
      * Subtracts this block position from the given block position.
      *
@@ -250,10 +186,6 @@ public final class BlockPosition implements GsonSerializable {
 
     public BlockPosition withY(int y) {
         return BlockPosition.of(this.x, y, this.y, this.world);
-    }
-
-    public boolean contains(Position position) {
-        return this.equals(position.floor());
     }
 
     public BlockPosition getRelative(BlockFace face) {
@@ -286,13 +218,6 @@ public final class BlockPosition implements GsonSerializable {
                 Mth.floor(location.getZ()));
     }
 
-    public BlockPosition add(Position position) {
-        return this.add(
-                Mth.floor(position.getX()),
-                Mth.floor(position.getY()),
-                Mth.floor(position.getZ()));
-    }
-
     public BlockPosition add(BlockPosition position) {
         return this.add(position.getX(), position.getY(), position.getZ());
     }
@@ -303,8 +228,6 @@ public final class BlockPosition implements GsonSerializable {
 
     /**
      * Returns the sum of this block position and the given position.
-     *
-     * @see #add(Position)
      */
     public BlockPosition add(int x, int y, int z) {
         return x == 0 && y == 0 && z == 0 ? this : BlockPosition.of(this.x + x, this.y + y, this.z + z, this.world);
@@ -322,13 +245,6 @@ public final class BlockPosition implements GsonSerializable {
                 Mth.floor(location.getX()),
                 Mth.floor(location.getY()),
                 Mth.floor(location.getZ()));
-    }
-
-    public BlockPosition subtract(Position position) {
-        return this.subtract(
-                Mth.floor(position.getX()),
-                Mth.floor(position.getY()),
-                Mth.floor(position.getZ()));
     }
 
     public BlockPosition subtract(BlockPosition position) {
@@ -370,13 +286,6 @@ public final class BlockPosition implements GsonSerializable {
                 Mth.floor(location.getZ()));
     }
 
-    public BlockPosition multiply(Position position) {
-        return this.multiply(
-                Mth.floor(position.getX()),
-                Mth.floor(position.getY()),
-                Mth.floor(position.getZ()));
-    }
-
     public BlockPosition multiply(BlockPosition position) {
         return this.multiply(position.getX(), position.getY(), position.getZ());
     }
@@ -393,11 +302,6 @@ public final class BlockPosition implements GsonSerializable {
      */
     public BlockPosition multiply(int x, int y, int z) {
         return BlockPosition.of(this.x * x, this.y * y, this.z * z, this.world);
-    }
-
-    public BlockRegion regionWith(BlockPosition other) {
-        Objects.requireNonNull(other, "other");
-        return BlockRegion.of(this, other);
     }
 
     /**
