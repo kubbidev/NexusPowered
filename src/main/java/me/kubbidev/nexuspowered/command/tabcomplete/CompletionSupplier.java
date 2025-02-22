@@ -1,5 +1,6 @@
 package me.kubbidev.nexuspowered.command.tabcomplete;
 
+import me.kubbidev.nexuspowered.command.CommandInterruptException;
 import me.kubbidev.nexuspowered.util.Predicates;
 
 import java.util.Arrays;
@@ -87,5 +88,5 @@ public interface CompletionSupplier {
      * @param partial The partial input string to match completions against.
      * @return A list of matching completion suggestions.
      */
-    List<String> supplyCompletions(String partial);
+    List<String> supplyCompletions(String partial) throws CommandInterruptException;
 }

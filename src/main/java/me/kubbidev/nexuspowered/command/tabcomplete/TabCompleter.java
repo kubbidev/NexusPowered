@@ -68,7 +68,7 @@ public class TabCompleter<T extends CommandSender> implements FunctionalTabHandl
         return getCompletions(lastIndex, partial);
     }
 
-    private List<String> getCompletions(int position, String partial) {
+    private List<String> getCompletions(int position, String partial) throws CommandInterruptException {
         if (position >= this.from) {
             return this.suppliers.get(this.from).supplyCompletions(partial);
         }
