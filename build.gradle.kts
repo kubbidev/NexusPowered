@@ -1,13 +1,13 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
+apply("gradle/ver.gradle.kts")
 plugins {
     id("java")
-    alias(libs.plugins.shadow)
     id("maven-publish")
+    alias(libs.plugins.shadow)
 }
 
 group = "me.kubbidev"
-version = "2.0.2"
 
 base {
     archivesName.set("nexuspowered")
@@ -39,6 +39,54 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.4")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.11.4")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.4")
+}
+
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+}
+
+tasks.processResources {
+    filesMatching("plugin.yml") {
+        expand("pluginVersion" to "$version")
+    }
+}
+
+tasks.shadowJar {
+    archiveFileName = "NexusPowered-$version.jar"
+    mergeServiceFiles()
+    dependencies {
+        include(dependency("me.kubbidev:.*"))
+    }
+
+    manifest {
+        attributes["paperweight-mappings-namespace"] = "mojang"
+    }
+}
+
+tasks.publish {
+    dependsOn(tasks.shadowJar)
+}
+
+tasks.matching { it.name.startsWith("publish") }.configureEach {
+    doFirst {
+        if (version.toString().contains('+')) {
+            throw GradleException("Refusing to publish non-release version: $version (tag a release first)")
+        }
+    }
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.withType<Test>().configureEach {
+    testLogging {
+        events = setOf(TestLogEvent.PASSED, TestLogEvent.FAILED, TestLogEvent.SKIPPED)
+    }
+}
+
+artifacts {
+    archives(tasks.shadowJar)
 }
 
 publishing {
@@ -78,58 +126,9 @@ publishing {
         maven(url = "https://nexus.kubbidev.me/repository/maven-releases/") {
             name = "kubbidev-releases"
             credentials(PasswordCredentials::class) {
-                username = System.getenv("GRADLE_KUBBIDEV_RELEASES_USER")
-                    ?: property("kubbidev-releases-user") as String?
-
-                password = System.getenv("GRADLE_KUBBIDEV_RELEASES_PASS")
-                    ?: property("kubbidev-releases-pass") as String?
+                username = System.getenv("GRADLE_KUBBIDEV_RELEASES_USER") ?: property("kubbidev-releases-user") as String?
+                password = System.getenv("GRADLE_KUBBIDEV_RELEASES_PASS") ?: property("kubbidev-releases-pass") as String?
             }
         }
     }
-}
-
-configurations {
-    named("testImplementation") {
-        extendsFrom(configurations.getByName("compileOnly"))
-    }
-}
-
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
-}
-
-tasks.processResources {
-    filesMatching("plugin.yml") {
-        expand("pluginVersion" to "$version")
-    }
-}
-
-tasks.shadowJar {
-    archiveFileName = "NexusPowered-$version.jar"
-    mergeServiceFiles()
-    dependencies {
-        include(dependency("me.kubbidev:.*"))
-    }
-
-    manifest {
-        attributes["paperweight-mappings-namespace"] = "mojang"
-    }
-}
-
-tasks.publish {
-    dependsOn(tasks.shadowJar)
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-tasks.withType<Test>().configureEach {
-    testLogging {
-        events = setOf(TestLogEvent.PASSED, TestLogEvent.FAILED, TestLogEvent.SKIPPED)
-    }
-}
-
-artifacts {
-    archives(tasks.shadowJar)
 }
