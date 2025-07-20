@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "me.kubbidev"
-version = "2.0.0"
+version = "2.0.1"
 
 base {
     archivesName.set("nexuspowered")
@@ -109,6 +109,10 @@ tasks.shadowJar {
     mergeServiceFiles()
     dependencies {
         include(dependency("me.kubbidev:.*"))
+    }
+
+    manifest {
+        attributes["paperweight-mappings-namespace"] = "mojang"
     }
 }
 
