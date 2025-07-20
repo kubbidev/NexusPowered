@@ -1,5 +1,11 @@
 package me.kubbidev.nexuspowered;
 
+import java.util.Objects;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import me.kubbidev.nexuspowered.interfaces.Delegate;
 import me.kubbidev.nexuspowered.internal.LoaderUtils;
 import me.kubbidev.nexuspowered.internal.exception.NexusExceptions;
@@ -14,20 +20,18 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NotNullByDefault;
 
-import java.util.Objects;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-
 /**
  * Provides common instances of {@link Scheduler}.
  */
 @NotNullByDefault
 public final class Schedulers {
-    private static final Scheduler SYNC_SCHEDULER = new SyncScheduler();
+
+    private static final Scheduler SYNC_SCHEDULER  = new SyncScheduler();
     private static final Scheduler ASYNC_SCHEDULER = new AsyncScheduler();
+
+    private Schedulers() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
 
     /**
      * Gets a scheduler for the given context.
@@ -36,14 +40,10 @@ public final class Schedulers {
      * @return a scheduler
      */
     public static Scheduler get(ThreadContext context) {
-        switch (context) {
-            case SYNC:
-                return sync();
-            case ASYNC:
-                return async();
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (context) {
+            case SYNC -> sync();
+            case ASYNC -> async();
+        };
     }
 
     /**
@@ -106,7 +106,8 @@ public final class Schedulers {
 
         @NotNull
         @Override
-        public Task runRepeating(@NotNull Consumer<Task> consumer, long delay, @NotNull TimeUnit delayUnit, long interval, @NotNull TimeUnit intervalUnit) {
+        public Task runRepeating(@NotNull Consumer<Task> consumer, long delay, @NotNull TimeUnit delayUnit,
+                                 long interval, @NotNull TimeUnit intervalUnit) {
             return runRepeating(consumer, Ticks.from(delay, delayUnit), Ticks.from(interval, intervalUnit));
         }
     }
@@ -135,16 +136,18 @@ public final class Schedulers {
 
         @NotNull
         @Override
-        public Task runRepeating(@NotNull Consumer<Task> consumer, long delay, @NotNull TimeUnit delayUnit, long interval, @NotNull TimeUnit intervalUnit) {
+        public Task runRepeating(@NotNull Consumer<Task> consumer, long delay, @NotNull TimeUnit delayUnit,
+                                 long interval, @NotNull TimeUnit intervalUnit) {
             Objects.requireNonNull(consumer, "consumer");
             return new NexusAsyncTask(consumer, delay, delayUnit, interval, intervalUnit);
         }
     }
 
     private static class NexusTask extends BukkitRunnable implements Task, Delegate<Consumer<Task>> {
+
         private final Consumer<Task> backingTask;
 
-        private final AtomicInteger counter = new AtomicInteger(0);
+        private final AtomicInteger counter   = new AtomicInteger(0);
         private final AtomicBoolean cancelled = new AtomicBoolean(false);
 
         private NexusTask(Consumer<Task> backingTask) {
@@ -197,15 +200,19 @@ public final class Schedulers {
     }
 
     private static class NexusAsyncTask implements Runnable, Task, Delegate<Consumer<Task>> {
-        private final Consumer<Task> backingTask;
+
+        private final Consumer<Task>     backingTask;
         private final ScheduledFuture<?> future;
 
-        private final AtomicInteger counter = new AtomicInteger(0);
+        private final AtomicInteger counter   = new AtomicInteger(0);
         private final AtomicBoolean cancelled = new AtomicBoolean(false);
 
-        private NexusAsyncTask(Consumer<Task> backingTask, long delay, TimeUnit delayUnit, long interval, TimeUnit intervalUnit) {
+        private NexusAsyncTask(Consumer<Task> backingTask, long delay, TimeUnit delayUnit, long interval,
+                               TimeUnit intervalUnit) {
             this.backingTask = backingTask;
-            this.future = NexusExecutors.asyncNexus().scheduleAtFixedRate(this, delayUnit.toNanos(delay), intervalUnit.toNanos(interval), TimeUnit.NANOSECONDS);
+            this.future = NexusExecutors.asyncNexus()
+                .scheduleAtFixedRate(this, delayUnit.toNanos(delay), intervalUnit.toNanos(interval),
+                    TimeUnit.NANOSECONDS);
         }
 
         @Override
@@ -251,9 +258,5 @@ public final class Schedulers {
         public Consumer<Task> delegate() {
             return this.backingTask;
         }
-    }
-
-    private Schedulers() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 }

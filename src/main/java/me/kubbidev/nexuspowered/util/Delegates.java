@@ -1,14 +1,22 @@
 package me.kubbidev.nexuspowered.util;
 
-import me.kubbidev.nexuspowered.interfaces.Delegate;
-
 import java.util.concurrent.Callable;
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import me.kubbidev.nexuspowered.interfaces.Delegate;
 
 /**
  * A collection of utility methods for delegating Java 8 functions
  */
 public final class Delegates {
+
+    private Delegates() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
 
     public static <T> Consumer<T> runnableToConsumer(Runnable runnable) {
         return new RunnableToConsumer<>(runnable);
@@ -47,6 +55,7 @@ public final class Delegates {
     }
 
     private static abstract class AbstractDelegate<T> implements Delegate<T> {
+
         final T delegate;
 
         AbstractDelegate(T delegate) {
@@ -60,6 +69,7 @@ public final class Delegates {
     }
 
     private static final class RunnableToConsumer<T> extends AbstractDelegate<Runnable> implements Consumer<T> {
+
         RunnableToConsumer(Runnable delegate) {
             super(delegate);
         }
@@ -71,6 +81,7 @@ public final class Delegates {
     }
 
     private static final class CallableToSupplier<T> extends AbstractDelegate<Callable<T>> implements Supplier<T> {
+
         CallableToSupplier(Callable<T> delegate) {
             super(delegate);
         }
@@ -88,6 +99,7 @@ public final class Delegates {
     }
 
     private static final class RunnableToSupplier<T> extends AbstractDelegate<Runnable> implements Supplier<T> {
+
         RunnableToSupplier(Runnable delegate) {
             super(delegate);
         }
@@ -99,7 +111,9 @@ public final class Delegates {
         }
     }
 
-    private static final class ConsumerToBiConsumerFirst<T, U> extends AbstractDelegate<Consumer<T>> implements BiConsumer<T, U> {
+    private static final class ConsumerToBiConsumerFirst<T, U> extends AbstractDelegate<Consumer<T>> implements
+        BiConsumer<T, U> {
+
         ConsumerToBiConsumerFirst(Consumer<T> delegate) {
             super(delegate);
         }
@@ -110,7 +124,9 @@ public final class Delegates {
         }
     }
 
-    private static final class ConsumerToBiConsumerSecond<T, U>extends AbstractDelegate<Consumer<U>> implements BiConsumer<T, U> {
+    private static final class ConsumerToBiConsumerSecond<T, U> extends AbstractDelegate<Consumer<U>> implements
+        BiConsumer<T, U> {
+
         ConsumerToBiConsumerSecond(Consumer<U> delegate) {
             super(delegate);
         }
@@ -121,7 +137,9 @@ public final class Delegates {
         }
     }
 
-    private static final class PredicateToBiPredicateFirst<T, U> extends AbstractDelegate<Predicate<T>> implements BiPredicate<T, U> {
+    private static final class PredicateToBiPredicateFirst<T, U> extends AbstractDelegate<Predicate<T>> implements
+        BiPredicate<T, U> {
+
         PredicateToBiPredicateFirst(Predicate<T> delegate) {
             super(delegate);
         }
@@ -132,7 +150,9 @@ public final class Delegates {
         }
     }
 
-    private static final class PredicateToBiPredicateSecond<T, U> extends AbstractDelegate<Predicate<U>> implements BiPredicate<T, U> {
+    private static final class PredicateToBiPredicateSecond<T, U> extends AbstractDelegate<Predicate<U>> implements
+        BiPredicate<T, U> {
+
         PredicateToBiPredicateSecond(Predicate<U> delegate) {
             super(delegate);
         }
@@ -143,7 +163,9 @@ public final class Delegates {
         }
     }
 
-    private static final class ConsumerToFunction<T, R> extends AbstractDelegate<Consumer<T>> implements Function<T, R> {
+    private static final class ConsumerToFunction<T, R> extends AbstractDelegate<Consumer<T>> implements
+        Function<T, R> {
+
         ConsumerToFunction(Consumer<T> delegate) {
             super(delegate);
         }
@@ -156,6 +178,7 @@ public final class Delegates {
     }
 
     private static final class RunnableToFunction<T, R> extends AbstractDelegate<Runnable> implements Function<T, R> {
+
         RunnableToFunction(Runnable delegate) {
             super(delegate);
         }
@@ -165,9 +188,5 @@ public final class Delegates {
             this.delegate.run();
             return null;
         }
-    }
-
-    private Delegates() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 }

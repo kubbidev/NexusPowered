@@ -1,5 +1,6 @@
 package me.kubbidev.nexuspowered.util;
 
+import java.util.Optional;
 import me.kubbidev.nexuspowered.Events;
 import me.kubbidev.nexuspowered.Nexus;
 import me.kubbidev.nexuspowered.event.MergedSubscription;
@@ -10,8 +11,6 @@ import org.bukkit.event.server.ServiceUnregisterEvent;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-
 /**
  * A wrapper to always provide the latest instance of a service.
  *
@@ -19,6 +18,25 @@ import java.util.Optional;
  */
 @NotNullByDefault
 public final class ServiceCallback<T> implements Terminable {
+
+    private final Class<T>                         serviceClass;
+    private final MergedSubscription<ServiceEvent> listener;
+    @Nullable
+    private       T                                instance = null;
+
+    private ServiceCallback(Class<T> serviceClass) {
+        this.serviceClass = serviceClass;
+        this.refresh();
+
+        // listen for service updates
+        this.listener = Events.merge(
+                ServiceEvent.class,
+                ServiceRegisterEvent.class,
+                ServiceUnregisterEvent.class
+            )
+            .filter(e -> e.getProvider().getService().equals(serviceClass))
+            .handler(e -> this.refresh());
+    }
 
     /**
      * Create a new ServiceCallback for the given class.
@@ -29,25 +47,6 @@ public final class ServiceCallback<T> implements Terminable {
      */
     public static <T> ServiceCallback<T> of(Class<T> serviceClass) {
         return new ServiceCallback<>(serviceClass);
-    }
-
-    @Nullable
-    private T instance = null;
-    private final Class<T> serviceClass;
-    private final MergedSubscription<ServiceEvent> listener;
-
-    private ServiceCallback(Class<T> serviceClass) {
-        this.serviceClass = serviceClass;
-        refresh();
-
-        // listen for service updates
-        this.listener = Events.merge(
-                        ServiceEvent.class,
-                        ServiceRegisterEvent.class,
-                        ServiceUnregisterEvent.class
-                )
-                .filter(e -> e.getProvider().getService().equals(serviceClass))
-                .handler(e -> refresh());
     }
 
     /**
@@ -91,10 +90,9 @@ public final class ServiceCallback<T> implements Terminable {
         if (o == this) {
             return true;
         }
-        if (!(o instanceof ServiceCallback<?>)) {
+        if (!(o instanceof ServiceCallback<?> other)) {
             return false;
         }
-        ServiceCallback<?> other = (ServiceCallback<?>) o;
         return this.serviceClass.equals(other.serviceClass);
     }
 

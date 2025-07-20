@@ -1,5 +1,6 @@
 package me.kubbidev.nexuspowered.command;
 
+import java.util.List;
 import me.kubbidev.nexuspowered.command.context.CommandContext;
 import me.kubbidev.nexuspowered.command.context.ImmutableCommandContext;
 import me.kubbidev.nexuspowered.internal.LoaderUtils;
@@ -11,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 /**
  * An abstract implementation of {@link Command} and {@link CommandExecutor}.
  */
@@ -21,16 +20,12 @@ public abstract class AbstractCommand implements Command, CommandExecutor, TabCo
 
     @Nullable
     protected String permission;
-
     @Nullable
     protected String description;
 
-    @Nullable
-    protected String permissionMessage;
-
     @Override
     public void register(@NotNull String... aliases) {
-        LoaderUtils.getPlugin().registerCommand(this, this.permission, this.permissionMessage, this.description, aliases);
+        LoaderUtils.getPlugin().registerCommand(this, this.permission, this.description, aliases);
     }
 
     @Override
@@ -39,10 +34,14 @@ public abstract class AbstractCommand implements Command, CommandExecutor, TabCo
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        CommandContext<CommandSender> context = new ImmutableCommandContext<>(sender, label, args, command.getAliases());
+    public boolean onCommand(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command,
+                             @NotNull String label,
+                             @NotNull String[] args
+    ) {
+        CommandContext<CommandSender> context = new ImmutableCommandContext<>(sender, label, args,
+            command.getAliases());
         try {
-            call(context);
+            this.call(context);
         } catch (CommandInterruptException e) {
             e.getAction().accept(context.sender());
         }
@@ -50,10 +49,14 @@ public abstract class AbstractCommand implements Command, CommandExecutor, TabCo
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        CommandContext<CommandSender> context = new ImmutableCommandContext<>(sender, label, args, command.getAliases());
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender,
+                                                org.bukkit.command.@NotNull Command command, @NotNull String label,
+                                                @NotNull String[] args
+    ) {
+        CommandContext<CommandSender> context = new ImmutableCommandContext<>(sender, label, args,
+            command.getAliases());
         try {
-            return callTabCompleter(context);
+            return this.callTabCompleter(context);
         } catch (CommandInterruptException e) {
             e.getAction().accept(context.sender());
         }

@@ -1,19 +1,23 @@
 package me.kubbidev.nexuspowered.scheduler;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Utility for converting between Minecraft game ticks and standard durations.
  */
 public final class Ticks {
+
     // the number of ticks which occur in a second - this is a server implementation detail
-    public static final int TICKS_PER_SECOND = 20;
+    public static final int TICKS_PER_SECOND        = 20;
     // the number of milliseconds in a second - constant
     public static final int MILLISECONDS_PER_SECOND = 1000;
     // the number of milliseconds in a tick - assuming the server runs at a perfect tick rate
-    public static final int MILLISECONDS_PER_TICK = MILLISECONDS_PER_SECOND / TICKS_PER_SECOND;
+    public static final int MILLISECONDS_PER_TICK   = MILLISECONDS_PER_SECOND / TICKS_PER_SECOND;
+
+    private Ticks() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
 
     /**
      * Converts a duration in a certain unit of time to ticks.
@@ -39,10 +43,6 @@ public final class Ticks {
      */
     public static long to(long ticks, @NotNull TimeUnit unit) {
         return unit.convert(ticks * MILLISECONDS_PER_TICK, TimeUnit.MILLISECONDS);
-    }
-
-    private Ticks() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 
 }

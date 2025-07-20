@@ -3,19 +3,19 @@ package me.kubbidev.nexuspowered.cooldown;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import java.util.OptionalLong;
+import java.util.concurrent.TimeUnit;
 import me.kubbidev.nexuspowered.gson.GsonSerializable;
 import me.kubbidev.nexuspowered.scheduler.Ticks;
 import me.kubbidev.nexuspowered.time.Time;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
-import java.util.OptionalLong;
-import java.util.concurrent.TimeUnit;
-
 /**
  * A simple cooldown abstraction
  */
 public interface Cooldown extends GsonSerializable {
+
     static Cooldown deserialize(JsonElement element) {
         Preconditions.checkArgument(element.isJsonObject());
         JsonObject object = element.getAsJsonObject();
@@ -37,8 +37,7 @@ public interface Cooldown extends GsonSerializable {
      * @param ticks the number of ticks
      * @return a new cooldown
      */
-    @NotNull
-    static Cooldown ofTicks(long ticks) {
+    static @NotNull Cooldown ofTicks(long ticks) {
         return new CooldownImpl(Ticks.to(ticks, TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS);
     }
 
@@ -46,11 +45,10 @@ public interface Cooldown extends GsonSerializable {
      * Creates a cooldown lasting a specified amount of time
      *
      * @param amount the amount of time
-     * @param unit the unit of time
+     * @param unit   the unit of time
      * @return a new cooldown
      */
-    @NotNull
-    static Cooldown of(long amount, @NotNull TimeUnit unit) {
+    static @NotNull Cooldown of(long amount, @NotNull TimeUnit unit) {
         return new CooldownImpl(amount, unit);
     }
 
@@ -62,11 +60,11 @@ public interface Cooldown extends GsonSerializable {
      * @return true if the cooldown is not active
      */
     default boolean test() {
-        if (!testSilently()) {
+        if (!this.testSilently()) {
             return false;
         }
 
-        reset();
+        this.reset();
         return true;
     }
 
@@ -76,7 +74,7 @@ public interface Cooldown extends GsonSerializable {
      * @return true if the cooldown is not active
      */
     default boolean testSilently() {
-        return elapsed() > getTimeout();
+        return this.elapsed() > this.getTimeout();
     }
 
     /**
@@ -85,14 +83,14 @@ public interface Cooldown extends GsonSerializable {
      * @return the elapsed time
      */
     default long elapsed() {
-        return Time.nowMillis() - getLastTested().orElse(0);
+        return Time.nowMillis() - this.getLastTested().orElse(0);
     }
 
     /**
      * Resets the cooldown
      */
     default void reset() {
-        setLastTested(Time.nowMillis());
+        this.setLastTested(Time.nowMillis());
     }
 
     /**
@@ -103,8 +101,8 @@ public interface Cooldown extends GsonSerializable {
      * @return the time in millis until the cooldown will expire
      */
     default long remainingMillis() {
-        long diff = elapsed();
-        return diff > getTimeout() ? 0L : getTimeout() - diff;
+        long diff = this.elapsed();
+        return diff > this.getTimeout() ? 0L : this.getTimeout() - diff;
     }
 
     /**
@@ -116,7 +114,7 @@ public interface Cooldown extends GsonSerializable {
      * @return the time until the cooldown will expire
      */
     default long remainingTime(TimeUnit unit) {
-        return Math.max(0L, unit.convert(remainingMillis(), TimeUnit.MILLISECONDS));
+        return Math.max(0L, unit.convert(this.remainingMillis(), TimeUnit.MILLISECONDS));
     }
 
     /**
@@ -127,19 +125,8 @@ public interface Cooldown extends GsonSerializable {
     default void reduceRemainingCooldown(@Range(from = 0, to = 1) float p) {
         Preconditions.checkArgument(p >= 0 && p <= 1, "percentage must be between 0 and 1");
 
-        long remaining = remainingMillis();
-        OptionalLong lastTestedOptional = getLastTested();
-        if (!lastTestedOptional.isPresent()) {
-            // if lastTested is not set, there's nothing to reduce
-            return;
-        }
-
-        long lastTested = lastTestedOptional.getAsLong();
-        long reductionMillis = (long) (remaining * p);
-
-        // calculate the new last tested time, ensuring it does not go below 0
-        long newLastTested = Math.max(0, lastTested - reductionMillis);
-        setLastTested(newLastTested);
+        long remaining = this.remainingMillis();
+        this.reduceCooldownRaw((long) (remaining * p));
     }
 
     /**
@@ -150,19 +137,22 @@ public interface Cooldown extends GsonSerializable {
     default void reduceInitialCooldown(@Range(from = 0, to = 1) float p) {
         Preconditions.checkArgument(p >= 0 && p <= 1, "percentage must be between 0 and 1");
 
-        long initialTimeout = getTimeout();
-        OptionalLong lastTestedOptional = getLastTested();
-        if (!lastTestedOptional.isPresent()) {
+        long initialTimeout = this.getTimeout();
+        this.reduceCooldownRaw((long) (initialTimeout * p));
+    }
+
+    private void reduceCooldownRaw(long reductionMillis) {
+        OptionalLong lastTestedOptional = this.getLastTested();
+        if (lastTestedOptional.isEmpty()) {
             // if lastTested is not set, there's nothing to reduce
             return;
         }
 
         long lastTested = lastTestedOptional.getAsLong();
-        long reductionMillis = (long) (initialTimeout * p);
 
         // calculate the new last tested time, ensuring it does not go below 0
         long newLastTested = Math.max(0, lastTested - reductionMillis);
-        setLastTested(newLastTested);
+        this.setLastTested(newLastTested);
     }
 
     /**
@@ -172,18 +162,7 @@ public interface Cooldown extends GsonSerializable {
      */
     default void reduceFlat(@Range(from = 0, to = Long.MAX_VALUE) float d) {
         Preconditions.checkArgument(d >= 0, "Reduction amount must be non-negative");
-        OptionalLong lastTestedOptional = getLastTested();
-        if (!lastTestedOptional.isPresent()) {
-            // if lastTested is not set, there's nothing to reduce
-            return;
-        }
-
-        long lastTested = lastTestedOptional.getAsLong();
-        long reductionMillis = (long) (d * 1000L);
-
-        // calculate the new last tested time, ensuring it does not go below 0
-        long newLastTested = Math.max(0, lastTested - reductionMillis);
-        setLastTested(newLastTested);
+        this.reduceCooldownRaw((long) (d * 1000L));
     }
 
     /**
@@ -191,8 +170,7 @@ public interface Cooldown extends GsonSerializable {
      *
      * @return the last call time
      */
-    @NotNull
-    OptionalLong getLastTested();
+    @NotNull OptionalLong getLastTested();
 
     /**
      * Sets the time in milliseconds when this cooldown was last tested.
@@ -216,7 +194,5 @@ public interface Cooldown extends GsonSerializable {
      *
      * @return a cloned cooldown instance
      */
-    @NotNull
-    Cooldown copy();
-
+    @NotNull Cooldown copy();
 }

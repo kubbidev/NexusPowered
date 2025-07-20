@@ -1,10 +1,9 @@
 package me.kubbidev.nexuspowered.util;
 
-import me.kubbidev.nexuspowered.Schedulers;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import me.kubbidev.nexuspowered.Schedulers;
 
 /**
  * Base class for an interface which can perform operations asynchronously and return {@link CompletableFuture}s

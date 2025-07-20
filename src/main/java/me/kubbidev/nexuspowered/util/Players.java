@@ -1,24 +1,20 @@
 package me.kubbidev.nexuspowered.util;
 
 import com.google.common.collect.ImmutableList;
-import me.kubbidev.nexuspowered.Nexus;
-import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.permissions.Permissible;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.NotNullByDefault;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+import me.kubbidev.nexuspowered.Nexus;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
+import org.jetbrains.annotations.NotNullByDefault;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A collection of Player related utilities
@@ -26,14 +22,20 @@ import java.util.stream.Stream;
 @NotNullByDefault
 public final class Players {
 
+    public static final float DEFAULT_PLAYER_WALKING_SPEED = 0.2f;
+    public static final float DEFAULT_PLAYER_FLYING_SPEED  = 0.1f;
+
+    private Players() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
+
     /**
      * Gets a player by uuid.
      *
      * @param uuid the uuid
      * @return a player, or null
      */
-    @Nullable
-    public static Player getNullable(UUID uuid) {
+    public static @Nullable Player getNullable(UUID uuid) {
         return Nexus.server().getPlayer(uuid);
     }
 
@@ -53,8 +55,7 @@ public final class Players {
      * @param username the players username
      * @return the player, or null
      */
-    @Nullable
-    public static Player getNullable(String username) {
+    public static @Nullable Player getNullable(String username) {
         return Nexus.server().getPlayerExact(username);
     }
 
@@ -97,20 +98,6 @@ public final class Players {
     }
 
     /**
-     * Applies an action to each object in the iterable, if it is a player.
-     *
-     * @param objects  the objects to iterate
-     * @param consumer the action to apply
-     */
-    public static void forEachIfPlayer(Iterable<Object> objects, Consumer<Player> consumer) {
-        for (Object o : objects) {
-            if (o instanceof Player) {
-                consumer.accept(((Player) o));
-            }
-        }
-    }
-
-    /**
      * Gets a stream of all players within a given radius of a point
      *
      * @param center the point
@@ -119,8 +106,8 @@ public final class Players {
      */
     public static Stream<Player> streamInRange(Location center, double radius) {
         return center.getWorld().getNearbyEntities(center, radius, radius, radius).stream()
-                .filter(e -> e instanceof Player)
-                .map(e -> ((Player) e));
+            .filter(e -> e instanceof Player)
+            .map(e -> ((Player) e));
     }
 
     /**
@@ -134,17 +121,6 @@ public final class Players {
         streamInRange(center, radius).forEach(consumer);
     }
 
-    /**
-     * Messages a sender a set of messages.
-     *
-     * @param sender   the sender
-     * @param messages the messages to send
-     */
-    public static void msg(CommandSender sender, String... messages) {
-        Arrays.stream(messages).map(Text::colorize).forEach(sender::sendMessage);
-    }
-
-    @NotNull
     public static OfflinePlayer getOfflineNullable(UUID uuid) {
         return Nexus.server().getOfflinePlayer(uuid);
     }
@@ -153,8 +129,6 @@ public final class Players {
         return Optional.of(getOfflineNullable(uuid));
     }
 
-    @SuppressWarnings("deprecation")
-    @NotNull
     public static OfflinePlayer getOfflineNullable(String username) {
         return Nexus.server().getOfflinePlayer(username);
     }
@@ -177,55 +151,19 @@ public final class Players {
         }
     }
 
-    @SuppressWarnings("deprecation")
-    public static void sendBlockChange(Player player, Location loc, Material type, int data) {
-        player.sendBlockChange(loc, type, (byte) data);
-    }
-
-    public static void sendBlockChange(Player player, Block block, Material type, int data) {
-        sendBlockChange(player, block.getLocation(), type, data);
-    }
-
-    public static void sendBlockChange(Player player, Location loc, Material type) {
-        sendBlockChange(player, loc, type, 0);
-    }
-
-    public static void sendBlockChange(Player player, Block block, Material type) {
-        sendBlockChange(player, block, type, 0);
-    }
-
     public static void resetWalkSpeed(Player player) {
-        player.setWalkSpeed(0.2f);
+        player.setWalkSpeed(DEFAULT_PLAYER_WALKING_SPEED);
     }
 
     public static void resetFlySpeed(Player player) {
-        player.setFlySpeed(0.1f);
-    }
-
-    public static boolean hasPermission(Permissible entity, Collection<String> permissions) {
-        return permissions.stream().anyMatch(entity::hasPermission);
+        player.setFlySpeed(DEFAULT_PLAYER_FLYING_SPEED);
     }
 
     public static boolean hasPermission(Permissible entity, String... permissions) {
         return Arrays.stream(permissions).anyMatch(entity::hasPermission);
     }
 
-    public static void sound(Player player, Sound sound) {
-        Players.sound(player, sound, 1.0f, 1.0f);
-    }
-
-    public static void sound(Player player, Sound sound, float volume, float pitch) {
-        player.playSound(player.getLocation(), sound, volume, pitch);
-    }
-
-    public static void clearPlayerInventory(Player player) {
-        PlayerInventory inventory = player.getInventory();
-        // PlayerInventory#clear does not clear armor contents on Spigot < 1.9
-        inventory.setArmorContents(new ItemStack[4]);
-        inventory.clear();
-    }
-
-    private Players() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
+    public static boolean hasPermission(Permissible entity, Collection<String> permissions) {
+        return permissions.stream().anyMatch(entity::hasPermission);
     }
 }

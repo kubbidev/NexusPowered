@@ -1,16 +1,16 @@
 package me.kubbidev.nexuspowered.terminable.composite;
 
-import me.kubbidev.nexuspowered.terminable.Terminable;
-
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import me.kubbidev.nexuspowered.terminable.Terminable;
 
 public class AbstractCompositeTerminable implements CompositeTerminable {
+
     private final Deque<AutoCloseable> closeables = new ConcurrentLinkedDeque<>();
-    private boolean closed = false;
+    private       boolean              closed     = false;
 
     protected AbstractCompositeTerminable() {
 

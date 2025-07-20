@@ -1,10 +1,9 @@
 package me.kubbidev.nexuspowered.scheduler.threadlock;
 
+import java.util.concurrent.CountDownLatch;
 import me.kubbidev.nexuspowered.internal.LoaderUtils;
 import me.kubbidev.nexuspowered.promise.ThreadContext;
 import org.bukkit.Bukkit;
-
-import java.util.concurrent.CountDownLatch;
 
 final class ServerThreadLockImpl implements ServerThreadLock {
 

@@ -5,8 +5,7 @@ import me.kubbidev.nexuspowered.terminable.TerminableConsumer;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A terminable module is a class which manipulates and constructs a number
- * of {@link Terminable}s.
+ * A terminable module is a class which manipulates and constructs a number of {@link Terminable}s.
  */
 public interface TerminableModule {
 

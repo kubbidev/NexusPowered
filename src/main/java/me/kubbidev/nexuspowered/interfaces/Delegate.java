@@ -5,6 +5,7 @@ package me.kubbidev.nexuspowered.interfaces;
  *
  * @param <T> the delegate type
  */
+@FunctionalInterface
 public interface Delegate<T> {
 
     static Object resolve(Object o) {
@@ -20,5 +21,4 @@ public interface Delegate<T> {
      * @return the delegate object
      */
     T delegate();
-
 }

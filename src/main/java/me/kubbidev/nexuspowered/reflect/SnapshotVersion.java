@@ -1,12 +1,15 @@
 package me.kubbidev.nexuspowered.reflect;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Encapsulates a snapshot version of Minecraft.
@@ -16,28 +19,14 @@ import java.util.regex.Pattern;
 public class SnapshotVersion implements Comparable<SnapshotVersion> {
 
     public static final Comparator<SnapshotVersion> COMPARATOR = Comparator.nullsFirst(Comparator
-            .comparing(SnapshotVersion::getSnapshotDate)
-            .thenComparing(SnapshotVersion::getSnapshotWeekVersion)
+        .comparing(SnapshotVersion::getSnapshotDate)
+        .thenComparing(SnapshotVersion::getSnapshotWeekVersion)
     );
 
     private static final Pattern SNAPSHOT_PATTERN = Pattern.compile("(\\d{2}w\\d{2})([a-z])");
-
-    /**
-     * Parses a snapshot version
-     *
-     * @param version the version string
-     * @return the parsed version
-     * @throws IllegalArgumentException if the version is not a snapshot version
-     */
-    @NotNull
-    public static SnapshotVersion parse(String version) throws IllegalArgumentException {
-        return new SnapshotVersion(version);
-    }
-
-    private final Date snapshotDate;
-    private final int snapshotWeekVersion;
-
-    private transient String rawString;
+    private final        Date    snapshotDate;
+    private final        int     snapshotWeekVersion;
+    private transient    String  rawString;
 
     private SnapshotVersion(String version) {
         Matcher matcher = SNAPSHOT_PATTERN.matcher(version.trim());
@@ -55,9 +44,22 @@ public class SnapshotVersion implements Comparable<SnapshotVersion> {
     }
 
     /**
+     * Parses a snapshot version
+     *
+     * @param version the version string
+     * @return the parsed version
+     * @throws IllegalArgumentException if the version is not a snapshot version
+     */
+    @NotNull
+    public static SnapshotVersion parse(String version) throws IllegalArgumentException {
+        return new SnapshotVersion(version);
+    }
+
+    /**
      * Retrieve the snapshot date parser.
      * <p>
      * We have to create a new instance of SimpleDateFormat every time as it is not thread safe.
+     *
      * @return The date formatter.
      */
     private static SimpleDateFormat getDateFormat() {
@@ -95,9 +97,9 @@ public class SnapshotVersion implements Comparable<SnapshotVersion> {
             Calendar current = Calendar.getInstance(Locale.US);
             current.setTime(this.snapshotDate);
             this.rawString = String.format("%02dw%02d%s",
-                    current.get(Calendar.YEAR) % 100,
-                    current.get(Calendar.WEEK_OF_YEAR),
-                    (char) ('a' + this.snapshotWeekVersion));
+                current.get(Calendar.YEAR) % 100,
+                current.get(Calendar.WEEK_OF_YEAR),
+                (char) ('a' + this.snapshotWeekVersion));
         }
         return this.rawString;
     }
@@ -115,12 +117,11 @@ public class SnapshotVersion implements Comparable<SnapshotVersion> {
         if (o == this) {
             return true;
         }
-        if (!(o instanceof SnapshotVersion)) {
+        if (!(o instanceof SnapshotVersion other)) {
             return false;
         }
-        SnapshotVersion other = (SnapshotVersion) o;
         return Objects.equals(this.snapshotDate, other.getSnapshotDate()) &&
-                this.snapshotWeekVersion == other.getSnapshotWeekVersion();
+            this.snapshotWeekVersion == other.getSnapshotWeekVersion();
     }
 
     @Override

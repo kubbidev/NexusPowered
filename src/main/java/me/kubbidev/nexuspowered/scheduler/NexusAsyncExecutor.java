@@ -1,33 +1,39 @@
 package me.kubbidev.nexuspowered.scheduler;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import me.kubbidev.nexuspowered.internal.exception.NexusExceptions;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.concurrent.*;
+import java.util.concurrent.AbstractExecutorService;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
+import me.kubbidev.nexuspowered.internal.exception.NexusExceptions;
+import org.jetbrains.annotations.NotNull;
 
 final class NexusAsyncExecutor extends AbstractExecutorService implements ScheduledExecutorService {
-    private final ExecutorService taskService;
+
+    private final ExecutorService          taskService;
     private final ScheduledExecutorService timerExecutionService;
 
     private final Set<ScheduledFuture<?>> tasks = Collections.newSetFromMap(new WeakHashMap<>());
 
     NexusAsyncExecutor() {
         this.taskService = Executors.newCachedThreadPool(new ThreadFactoryBuilder()
-                .setDaemon(true)
-                .setNameFormat("nexuspowered-scheduler-%d")
-                .build()
+            .setDaemon(true)
+            .setNameFormat("nexuspowered-scheduler-%d")
+            .build()
         );
         this.timerExecutionService = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder()
-                .setDaemon(true)
-                .setNameFormat("nexuspowered-scheduler-timer")
-                .build()
+            .setDaemon(true)
+            .setNameFormat("nexuspowered-scheduler-timer")
+            .build()
         );
     }
 
@@ -63,12 +69,15 @@ final class NexusAsyncExecutor extends AbstractExecutorService implements Schedu
     }
 
     @Override
-    public @NotNull ScheduledFuture<?> scheduleAtFixedRate(@NotNull Runnable command, long initialDelay, long period, @NotNull TimeUnit unit) {
-        return consumeTask(this.timerExecutionService.scheduleAtFixedRate(new FixedRateWorker(NexusExceptions.wrapSchedulerTask(command)), initialDelay, period, unit));
+    public @NotNull ScheduledFuture<?> scheduleAtFixedRate(@NotNull Runnable command, long initialDelay, long period,
+                                                           @NotNull TimeUnit unit) {
+        return consumeTask(this.timerExecutionService.scheduleAtFixedRate(
+            new FixedRateWorker(NexusExceptions.wrapSchedulerTask(command)), initialDelay, period, unit));
     }
 
     @Override
-    public @NotNull ScheduledFuture<?> scheduleWithFixedDelay(@NotNull Runnable command, long initialDelay, long delay, @NotNull TimeUnit unit) {
+    public @NotNull ScheduledFuture<?> scheduleWithFixedDelay(@NotNull Runnable command, long initialDelay, long delay,
+                                                              @NotNull TimeUnit unit) {
         return scheduleAtFixedRate(command, initialDelay, delay, unit);
     }
 
@@ -99,8 +108,9 @@ final class NexusAsyncExecutor extends AbstractExecutorService implements Schedu
     }
 
     private final class FixedRateWorker implements Runnable {
-        private final Runnable delegate;
-        private final ReentrantLock lock = new ReentrantLock();
+
+        private final Runnable      delegate;
+        private final ReentrantLock lock    = new ReentrantLock();
         private final AtomicInteger running = new AtomicInteger(0);
 
         private FixedRateWorker(Runnable delegate) {

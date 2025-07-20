@@ -4,20 +4,22 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public final class StackTracePrinter {
-    public static Consumer<StackTraceElement> elementToString(Consumer<String> consumer) {
-        return e -> consumer.accept(e.getClassName() + "." + e.getMethodName() + (e.getLineNumber() >= 0 ? ":" + e.getLineNumber() : ""));
-    }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    private final int truncateLength;
+    private final int                          truncateLength;
     private final Predicate<StackTraceElement> shouldPrintPredicate;
 
     private StackTracePrinter(int truncateLength, Predicate<StackTraceElement> shouldPrintPredicate) {
         this.truncateLength = truncateLength;
         this.shouldPrintPredicate = shouldPrintPredicate;
+    }
+
+    public static Consumer<StackTraceElement> elementToString(Consumer<String> consumer) {
+        return e -> consumer.accept(
+            e.getClassName() + "." + e.getMethodName() + (e.getLineNumber() >= 0 ? ":" + e.getLineNumber() : ""));
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public int process(StackTraceElement[] stackTrace, Consumer<StackTraceElement> consumer) {
@@ -56,7 +58,8 @@ public final class StackTracePrinter {
     }
 
     public static final class Builder {
-        private int truncateLength = Integer.MAX_VALUE;
+
+        private int                          truncateLength       = Integer.MAX_VALUE;
         private Predicate<StackTraceElement> shouldPrintPredicate = Predicates.alwaysTrue();
 
         private Builder() {

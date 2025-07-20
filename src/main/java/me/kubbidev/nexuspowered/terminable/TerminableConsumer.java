@@ -4,8 +4,7 @@ import me.kubbidev.nexuspowered.terminable.module.TerminableModule;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Accepts {@link AutoCloseable}s (and by inheritance {@link Terminable}s),
- * as well as {@link TerminableModule}s.
+ * Accepts {@link AutoCloseable}s (and by inheritance {@link Terminable}s), as well as {@link TerminableModule}s.
  */
 @FunctionalInterface
 public interface TerminableConsumer {

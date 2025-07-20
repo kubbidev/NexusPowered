@@ -21,5 +21,4 @@ public interface FunctionalCommandHandler<T extends CommandSender> {
      * @param context the command context
      */
     void handle(CommandContext<T> context) throws CommandInterruptException;
-
 }

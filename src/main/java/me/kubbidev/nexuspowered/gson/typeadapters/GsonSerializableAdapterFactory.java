@@ -1,16 +1,19 @@
 package me.kubbidev.nexuspowered.gson.typeadapters;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import me.kubbidev.nexuspowered.gson.GsonProvider;
-import me.kubbidev.nexuspowered.gson.GsonSerializable;
-
 import java.io.IOException;
 import java.lang.reflect.Method;
+import me.kubbidev.nexuspowered.gson.GsonSerializable;
 
 public final class GsonSerializableAdapterFactory implements TypeAdapterFactory {
+
     public static final GsonSerializableAdapterFactory INSTANCE = new GsonSerializableAdapterFactory();
 
     private GsonSerializableAdapterFactory() {
@@ -27,7 +30,7 @@ public final class GsonSerializableAdapterFactory implements TypeAdapterFactory 
             return null;
         }
 
-        TypeAdapter<? extends GsonSerializable> typeAdapter = new TypeAdapter<GsonSerializable>() {
+        TypeAdapter<? extends GsonSerializable> typeAdapter = new TypeAdapter<>() {
             @Override
             public void write(JsonWriter out, GsonSerializable value) {
                 if (value == null) {
@@ -39,7 +42,7 @@ public final class GsonSerializableAdapterFactory implements TypeAdapterFactory 
 
             @Override
             public GsonSerializable read(JsonReader in) throws IOException {
-                JsonElement element = GsonProvider.parser().parse(in);
+                JsonElement element = JsonParser.parseReader(in);
 
                 if (element.isJsonNull()) {
                     return null;

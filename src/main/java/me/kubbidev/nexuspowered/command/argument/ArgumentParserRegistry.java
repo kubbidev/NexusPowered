@@ -1,10 +1,9 @@
 package me.kubbidev.nexuspowered.command.argument;
 
 import com.google.common.reflect.TypeToken;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A collection of {@link ArgumentParser}s
@@ -18,8 +17,7 @@ public interface ArgumentParserRegistry {
      * @param <T>  the type
      * @return an argument, if one was found
      */
-    @NotNull
-    <T> Optional<ArgumentParser<T>> find(@NotNull TypeToken<T> type);
+    @NotNull <T> Optional<ArgumentParser<T>> find(@NotNull TypeToken<T> type);
 
     /**
      * Tries to find an argument parser for the given class.
@@ -28,8 +26,7 @@ public interface ArgumentParserRegistry {
      * @param <T>   the class type
      * @return an argument, if one was found
      */
-    @NotNull
-    default <T> Optional<ArgumentParser<T>> find(@NotNull Class<T> clazz) {
+    default @NotNull <T> Optional<ArgumentParser<T>> find(@NotNull Class<T> clazz) {
         return find(TypeToken.of(clazz));
     }
 
@@ -40,8 +37,7 @@ public interface ArgumentParserRegistry {
      * @param <T>  the type
      * @return a collection of argument parsers
      */
-    @NotNull
-    <T> Collection<ArgumentParser<T>> findAll(@NotNull TypeToken<T> type);
+    @NotNull <T> Collection<ArgumentParser<T>> findAll(@NotNull TypeToken<T> type);
 
     /**
      * Finds all known parsers for a given class.
@@ -50,8 +46,7 @@ public interface ArgumentParserRegistry {
      * @param <T>   the class type
      * @return a collection of argument parsers
      */
-    @NotNull
-    default <T> Collection<ArgumentParser<T>> findAll(@NotNull Class<T> clazz) {
+    default @NotNull <T> Collection<ArgumentParser<T>> findAll(@NotNull Class<T> clazz) {
         return findAll(TypeToken.of(clazz));
     }
 

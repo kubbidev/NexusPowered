@@ -2,7 +2,7 @@ package me.kubbidev.nexuspowered.serialize;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import me.kubbidev.nexuspowered.gson.JsonBuilder;
+import me.kubbidev.nexuspowered.gson.GsonBuilder;
 import org.bukkit.util.Vector;
 
 /**
@@ -10,23 +10,23 @@ import org.bukkit.util.Vector;
  */
 public final class VectorSerializers {
 
+    private VectorSerializers() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
+
     public static JsonObject serialize(Vector vector) {
-        return JsonBuilder.object()
-                .add("x", vector.getX())
-                .add("y", vector.getY())
-                .add("z", vector.getZ())
-                .build();
+        return GsonBuilder.object()
+            .add("x", vector.getX())
+            .add("y", vector.getY())
+            .add("z", vector.getZ())
+            .build();
     }
 
     public static Vector deserialize(JsonElement element) {
         return new Vector(
-                element.getAsJsonObject().get("x").getAsLong(),
-                element.getAsJsonObject().get("y").getAsLong(),
-                element.getAsJsonObject().get("z").getAsLong()
+            element.getAsJsonObject().get("x").getAsLong(),
+            element.getAsJsonObject().get("y").getAsLong(),
+            element.getAsJsonObject().get("z").getAsLong()
         );
-    }
-
-    private VectorSerializers() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 }

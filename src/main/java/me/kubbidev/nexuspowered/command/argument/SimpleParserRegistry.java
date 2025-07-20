@@ -2,13 +2,18 @@ package me.kubbidev.nexuspowered.command.argument;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import org.jetbrains.annotations.NotNull;
 
 public class SimpleParserRegistry implements ArgumentParserRegistry {
+
     private final Map<TypeToken<?>, List<ArgumentParser<?>>> parsers = new ConcurrentHashMap<>();
 
     @SuppressWarnings("unchecked")
@@ -20,7 +25,7 @@ public class SimpleParserRegistry implements ArgumentParserRegistry {
             return Optional.empty();
         }
 
-        return Optional.of((ArgumentParser<T>) parsers.get(0));
+        return Optional.of((ArgumentParser<T>) parsers.getFirst());
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

@@ -10,8 +10,12 @@ import java.util.stream.Stream;
 public final class Text {
 
     @SuppressWarnings("UnnecessaryUnicodeEscape")
-    public static final char SECTION_CHAR = '\u00A7'; // §
+    public static final char SECTION_CHAR   = '\u00A7'; // §
     public static final char AMPERSAND_CHAR = '&';
+
+    private Text() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
 
     public static String joinNewline(String... strings) {
         return joinNewline(Arrays.stream(strings));
@@ -49,9 +53,5 @@ public final class Text {
             }
         }
         return sb.toString();
-    }
-
-    private Text() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 }

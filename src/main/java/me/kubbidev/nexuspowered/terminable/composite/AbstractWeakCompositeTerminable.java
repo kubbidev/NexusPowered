@@ -1,17 +1,17 @@
 package me.kubbidev.nexuspowered.terminable.composite;
 
-import me.kubbidev.nexuspowered.terminable.Terminable;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import me.kubbidev.nexuspowered.terminable.Terminable;
 
 public class AbstractWeakCompositeTerminable implements CompositeTerminable {
+
     private final Deque<WeakReference<AutoCloseable>> closeables = new ConcurrentLinkedDeque<>();
-    private boolean closed = false;
+    private       boolean                             closed     = false;
 
     protected AbstractWeakCompositeTerminable() {
 

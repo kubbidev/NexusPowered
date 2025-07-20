@@ -1,5 +1,6 @@
 package me.kubbidev.nexuspowered;
 
+import java.util.Optional;
 import me.kubbidev.nexuspowered.internal.LoaderUtils;
 import me.kubbidev.nexuspowered.plugin.NexusPlugin;
 import org.bukkit.Bukkit;
@@ -12,13 +13,15 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-
 /**
  * Base class for nexuspowered, which mainly just proxies calls to {@link Bukkit#getServer()} for convenience.
  */
 @NotNullByDefault
 public final class Nexus {
+
+    private Nexus() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
 
     /**
      * Gets the plugin which is "hosting" nexuspowered.
@@ -69,9 +72,5 @@ public final class Nexus {
 
     public static Optional<World> world(String name) {
         return Optional.ofNullable(worldNullable(name));
-    }
-
-    private Nexus() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 }

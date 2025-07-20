@@ -1,5 +1,12 @@
 package me.kubbidev.nexuspowered.event.functional.single;
 
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 import me.kubbidev.nexuspowered.Nexus;
 import me.kubbidev.nexuspowered.event.SingleSubscription;
 import org.bukkit.event.Event;
@@ -10,32 +17,26 @@ import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiConsumer;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
-
 class NexusEventListener<T extends Event> implements SingleSubscription<T>, EventExecutor, Listener {
-    private final Class<T> eventClass;
+
+    private final Class<T>      eventClass;
     private final EventPriority priority;
 
     private final BiConsumer<? super T, Throwable> exceptionConsumer;
-    private final boolean handleSubclasses;
+    private final boolean                          handleSubclasses;
 
-    private final Predicate<T>[] filters;
-    private final BiPredicate<SingleSubscription<T>, T>[] preExpiryTests;
-    private final BiPredicate<SingleSubscription<T>, T>[] midExpiryTests;
-    private final BiPredicate<SingleSubscription<T>, T>[] postExpiryTests;
+    private final Predicate<T>[]                                 filters;
+    private final BiPredicate<SingleSubscription<T>, T>[]        preExpiryTests;
+    private final BiPredicate<SingleSubscription<T>, T>[]        midExpiryTests;
+    private final BiPredicate<SingleSubscription<T>, T>[]        postExpiryTests;
     private final BiConsumer<SingleSubscription<T>, ? super T>[] handlers;
 
-    private final AtomicLong callCount = new AtomicLong(0);
-    private final AtomicBoolean active = new AtomicBoolean(true);
+    private final AtomicLong    callCount = new AtomicLong(0);
+    private final AtomicBoolean active    = new AtomicBoolean(true);
 
     @SuppressWarnings("unchecked")
-    NexusEventListener(SingleSubscriptionBuilderImpl<T> builder, List<BiConsumer<SingleSubscription<T>, ? super T>> handlers) {
+    NexusEventListener(SingleSubscriptionBuilderImpl<T> builder,
+                       List<BiConsumer<SingleSubscription<T>, ? super T>> handlers) {
         this.eventClass = builder.eventClass;
         this.priority = builder.priority;
         this.exceptionConsumer = builder.exceptionConsumer;
@@ -46,6 +47,17 @@ class NexusEventListener<T extends Event> implements SingleSubscription<T>, Even
         this.midExpiryTests = builder.midExpiryTests.toArray(new BiPredicate[0]);
         this.postExpiryTests = builder.postExpiryTests.toArray(new BiPredicate[0]);
         this.handlers = handlers.toArray(new BiConsumer[0]);
+    }
+
+    private static void unregisterListener(Class<? extends Event> eventClass, Listener listener) {
+        try {
+            // unfortunately we can't cache this reflect call, as the method is static
+            Method getHandlerListMethod = eventClass.getMethod("getHandlerList");
+            HandlerList handlerList = (HandlerList) getHandlerListMethod.invoke(null);
+            handlerList.unregister(listener);
+        } catch (Throwable t) {
+            // ignored
+        }
     }
 
     void register(Plugin plugin) {
@@ -122,9 +134,8 @@ class NexusEventListener<T extends Event> implements SingleSubscription<T>, Even
         }
     }
 
-    @NotNull
     @Override
-    public Class<T> getEventClass() {
+    public @NotNull Class<T> getEventClass() {
         return this.eventClass;
     }
 
@@ -154,18 +165,6 @@ class NexusEventListener<T extends Event> implements SingleSubscription<T>, Even
         // (the event would also be unregistered next time it's called - but this obviously assumes
         // the event will be called again soon)
         unregisterListener(this.eventClass, this);
-
         return true;
-    }
-
-    private static void unregisterListener(Class<? extends Event> eventClass, Listener listener) {
-        try {
-            // unfortunately we can't cache this reflect call, as the method is static
-            Method getHandlerListMethod = eventClass.getMethod("getHandlerList");
-            HandlerList handlerList = (HandlerList) getHandlerListMethod.invoke(null);
-            handlerList.unregister(listener);
-        } catch (Throwable t) {
-            // ignored
-        }
     }
 }

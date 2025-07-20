@@ -26,8 +26,8 @@ public interface CompositeTerminable extends Terminable, TerminableConsumer {
     }
 
     /**
-     * Creates a new standalone {@link CompositeTerminable}, which wraps
-     * contained terminables in {@link java.lang.ref.WeakReference}s.
+     * Creates a new standalone {@link CompositeTerminable}, which wraps contained terminables in
+     * {@link java.lang.ref.WeakReference}s.
      *
      * @return a new {@link CompositeTerminable}
      */
@@ -39,8 +39,7 @@ public interface CompositeTerminable extends Terminable, TerminableConsumer {
     /**
      * Closes this composite terminable.
      *
-     * @throws CompositeClosingException if any of the sub-terminables throw an
-     *                                   exception on close
+     * @throws CompositeClosingException if any of the sub-terminables throw an exception on close
      */
     @Override
     void close() throws CompositeClosingException;
@@ -71,12 +70,12 @@ public interface CompositeTerminable extends Terminable, TerminableConsumer {
      * Binds an {@link AutoCloseable} with this composite closable.
      *
      * <p>Note that implementations do not keep track of duplicate contained
-     * terminables. If a single {@link AutoCloseable} is added twice, it will be
-     * {@link AutoCloseable#close() closed} twice.</p>
+     * terminables. If a single {@link AutoCloseable} is added twice, it will be {@link AutoCloseable#close() closed}
+     * twice.</p>
      *
      * @param autoCloseable the closable to bind
-     * @throws NullPointerException if the closable is null
      * @return this (for chaining)
+     * @throws NullPointerException if the closable is null
      */
     CompositeTerminable with(AutoCloseable autoCloseable);
 
@@ -84,8 +83,8 @@ public interface CompositeTerminable extends Terminable, TerminableConsumer {
      * Binds all given {@link AutoCloseable} with this composite closable.
      *
      * <p>Note that implementations do not keep track of duplicate contained
-     * terminables. If a single {@link AutoCloseable} is added twice, it will be
-     * {@link AutoCloseable#close() closed} twice.</p>
+     * terminables. If a single {@link AutoCloseable} is added twice, it will be {@link AutoCloseable#close() closed}
+     * twice.</p>
      *
      * <p>Ignores null values.</p>
      *
@@ -106,8 +105,8 @@ public interface CompositeTerminable extends Terminable, TerminableConsumer {
      * Binds all given {@link AutoCloseable} with this composite closable.
      *
      * <p>Note that implementations do not keep track of duplicate contained
-     * terminables. If a single {@link AutoCloseable} is added twice, it will be
-     * {@link AutoCloseable#close() closed} twice.</p>
+     * terminables. If a single {@link AutoCloseable} is added twice, it will be {@link AutoCloseable#close() closed}
+     * twice.</p>
      *
      * <p>Ignores null values.</p>
      *

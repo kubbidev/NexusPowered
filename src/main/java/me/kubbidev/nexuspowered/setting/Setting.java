@@ -1,11 +1,13 @@
 package me.kubbidev.nexuspowered.setting;
 
+import me.kubbidev.nexuspowered.setting.Setting.State;
+
 /**
  * Represents a setting.
  *
  * @param <V> the type of state the setting has
  */
-public interface Setting<V extends Setting.State> {
+public interface Setting<V extends State> {
 
     /**
      * The ordinal position of the setting.
@@ -24,6 +26,7 @@ public interface Setting<V extends Setting.State> {
     /**
      * Represents the state of a setting.
      */
+    @FunctionalInterface
     interface State {
 
         /**

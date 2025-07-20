@@ -2,8 +2,6 @@ package me.kubbidev.nexuspowered.serialize.storage;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import me.kubbidev.nexuspowered.gson.GsonProvider;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,6 +10,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import me.kubbidev.nexuspowered.gson.GsonProvider;
 
 /**
  * Extension of {@link FileStorageHandler} implemented using Gson.
@@ -19,6 +18,7 @@ import java.nio.file.Path;
  * @param <T> the type being stored
  */
 public class GsonStorageHandler<T> extends FileStorageHandler<T> {
+
     protected final Type type;
     protected final Gson gson;
 

@@ -1,16 +1,15 @@
 package me.kubbidev.nexuspowered.scheduler;
 
-import me.kubbidev.nexuspowered.promise.Promise;
-import me.kubbidev.nexuspowered.promise.ThreadContext;
-import me.kubbidev.nexuspowered.util.Delegates;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import me.kubbidev.nexuspowered.promise.Promise;
+import me.kubbidev.nexuspowered.promise.ThreadContext;
+import me.kubbidev.nexuspowered.util.Delegates;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Utility for scheduling tasks
@@ -22,8 +21,7 @@ public interface Scheduler extends Executor {
      *
      * @return the context
      */
-    @NotNull
-    ThreadContext getContext();
+    @NotNull ThreadContext getContext();
 
     /**
      * Compute the result of the passed supplier.
@@ -151,32 +149,31 @@ public interface Scheduler extends Executor {
     /**
      * Schedule a repeating task to run.
      *
-     * @param consumer the task to run
-     * @param delayTicks the delay before the task begins
+     * @param consumer      the task to run
+     * @param delayTicks    the delay before the task begins
      * @param intervalTicks the interval at which the task will repeat
      * @return a task instance
      */
-    @NotNull
-    Task runRepeating(@NotNull Consumer<Task> consumer, long delayTicks, long intervalTicks);
+    @NotNull Task runRepeating(@NotNull Consumer<Task> consumer, long delayTicks, long intervalTicks);
 
     /**
      * Schedule a repeating task to run.
      *
-     * @param consumer the task to run
-     * @param delay the delay before the task begins
-     * @param delayUnit the unit of delay
-     * @param interval the interval at which the task will repeat
+     * @param consumer     the task to run
+     * @param delay        the delay before the task begins
+     * @param delayUnit    the unit of delay
+     * @param interval     the interval at which the task will repeat
      * @param intervalUnit the
      * @return a task instance
      */
-    @NotNull
-    Task runRepeating(@NotNull Consumer<Task> consumer, long delay, @NotNull TimeUnit delayUnit, long interval, @NotNull TimeUnit intervalUnit);
+    @NotNull Task runRepeating(@NotNull Consumer<Task> consumer, long delay, @NotNull TimeUnit delayUnit, long interval,
+                               @NotNull TimeUnit intervalUnit);
 
     /**
      * Schedule a repeating task to run.
      *
-     * @param runnable the task to run
-     * @param delayTicks the delay before the task begins
+     * @param runnable      the task to run
+     * @param delayTicks    the delay before the task begins
      * @param intervalTicks the interval at which the task will repeat
      * @return a task instance
      */
@@ -188,15 +185,16 @@ public interface Scheduler extends Executor {
     /**
      * Schedule a repeating task to run.
      *
-     * @param runnable the task to run
-     * @param delay the delay before the task begins
-     * @param delayUnit the unit of delay
-     * @param interval the interval at which the task will repeat
+     * @param runnable     the task to run
+     * @param delay        the delay before the task begins
+     * @param delayUnit    the unit of delay
+     * @param interval     the interval at which the task will repeat
      * @param intervalUnit the
      * @return a task instance
      */
     @NotNull
-    default Task runRepeating(@NotNull Runnable runnable, long delay, @NotNull TimeUnit delayUnit, long interval, @NotNull TimeUnit intervalUnit) {
+    default Task runRepeating(@NotNull Runnable runnable, long delay, @NotNull TimeUnit delayUnit, long interval,
+                              @NotNull TimeUnit intervalUnit) {
         return runRepeating(Delegates.runnableToConsumer(runnable), delay, delayUnit, interval, intervalUnit);
     }
 }

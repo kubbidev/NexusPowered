@@ -1,21 +1,20 @@
 package me.kubbidev.nexuspowered.command.argument;
 
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-
 @NotNullByDefault
 public class SimpleArgument implements Argument {
-    protected final int index;
 
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    protected final Optional<String> value;
+    protected final int    index;
+    @Nullable
+    protected final String value;
 
     public SimpleArgument(int index, @Nullable String value) {
         this.index = index;
-        this.value = Optional.ofNullable(value);
+        this.value = value;
     }
 
     @Override
@@ -25,11 +24,11 @@ public class SimpleArgument implements Argument {
 
     @Override
     public @NotNull Optional<String> value() {
-        return this.value;
+        return Optional.ofNullable(this.value);
     }
 
     @Override
     public boolean isPresent() {
-        return this.value.isPresent();
+        return this.value != null;
     }
 }

@@ -3,11 +3,11 @@ package me.kubbidev.nexuspowered.random;
 /**
  * Represents an object which has a weight.
  */
+@FunctionalInterface
 public interface Weighted {
 
     /**
-     * An instance of {@link Weigher} which uses the {@link #getWeight()} method
-     * to determine weight.
+     * An instance of {@link Weigher} which uses the {@link #getWeight()} method to determine weight.
      */
     Weigher<? super Weighted> WEIGHER = Weighted::getWeight;
 
@@ -17,5 +17,4 @@ public interface Weighted {
      * @return The weight
      */
     double getWeight();
-
 }

@@ -5,6 +5,7 @@ package me.kubbidev.nexuspowered.random;
  *
  * @param <E> the element type
  */
+@FunctionalInterface
 public interface Weigher<E> {
 
     /**

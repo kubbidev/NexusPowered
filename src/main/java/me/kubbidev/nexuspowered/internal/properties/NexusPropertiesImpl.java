@@ -1,39 +1,37 @@
 package me.kubbidev.nexuspowered.internal.properties;
 
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.VisibleForTesting;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Function;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 
 final class NexusPropertiesImpl {
-    private static final String FILESYSTEM_DIRECTORY_NAME = "config";
-    private static final String FILESYSTEM_FILE_NAME = "nexuspowered.properties";
-    private static final Properties PROPERTIES = new Properties();
+
+    private static final String     FILESYSTEM_DIRECTORY_NAME = "config";
+    private static final String     FILESYSTEM_FILE_NAME      = "nexuspowered.properties";
+    private static final Properties PROPERTIES                = new Properties();
 
     static {
-        Path path = Optional.ofNullable(System.getProperty(systemPropertyName("config")))
-                .map(Paths::get)
-                .orElseGet(() -> Paths.get(FILESYSTEM_DIRECTORY_NAME, FILESYSTEM_FILE_NAME));
+        Path path = Optional.ofNullable(System.getProperty(systemPropertyName(FILESYSTEM_DIRECTORY_NAME)))
+            .map(Path::of)
+            .orElseGet(() -> Path.of(FILESYSTEM_DIRECTORY_NAME, FILESYSTEM_FILE_NAME));
         if (Files.isRegularFile(path)) {
             try (InputStream is = Files.newInputStream(path)) {
                 PROPERTIES.load(is);
             } catch (IOException e) {
-                // Well, that's awkward.
-                print(e);
+                print(e); // Well, that's awkward.
             }
         }
     }
 
-    // we don't have any better options on Java 8
-    private static void print(Throwable ex) {
-        ex.printStackTrace();
+    @SuppressWarnings("CallToPrintStackTrace") // We don't have any better options
+    private static void print(Throwable e) {
+        e.printStackTrace();
     }
 
     private NexusPropertiesImpl() {
@@ -49,11 +47,14 @@ final class NexusPropertiesImpl {
     }
 
     private static final class PropertyImpl<T> implements NexusProperties.Property<T> {
-        private final String name;
+
+        private final String              name;
         private final Function<String, T> parser;
-        private final @Nullable T defaultValue;
-        private boolean valueCalculated;
-        private @Nullable T value;
+        @Nullable
+        private final T                   defaultValue;
+        private       boolean             valueCalculated;
+        @Nullable
+        private       T                   value;
 
         PropertyImpl(String name, Function<String, T> parser, @Nullable T defaultValue) {
             this.name = name;
@@ -77,10 +78,9 @@ final class NexusPropertiesImpl {
             return this.value;
         }
 
-        @SuppressWarnings("RedundantMethodOverride")
         @Override
-        public boolean equals(Object that) {
-            return this == that;
+        public String toString() {
+            return this.name;
         }
 
         @Override

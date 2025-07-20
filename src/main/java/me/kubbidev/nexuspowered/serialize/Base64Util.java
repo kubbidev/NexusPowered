@@ -1,10 +1,12 @@
 package me.kubbidev.nexuspowered.serialize;
 
+import java.util.Base64;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
-import java.util.Base64;
-
 final class Base64Util {
+
+    private Base64Util() {
+    }
 
     public static String encode(byte[] buf) {
         return Base64.getEncoder().encodeToString(buf);
@@ -21,8 +23,5 @@ final class Base64Util {
                 throw e;
             }
         }
-    }
-
-    private Base64Util() {
     }
 }

@@ -14,8 +14,7 @@ public interface TransientValue<T> {
      *
      * @return the underlying value, or null if it has expired
      */
-    @Nullable
-    T getOrNull();
+    @Nullable T getOrNull();
 
     /**
      * Returns if this value should be removed from the map.

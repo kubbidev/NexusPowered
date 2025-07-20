@@ -8,9 +8,8 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <T> the type
  */
+@FunctionalInterface
 public interface TypeAware<T> {
 
-    @NotNull
-    TypeToken<T> getType();
-
+    @NotNull TypeToken<T> getType();
 }

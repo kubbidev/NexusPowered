@@ -1,15 +1,14 @@
 package me.kubbidev.nexuspowered.command.tabcomplete;
 
-import me.kubbidev.nexuspowered.command.CommandInterruptException;
-import me.kubbidev.nexuspowered.util.Predicates;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import me.kubbidev.nexuspowered.command.CommandInterruptException;
+import me.kubbidev.nexuspowered.util.Predicates;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Functional interface representing a supplier of tab completions.
@@ -49,7 +48,7 @@ public interface CompletionSupplier {
      * @return A CompletionSupplier that filters the supplied strings by those starting with the input.
      */
     static CompletionSupplier startsWith(Supplier<Stream<String>> stringsSupplier) {
-        return partial -> stringsSupplier.get().filter(Predicates.startsWithIgnoreCase(partial)).collect(Collectors.toList());
+        return partial -> stringsSupplier.get().filter(Predicates.startsWithIgnoreCase(partial)).toList();
     }
 
     /**
@@ -79,7 +78,7 @@ public interface CompletionSupplier {
      * @return A CompletionSupplier that filters the supplied strings by those containing the input.
      */
     static CompletionSupplier contains(Supplier<Stream<String>> stringsSupplier) {
-        return partial -> stringsSupplier.get().filter(Predicates.containsIgnoreCase(partial)).collect(Collectors.toList());
+        return partial -> stringsSupplier.get().filter(Predicates.containsIgnoreCase(partial)).toList();
     }
 
     /**
@@ -88,5 +87,5 @@ public interface CompletionSupplier {
      * @param partial The partial input string to match completions against.
      * @return A list of matching completion suggestions.
      */
-    List<String> supplyCompletions(String partial) throws CommandInterruptException;
+    @Nullable List<String> supplyCompletions(String partial) throws CommandInterruptException;
 }

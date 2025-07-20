@@ -1,8 +1,7 @@
 package me.kubbidev.nexuspowered.metadata;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.function.Supplier;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An object which represents nothing.
@@ -13,8 +12,13 @@ import java.util.function.Supplier;
  * <p>Very similar to {@link Void}, except this class also provides an instance of the "empty" object.</p>
  */
 public final class Empty {
-    private static final Empty INSTANCE = new Empty();
+
+    private static final Empty           INSTANCE = new Empty();
     private static final Supplier<Empty> SUPPLIER = () -> INSTANCE;
+
+    private Empty() {
+
+    }
 
     @NotNull
     public static Empty instance() {
@@ -24,10 +28,6 @@ public final class Empty {
     @NotNull
     public static Supplier<Empty> supplier() {
         return SUPPLIER;
-    }
-
-    private Empty() {
-
     }
 
     @SuppressWarnings("RedundantMethodOverride")

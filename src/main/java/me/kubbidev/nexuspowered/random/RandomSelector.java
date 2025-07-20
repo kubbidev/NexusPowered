@@ -16,7 +16,7 @@ public interface RandomSelector<E> {
      * Creates a uniform selector which picks elements randomly.
      *
      * @param elements the elements to pick from
-     * @param <E> the element type
+     * @param <E>      the element type
      * @return the selector instance
      */
     static <E> RandomSelector<E> uniform(Collection<E> elements) {
@@ -27,7 +27,7 @@ public interface RandomSelector<E> {
      * Creates a weighted selector which picks elements according to the value of their {@link Weighted#getWeight()}.
      *
      * @param elements the elements to pick from
-     * @param <E> the element type
+     * @param <E>      the element type
      * @return the selector instance
      */
     static <E extends Weighted> RandomSelector<E> weighted(Collection<E> elements) {
@@ -35,11 +35,10 @@ public interface RandomSelector<E> {
     }
 
     /**
-     * Creates a weighted selector which picks elements using their weight,
-     * according to the weigher function.
+     * Creates a weighted selector which picks elements using their weight, according to the weigher function.
      *
      * @param elements the elements to pick from
-     * @param <E> the element type
+     * @param <E>      the element type
      * @return the selector instance
      */
     static <E> RandomSelector<E> weighted(Collection<E> elements, Weigher<? super E> weigher) {

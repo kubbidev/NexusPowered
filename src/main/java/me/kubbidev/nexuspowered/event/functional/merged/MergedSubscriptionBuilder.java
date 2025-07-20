@@ -2,6 +2,13 @@ package me.kubbidev.nexuspowered.event.functional.merged;
 
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import me.kubbidev.nexuspowered.event.MergedSubscription;
 import me.kubbidev.nexuspowered.event.functional.ExpiryTestStage;
 import me.kubbidev.nexuspowered.event.functional.SubscriptionBuilder;
@@ -9,10 +16,6 @@ import me.kubbidev.nexuspowered.util.Delegates;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-import java.util.function.*;
 
 /**
  * Functional builder for {@link MergedSubscription}s.
@@ -28,8 +31,7 @@ public interface MergedSubscriptionBuilder<T> extends SubscriptionBuilder<T> {
      * @param <T>          the super type class
      * @return a {@link MergedSubscriptionBuilder} to construct the event handler
      */
-    @NotNull
-    static <T> MergedSubscriptionBuilder<T> newBuilder(@NotNull Class<T> handledClass) {
+    static @NotNull <T> MergedSubscriptionBuilder<T> newBuilder(@NotNull Class<T> handledClass) {
         Objects.requireNonNull(handledClass, "handledClass");
         return new MergedSubscriptionBuilderImpl<>(TypeToken.of(handledClass));
     }
@@ -41,8 +43,7 @@ public interface MergedSubscriptionBuilder<T> extends SubscriptionBuilder<T> {
      * @param <T>  the super type class
      * @return a {@link MergedSubscriptionBuilder} to construct the event handler
      */
-    @NotNull
-    static <T> MergedSubscriptionBuilder<T> newBuilder(@NotNull TypeToken<T> type) {
+    static @NotNull <T> MergedSubscriptionBuilder<T> newBuilder(@NotNull TypeToken<T> type) {
         Objects.requireNonNull(type, "type");
         return new MergedSubscriptionBuilderImpl<>(type);
     }
@@ -55,9 +56,9 @@ public interface MergedSubscriptionBuilder<T> extends SubscriptionBuilder<T> {
      * @param <S>          the super class type
      * @return a {@link MergedSubscriptionBuilder} to construct the event handler
      */
-    @NotNull
     @SafeVarargs
-    static <S extends Event> MergedSubscriptionBuilder<S> newBuilder(@NotNull Class<S> superClass, @NotNull Class<? extends S>... eventClasses) {
+    static @NotNull <S extends Event> MergedSubscriptionBuilder<S> newBuilder(@NotNull Class<S> superClass,
+                                                                              @NotNull Class<? extends S>... eventClasses) {
         return newBuilder(superClass, EventPriority.NORMAL, eventClasses);
     }
 
@@ -70,9 +71,10 @@ public interface MergedSubscriptionBuilder<T> extends SubscriptionBuilder<T> {
      * @param <S>          the super class type
      * @return a {@link MergedSubscriptionBuilder} to construct the event handler
      */
-    @NotNull
     @SafeVarargs
-    static <S extends Event> MergedSubscriptionBuilder<S> newBuilder(@NotNull Class<S> superClass, @NotNull EventPriority priority, @NotNull Class<? extends S>... eventClasses) {
+    static @NotNull <S extends Event> MergedSubscriptionBuilder<S> newBuilder(@NotNull Class<S> superClass,
+                                                                              @NotNull EventPriority priority,
+                                                                              @NotNull Class<? extends S>... eventClasses) {
         Objects.requireNonNull(superClass, "superClass");
         Objects.requireNonNull(eventClasses, "eventClasses");
         Objects.requireNonNull(priority, "priority");
@@ -89,41 +91,39 @@ public interface MergedSubscriptionBuilder<T> extends SubscriptionBuilder<T> {
 
     // override return type - we return MergedSubscriptionBuilder, not SubscriptionBuilder
 
-    @NotNull
     @Override
-    default MergedSubscriptionBuilder<T> expireIf(@NotNull Predicate<T> predicate) {
-        return expireIf(Delegates.predicateToBiPredicateSecond(predicate), ExpiryTestStage.PRE, ExpiryTestStage.POST_HANDLE);
+    default @NotNull MergedSubscriptionBuilder<T> expireIf(@NotNull Predicate<T> predicate) {
+        return expireIf(Delegates.predicateToBiPredicateSecond(predicate), ExpiryTestStage.PRE,
+            ExpiryTestStage.POST_HANDLE);
     }
 
-    @NotNull
     @Override
-    default MergedSubscriptionBuilder<T> expireAfter(long duration, @NotNull TimeUnit unit) {
+    default @NotNull MergedSubscriptionBuilder<T> expireAfter(long duration, @NotNull TimeUnit unit) {
         Objects.requireNonNull(unit, "unit");
         Preconditions.checkArgument(duration >= 1, "duration < 1");
         long expiry = Math.addExact(System.currentTimeMillis(), unit.toMillis(duration));
         return expireIf((handler, event) -> System.currentTimeMillis() > expiry, ExpiryTestStage.PRE);
     }
 
-    @NotNull
     @Override
-    default MergedSubscriptionBuilder<T> expireAfter(long maxCalls) {
+    default @NotNull MergedSubscriptionBuilder<T> expireAfter(long maxCalls) {
         Preconditions.checkArgument(maxCalls >= 1, "maxCalls < 1");
-        return expireIf((handler, event) -> handler.getCallCounter() >= maxCalls, ExpiryTestStage.PRE, ExpiryTestStage.POST_HANDLE);
+        return expireIf((handler, event) -> handler.getCallCounter() >= maxCalls, ExpiryTestStage.PRE,
+            ExpiryTestStage.POST_HANDLE);
     }
 
-    @NotNull
     @Override
-    MergedSubscriptionBuilder<T> filter(@NotNull Predicate<T> predicate);
+    @NotNull MergedSubscriptionBuilder<T> filter(@NotNull Predicate<T> predicate);
 
     /**
      * Add a expiry predicate.
      *
-     * @param predicate the expiry test
+     * @param predicate  the expiry test
      * @param testPoints when to test the expiry predicate
      * @return ths builder instance
      */
-    @NotNull
-    MergedSubscriptionBuilder<T> expireIf(@NotNull BiPredicate<MergedSubscription<T>, T> predicate, @NotNull ExpiryTestStage... testPoints);
+    @NotNull MergedSubscriptionBuilder<T> expireIf(@NotNull BiPredicate<MergedSubscription<T>, T> predicate,
+                                                   @NotNull ExpiryTestStage... testPoints);
 
     /**
      * Binds this handler to an event
@@ -133,8 +133,8 @@ public interface MergedSubscriptionBuilder<T> extends SubscriptionBuilder<T> {
      * @param <E>        the event class
      * @return the builder instance
      */
-    @NotNull
-    <E extends Event> MergedSubscriptionBuilder<T> bindEvent(@NotNull Class<E> eventClass, @NotNull Function<E, T> function);
+    @NotNull <E extends Event> MergedSubscriptionBuilder<T> bindEvent(@NotNull Class<E> eventClass,
+                                                                      @NotNull Function<E, T> function);
 
     /**
      * Binds this handler to an event
@@ -145,8 +145,9 @@ public interface MergedSubscriptionBuilder<T> extends SubscriptionBuilder<T> {
      * @param <E>        the event class
      * @return the builder instance
      */
-    @NotNull
-    <E extends Event> MergedSubscriptionBuilder<T> bindEvent(@NotNull Class<E> eventClass, @NotNull EventPriority priority, @NotNull Function<E, T> function);
+    @NotNull <E extends Event> MergedSubscriptionBuilder<T> bindEvent(@NotNull Class<E> eventClass,
+                                                                      @NotNull EventPriority priority,
+                                                                      @NotNull Function<E, T> function);
 
     /**
      * Sets the exception consumer for the handler.
@@ -157,16 +158,14 @@ public interface MergedSubscriptionBuilder<T> extends SubscriptionBuilder<T> {
      * @return the builder instance
      * @throws NullPointerException if the consumer is null
      */
-    @NotNull
-    MergedSubscriptionBuilder<T> exceptionConsumer(@NotNull BiConsumer<Event, Throwable> consumer);
+    @NotNull MergedSubscriptionBuilder<T> exceptionConsumer(@NotNull BiConsumer<Event, Throwable> consumer);
 
     /**
      * Return the handler list builder to append handlers for the event.
      *
      * @return the handler list
      */
-    @NotNull
-    MergedHandlerList<T> handlers();
+    @NotNull MergedHandlerList<T> handlers();
 
     /**
      * Builds and registers the Handler.
@@ -178,7 +177,7 @@ public interface MergedSubscriptionBuilder<T> extends SubscriptionBuilder<T> {
      */
     @NotNull
     default MergedSubscription<T> handler(@NotNull Consumer<? super T> handler) {
-        return handlers().consumer(handler).register();
+        return this.handlers().consumer(handler).register();
     }
 
     /**
@@ -191,6 +190,6 @@ public interface MergedSubscriptionBuilder<T> extends SubscriptionBuilder<T> {
      */
     @NotNull
     default MergedSubscription<T> biHandler(@NotNull BiConsumer<MergedSubscription<T>, ? super T> handler) {
-        return handlers().biConsumer(handler).register();
+        return this.handlers().biConsumer(handler).register();
     }
 }

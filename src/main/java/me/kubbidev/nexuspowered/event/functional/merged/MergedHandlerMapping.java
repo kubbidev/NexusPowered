@@ -1,12 +1,12 @@
 package me.kubbidev.nexuspowered.event.functional.merged;
 
+import java.util.function.Function;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 
-import java.util.function.Function;
-
 class MergedHandlerMapping<T, E extends Event> {
-    private final EventPriority priority;
+
+    private final EventPriority       priority;
     private final Function<Object, T> function;
 
     @SuppressWarnings("unchecked")

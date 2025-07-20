@@ -1,9 +1,8 @@
 package me.kubbidev.nexuspowered.config.adapter;
 
-import me.kubbidev.nexuspowered.plugin.NexusPlugin;
-
 import java.util.List;
 import java.util.Map;
+import me.kubbidev.nexuspowered.plugin.NexusPlugin;
 
 public interface ConfigurationAdapter {
 
@@ -22,5 +21,4 @@ public interface ConfigurationAdapter {
     List<String> getStringList(String path, List<String> def);
 
     Map<String, String> getStringMap(String path, Map<String, String> def);
-
 }

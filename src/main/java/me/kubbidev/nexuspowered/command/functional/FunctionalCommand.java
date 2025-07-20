@@ -1,6 +1,8 @@
 package me.kubbidev.nexuspowered.command.functional;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
+import java.util.function.Predicate;
 import me.kubbidev.nexuspowered.command.AbstractCommand;
 import me.kubbidev.nexuspowered.command.CommandInterruptException;
 import me.kubbidev.nexuspowered.command.context.CommandContext;
@@ -9,27 +11,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.function.Predicate;
-
 @NotNullByDefault
 class FunctionalCommand<T extends CommandSender> extends AbstractCommand {
-    private final ImmutableList<Predicate<CommandContext<?>>> predicates;
-    private final FunctionalCommandHandler<T> handler;
 
+    private final ImmutableList<Predicate<CommandContext<?>>> predicates;
+    private final FunctionalCommandHandler<T>                 handler;
     @Nullable
-    private final FunctionalTabHandler<T> tabHandler;
+    private final FunctionalTabHandler<T>                     tabHandler;
 
     FunctionalCommand(ImmutableList<Predicate<CommandContext<?>>> predicates, FunctionalCommandHandler<T> handler,
                       @Nullable FunctionalTabHandler<T> tabHandler,
                       @Nullable String permission,
-                      @Nullable String description, @Nullable String permissionMessage) {
+                      @Nullable String description) {
         this.predicates = predicates;
         this.handler = handler;
         this.tabHandler = tabHandler;
         this.permission = permission;
         this.description = description;
-        this.permissionMessage = permissionMessage;
     }
 
     @SuppressWarnings("unchecked")
@@ -46,7 +44,8 @@ class FunctionalCommand<T extends CommandSender> extends AbstractCommand {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> callTabCompleter(@NotNull CommandContext<?> context) throws CommandInterruptException {
+    public @Nullable List<String> callTabCompleter(@NotNull CommandContext<?> context)
+        throws CommandInterruptException {
         if (this.tabHandler == null) {
             return null;
         }

@@ -1,11 +1,10 @@
 package me.kubbidev.nexuspowered.metadata;
 
 import com.google.common.base.Preconditions;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a value which will expire a set amount of time after the last access
@@ -13,6 +12,16 @@ import java.util.function.Supplier;
  * @param <T> the wrapped value type
  */
 public class ExpireAfterAccessValue<T> implements TransientValue<T> {
+
+    private final T    value;
+    private final long millis;
+    private       long expireAt;
+
+    private ExpireAfterAccessValue(T value, long millis) {
+        this.value = value;
+        this.millis = millis;
+        this.expireAt = System.currentTimeMillis() + this.millis;
+    }
 
     public static <T> ExpireAfterAccessValue<T> of(T value, long duration, TimeUnit unit) {
         Preconditions.checkArgument(duration >= 0, "duration must be >= 0");
@@ -23,7 +32,8 @@ public class ExpireAfterAccessValue<T> implements TransientValue<T> {
         return new ExpireAfterAccessValue<>(value, millis);
     }
 
-    public static <T> Supplier<ExpireAfterAccessValue<T>> supplied(Supplier<? extends T> supplier, long duration, TimeUnit unit) {
+    public static <T> Supplier<ExpireAfterAccessValue<T>> supplied(Supplier<? extends T> supplier, long duration,
+                                                                   TimeUnit unit) {
         Preconditions.checkArgument(duration >= 0, "duration must be >= 0");
         Objects.requireNonNull(supplier, "supplier");
         Objects.requireNonNull(unit, "unit");
@@ -36,16 +46,6 @@ public class ExpireAfterAccessValue<T> implements TransientValue<T> {
 
             return new ExpireAfterAccessValue<>(value, millis);
         };
-    }
-
-    private final T value;
-    private final long millis;
-    private long expireAt;
-
-    private ExpireAfterAccessValue(T value, long millis) {
-        this.value = value;
-        this.millis = millis;
-        this.expireAt = System.currentTimeMillis() + this.millis;
     }
 
     @Nullable

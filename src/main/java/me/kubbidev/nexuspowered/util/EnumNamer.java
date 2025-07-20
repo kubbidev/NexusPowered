@@ -12,12 +12,13 @@ import java.util.function.Function;
  * @param <E> the enum type
  */
 public class EnumNamer<E extends Enum<E>> {
+
     /**
      * Function to convert an enum value's name to lowercase
      */
     public static final Function<Enum<?>, String> LOWER_CASE_NAME = e -> e.name().toLowerCase(Locale.ROOT);
 
-    private final EnumMap<E, String> nameEnumMap;
+    private final EnumMap<E, String>          nameEnumMap;
     private final Function<? super E, String> namingFunction;
 
     /**

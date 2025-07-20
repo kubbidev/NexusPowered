@@ -4,12 +4,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import org.jetbrains.annotations.NotNullByDefault;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.jetbrains.annotations.NotNullByDefault;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A utility for converting between GSON's {@link JsonElement} family of classes, and standard Java types.
@@ -57,8 +56,7 @@ public interface GsonConverter {
      * @param element the json element
      * @return the object
      */
-    @Nullable
-    Object unwrapElement(JsonElement element);
+    @Nullable Object unwrapElement(JsonElement element);
 
     /**
      * Tries to wrap an object to a {@link JsonElement}.
@@ -70,5 +68,4 @@ public interface GsonConverter {
      * @return the new json element
      */
     JsonElement wrap(Object object);
-
 }

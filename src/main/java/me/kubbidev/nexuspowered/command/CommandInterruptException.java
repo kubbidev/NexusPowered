@@ -1,8 +1,7 @@
 package me.kubbidev.nexuspowered.command;
 
-import org.bukkit.command.CommandSender;
-
 import java.util.function.Consumer;
+import org.bukkit.command.CommandSender;
 
 /**
  * Exception thrown when the handling of a command should be interrupted.
@@ -10,6 +9,16 @@ import java.util.function.Consumer;
  * <p>This exception is silently swallowed by the command processing handler.</p>
  */
 public class CommandInterruptException extends Exception {
+
+    private final Consumer<CommandSender> action;
+
+    public CommandInterruptException(Consumer<CommandSender> action) {
+        this.action = action;
+    }
+
+    public CommandInterruptException(String message) {
+        this.action = cs -> cs.sendMessage(message);
+    }
 
     /**
      * Makes an assertion about a condition.
@@ -25,16 +34,6 @@ public class CommandInterruptException extends Exception {
         if (!condition) {
             throw new CommandInterruptException(failMsg);
         }
-    }
-
-    private final Consumer<CommandSender> action;
-
-    public CommandInterruptException(Consumer<CommandSender> action) {
-        this.action = action;
-    }
-
-    public CommandInterruptException(String message) {
-        this.action = cs -> cs.sendMessage(message);
     }
 
     public Consumer<CommandSender> getAction() {

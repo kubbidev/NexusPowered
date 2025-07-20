@@ -10,6 +10,10 @@ import java.util.concurrent.TimeUnit;
  */
 public final class Time {
 
+    private Time() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
+
     /**
      * Gets the current unix time in milliseconds.
      *
@@ -50,34 +54,20 @@ public final class Time {
     /**
      * Gets a {@link Duration} for a {@link TimeUnit} and amount.
      *
-     * @param unit the unit
+     * @param unit   the unit
      * @param amount the amount
      * @return the duration
      */
     public static Duration duration(TimeUnit unit, long amount) {
         Objects.requireNonNull(unit, "unit");
-        switch (unit) {
-            case NANOSECONDS:
-                return Duration.ofNanos(amount);
-            case MICROSECONDS:
-                return Duration.ofNanos(TimeUnit.MICROSECONDS.toNanos(amount));
-            case MILLISECONDS:
-                return Duration.ofMillis(amount);
-            case SECONDS:
-                return Duration.ofSeconds(amount);
-            case MINUTES:
-                return Duration.ofMinutes(amount);
-            case HOURS:
-                return Duration.ofHours(amount);
-            case DAYS:
-                return Duration.ofDays(amount);
-            default:
-                throw new AssertionError("unknown time unit: " + unit);
-
-        }
-    }
-
-    private Time() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
+        return switch (unit) {
+            case NANOSECONDS -> Duration.ofNanos(amount);
+            case MICROSECONDS -> Duration.ofNanos(TimeUnit.MICROSECONDS.toNanos(amount));
+            case MILLISECONDS -> Duration.ofMillis(amount);
+            case SECONDS -> Duration.ofSeconds(amount);
+            case MINUTES -> Duration.ofMinutes(amount);
+            case HOURS -> Duration.ofHours(amount);
+            case DAYS -> Duration.ofDays(amount);
+        };
     }
 }

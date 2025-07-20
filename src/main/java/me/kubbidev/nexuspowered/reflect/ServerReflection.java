@@ -7,8 +7,8 @@ import org.jetbrains.annotations.NotNull;
  * Utility methods for working with "versioned" server classes.
  *
  * <p>Internal classes within the Minecraft server and CraftBukkit are relocated at build time
- * to prevent developers from relying upon server internals. It is however sometimes useful to be
- * able to interact with these classes (via reflection).</p>
+ * to prevent developers from relying upon server internals. It is however sometimes useful to be able to interact with
+ * these classes (via reflection).</p>
  */
 public final class ServerReflection {
 
@@ -36,7 +36,8 @@ public final class ServerReflection {
         String serverVersion = "";
         // check we're dealing with a "CraftServer" and that the server isn't non-versioned.
         Class<?> server = Bukkit.getServer().getClass();
-        if (server.getSimpleName().equals("CraftServer") && !server.getName().equals("org.bukkit.craftbukkit.CraftServer")) {
+        if (server.getSimpleName().equals("CraftServer") && !server.getName()
+            .equals("org.bukkit.craftbukkit.CraftServer")) {
             String obcPackage = server.getPackage().getName();
             // check we're dealing with a craftbukkit implementation.
             if (obcPackage.startsWith("org.bukkit.craftbukkit.")) {
@@ -51,6 +52,10 @@ public final class ServerReflection {
         } else {
             NMS_VERSION = NmsVersion.valueOf(serverVersion);
         }
+    }
+
+    private ServerReflection() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 
     /**
@@ -115,9 +120,5 @@ public final class ServerReflection {
     @NotNull
     public static Class<?> obcClass(String className) throws ClassNotFoundException {
         return NMS_VERSION.obcClass(className);
-    }
-
-    private ServerReflection() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 }

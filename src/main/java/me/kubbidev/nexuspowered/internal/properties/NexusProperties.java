@@ -1,20 +1,17 @@
 package me.kubbidev.nexuspowered.internal.properties;
 
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.function.Function;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * NexusPowered properties.
  */
-@ApiStatus.Internal
 public final class NexusProperties {
 
     /**
      * Property for specifying whether debug mode is enabled.
      */
-    public static final NexusProperties.Property<Boolean> DEBUG = property("debug", Boolean::parseBoolean, false);
+    public static final Property<Boolean> DEBUG = property("debug", Boolean::parseBoolean, false);
 
     private NexusProperties() {
     }
@@ -37,15 +34,14 @@ public final class NexusProperties {
      *
      * @param <T> the value type
      */
-    @ApiStatus.Internal
-    @ApiStatus.NonExtendable
+    @FunctionalInterface
     public interface Property<T> {
+
         /**
          * Gets the value.
          *
          * @return the value
          */
-        @Nullable
-        T value();
+        @Nullable T value();
     }
 }

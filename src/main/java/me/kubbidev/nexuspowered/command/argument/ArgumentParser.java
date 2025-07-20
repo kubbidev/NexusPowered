@@ -1,11 +1,10 @@
 package me.kubbidev.nexuspowered.command.argument;
 
+import java.util.Optional;
+import java.util.function.Function;
 import me.kubbidev.nexuspowered.command.CommandInterruptException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NotNullByDefault;
-
-import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * Parses an argument from a String.
@@ -19,8 +18,9 @@ public interface ArgumentParser<T> {
         return parseFunction::apply;
     }
 
-    static <T> ArgumentParser<T> of(Function<String, Optional<T>> parseFunction, Function<String, CommandInterruptException> generateExceptionFunction) {
-        return new ArgumentParser<T>() {
+    static <T> ArgumentParser<T> of(Function<String, Optional<T>> parseFunction,
+                                    Function<String, CommandInterruptException> generateExceptionFunction) {
+        return new ArgumentParser<>() {
             @Override
             public Optional<T> parse(@NotNull String t) {
                 return parseFunction.apply(t);
@@ -62,16 +62,14 @@ public interface ArgumentParser<T> {
     }
 
     /**
-     * Parses the value from a string, throwing an interrupt exception if
-     * parsing failed.
+     * Parses the value from a string, throwing an interrupt exception if parsing failed.
      *
      * @param s the string
      * @return the value
      */
-    @NotNull
-    default T parseOrFail(@NotNull String s) throws CommandInterruptException {
+    default @NotNull T parseOrFail(@NotNull String s) throws CommandInterruptException {
         Optional<T> ret = parse(s);
-        if (!ret.isPresent()) {
+        if (ret.isEmpty()) {
             throw generateException(s);
         }
         return ret.get();
@@ -83,36 +81,32 @@ public interface ArgumentParser<T> {
      * @param argument the argument
      * @return the value, if parsing was successful
      */
-    @NotNull
-    default Optional<T> parse(@NotNull Argument argument) {
+    default @NotNull Optional<T> parse(@NotNull Argument argument) {
         return argument.value().flatMap(this::parse);
     }
 
     /**
-     * Parses the value from an argument, throwing an interrupt exception if
-     * parsing failed.
+     * Parses the value from an argument, throwing an interrupt exception if parsing failed.
      *
      * @param argument the argument
      * @return the value
      */
-    @NotNull
-    default T parseOrFail(@NotNull Argument argument) throws CommandInterruptException {
+    default @NotNull T parseOrFail(@NotNull Argument argument) throws CommandInterruptException {
         Optional<String> value = argument.value();
-        if (!value.isPresent()) {
+        if (value.isEmpty()) {
             throw generateException(argument.index());
         }
         return parseOrFail(value.get());
     }
 
     /**
-     * Creates a new parser which first tries to obtain a value from
-     * this parser, then from another if the former was not successful.
+     * Creates a new parser which first tries to obtain a value from this parser, then from another if the former was
+     * not successful.
      *
      * @param other the other parser
      * @return the combined parser
      */
-    @NotNull
-    default ArgumentParser<T> thenTry(@NotNull ArgumentParser<T> other) {
+    default @NotNull ArgumentParser<T> thenTry(@NotNull ArgumentParser<T> other) {
         ArgumentParser<T> first = this;
         return t -> {
             Optional<T> ret = first.parse(t);

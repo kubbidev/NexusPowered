@@ -1,14 +1,17 @@
 package me.kubbidev.nexuspowered.bucket.partitioning;
 
+import java.util.concurrent.ThreadLocalRandom;
 import me.kubbidev.nexuspowered.bucket.Bucket;
 import me.kubbidev.nexuspowered.bucket.BucketPartition;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Some standard partitioning strategies for use in {@link Bucket}s.
  */
 public final class PartitioningStrategies {
+
+    private PartitioningStrategies() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
 
     public static <T> PartitioningStrategy<T> random() {
         return Strategies.RANDOM.cast();
@@ -71,10 +74,6 @@ public final class PartitioningStrategies {
                 return bucket.asCycle().previous().getPartitionIndex();
             }
         }
-    }
-
-    private PartitioningStrategies() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 
 }

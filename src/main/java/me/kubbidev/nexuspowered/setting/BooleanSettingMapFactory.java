@@ -14,6 +14,14 @@ import java.util.Objects;
  */
 public final class BooleanSettingMapFactory<S extends BooleanSetting> {
 
+    private final S[]    settings;
+    private final BitSet defaultBits;
+
+    private BooleanSettingMapFactory(S[] settings, BitSet defaultBits) {
+        this.settings = settings;
+        this.defaultBits = defaultBits;
+    }
+
     /**
      * Creates a new {@link BooleanSettingMapFactory} for the given {@link BooleanSetting} enum.
      *
@@ -21,7 +29,7 @@ public final class BooleanSettingMapFactory<S extends BooleanSetting> {
      * setting enum and reused.</p>
      *
      * @param settingsEnum the setting class
-     * @param <S> the class type
+     * @param <S>          the class type
      * @return a new factory
      */
     public static <S extends Enum<S> & BooleanSetting> BooleanSettingMapFactory<S> create(Class<S> settingsEnum) {
@@ -36,7 +44,7 @@ public final class BooleanSettingMapFactory<S extends BooleanSetting> {
      * setting class.</p>
      *
      * @param settings the settings
-     * @param <S> the class type
+     * @param <S>      the class type
      * @return a new factory
      */
     public static <S extends BooleanSetting> BooleanSettingMapFactory<S> create(S[] settings) {
@@ -48,7 +56,9 @@ public final class BooleanSettingMapFactory<S extends BooleanSetting> {
 
             // ensure ordinal has been correctly implemented
             if (setting.ordinal() != i) {
-                throw new IllegalArgumentException("The ordinal of setting " + setting + " does not equal its array index. ordinal=" + setting.ordinal() + ", index=" + i);
+                throw new IllegalArgumentException(
+                    "The ordinal of setting " + setting + " does not equal its array index. ordinal="
+                        + setting.ordinal() + ", index=" + i);
             }
 
             if (setting.defaultState()) {
@@ -56,14 +66,6 @@ public final class BooleanSettingMapFactory<S extends BooleanSetting> {
             }
         }
         return new BooleanSettingMapFactory<>(settings, defaultBits);
-    }
-
-    private final S[] settings;
-    private final BitSet defaultBits;
-
-    private BooleanSettingMapFactory(S[] settings, BitSet defaultBits) {
-        this.settings = settings;
-        this.defaultBits = defaultBits;
     }
 
     /**

@@ -1,10 +1,15 @@
 package me.kubbidev.nexuspowered.item;
 
 import com.google.common.collect.Iterables;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.OptionalInt;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-
-import java.util.*;
 
 /**
  * Utility for creating {@link ItemStackBuilder}s from {@link ConfigurationSection config} files.
@@ -40,11 +45,15 @@ public class ItemStackReader {
      */
     public ItemStackBuilder read(ConfigurationSection config, VariableReplacer variableReplacer) {
         return ItemStackBuilder.of(parseMaterial(config))
-                .apply(isb -> {
-                    parseData(config).ifPresent(isb::data);
-                    parseName(config).map(variableReplacer::replace).ifPresent(isb::name);
-                    parseLore(config).map(variableReplacer::replace).ifPresent(isb::lore);
-                });
+            .apply(isb -> {
+                parseModelData(config).ifPresent(isb::modelData);
+                parseName(config).map(variableReplacer::replace).map(this::parseComponent).ifPresent(isb::name);
+                parseLore(config).map(variableReplacer::replace).map(this::parseComponent).ifPresent(isb::lore);
+            });
+    }
+
+    protected Component parseComponent(String rawString) {
+        return GsonComponentSerializer.gson().deserialize(rawString);
     }
 
     protected Material parseMaterial(ConfigurationSection config) {
@@ -59,25 +68,16 @@ public class ItemStackReader {
         }
     }
 
-    protected OptionalInt parseData(ConfigurationSection config) {
-        if (config.contains("data")) {
-            return OptionalInt.of(config.getInt("data"));
-        }
-        return OptionalInt.empty();
+    protected OptionalInt parseModelData(ConfigurationSection config) {
+        return config.contains("model_data") ? OptionalInt.of(config.getInt("model_data")) : OptionalInt.empty();
     }
 
     protected Optional<String> parseName(ConfigurationSection config) {
-        if (config.contains("name")) {
-            return Optional.of(config.getString("name"));
-        }
-        return Optional.empty();
+        return config.contains("name") ? Optional.ofNullable(config.getString("name")) : Optional.empty();
     }
 
-    protected Optional<List<String>> parseLore(ConfigurationSection config) {
-        if (config.contains("lore")) {
-            return Optional.of(config.getStringList("lore"));
-        }
-        return Optional.empty();
+    protected Optional<String> parseLore(ConfigurationSection config) {
+        return config.contains("lore") ? Optional.ofNullable(config.getString("lore")) : Optional.empty();
     }
 
     /**

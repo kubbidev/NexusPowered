@@ -4,6 +4,7 @@ import me.kubbidev.nexuspowered.scoreboard.PacketScoreboardProvider;
 import me.kubbidev.nexuspowered.scoreboard.ScoreboardProvider;
 
 final class NexusServices {
+
     private NexusServices() {
     }
 

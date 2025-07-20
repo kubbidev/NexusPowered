@@ -1,17 +1,17 @@
 package me.kubbidev.nexuspowered.util;
 
 import com.google.common.collect.Range;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.NotNullByDefault;
-
 import java.util.Locale;
 import java.util.function.Predicate;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 
 /**
  * A collection of predicate utilities used mostly in command classes
  */
 @NotNullByDefault
 public final class Predicates {
+
     private Predicates() {
     }
 
@@ -37,6 +37,7 @@ public final class Predicates {
             return TRUE;
         }
     };
+
     @SuppressWarnings("rawtypes")
     private static final Predicate TRUE = new Predicate() {
         @Override
@@ -105,5 +106,6 @@ public final class Predicates {
             return string.toLowerCase(Locale.ROOT).contains(substring.toLowerCase(Locale.ROOT));
         };
     }
+
 
 }

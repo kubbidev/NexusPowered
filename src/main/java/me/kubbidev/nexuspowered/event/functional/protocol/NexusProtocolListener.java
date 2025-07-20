@@ -3,11 +3,6 @@ package me.kubbidev.nexuspowered.event.functional.protocol;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import me.kubbidev.nexuspowered.event.ProtocolSubscription;
-import me.kubbidev.nexuspowered.internal.LoaderUtils;
-import me.kubbidev.nexuspowered.protocol.Protocol;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -15,23 +10,29 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
+import me.kubbidev.nexuspowered.event.ProtocolSubscription;
+import me.kubbidev.nexuspowered.internal.LoaderUtils;
+import me.kubbidev.nexuspowered.protocol.Protocol;
+import org.jetbrains.annotations.NotNull;
 
 class NexusProtocolListener extends PacketAdapter implements ProtocolSubscription {
+
     private final Set<PacketType> types;
 
     private final BiConsumer<? super PacketEvent, Throwable> exceptionConsumer;
 
-    private final Predicate<PacketEvent>[] filters;
-    private final BiPredicate<ProtocolSubscription, PacketEvent>[] preExpiryTests;
-    private final BiPredicate<ProtocolSubscription, PacketEvent>[] midExpiryTests;
-    private final BiPredicate<ProtocolSubscription, PacketEvent>[] postExpiryTests;
+    private final Predicate<PacketEvent>[]                                filters;
+    private final BiPredicate<ProtocolSubscription, PacketEvent>[]        preExpiryTests;
+    private final BiPredicate<ProtocolSubscription, PacketEvent>[]        midExpiryTests;
+    private final BiPredicate<ProtocolSubscription, PacketEvent>[]        postExpiryTests;
     private final BiConsumer<ProtocolSubscription, ? super PacketEvent>[] handlers;
 
-    private final AtomicLong callCount = new AtomicLong(0);
-    private final AtomicBoolean active = new AtomicBoolean(true);
+    private final AtomicLong    callCount = new AtomicLong(0);
+    private final AtomicBoolean active    = new AtomicBoolean(true);
 
     @SuppressWarnings("unchecked")
-    NexusProtocolListener(ProtocolSubscriptionBuilderImpl builder, List<BiConsumer<ProtocolSubscription, ? super PacketEvent>> handlers) {
+    NexusProtocolListener(ProtocolSubscriptionBuilderImpl builder,
+                          List<BiConsumer<ProtocolSubscription, ? super PacketEvent>> handlers) {
         super(LoaderUtils.getPlugin(), builder.priority, builder.types);
 
         this.types = builder.types;
@@ -48,12 +49,12 @@ class NexusProtocolListener extends PacketAdapter implements ProtocolSubscriptio
 
     @Override
     public void onPacketReceiving(PacketEvent event) {
-        onPacket(event);
+        this.onPacket(event);
     }
 
     @Override
     public void onPacketSending(PacketEvent event) {
-        onPacket(event);
+        this.onPacket(event);
     }
 
     private void onPacket(PacketEvent event) {
@@ -106,15 +107,14 @@ class NexusProtocolListener extends PacketAdapter implements ProtocolSubscriptio
         // check post-expiry tests
         for (BiPredicate<ProtocolSubscription, PacketEvent> test : this.postExpiryTests) {
             if (test.test(this, event)) {
-                unregister();
+                this.unregister();
                 return;
             }
         }
     }
 
-    @NotNull
     @Override
-    public Set<PacketType> getPackets() {
+    public @NotNull Set<PacketType> getPackets() {
         return this.types;
     }
 

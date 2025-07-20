@@ -1,5 +1,6 @@
 package me.kubbidev.nexuspowered.internal.exception;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import me.kubbidev.nexuspowered.Events;
 import me.kubbidev.nexuspowered.interfaces.Delegate;
 import me.kubbidev.nexuspowered.internal.exception.event.NexusExceptionEvent;
@@ -8,18 +9,16 @@ import me.kubbidev.nexuspowered.internal.exception.type.PromiseChainException;
 import me.kubbidev.nexuspowered.internal.exception.type.SchedulerTaskException;
 import me.kubbidev.nexuspowered.util.Log;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
- * Central handler for exceptions that occur within user-written
- * Runnables and handlers running in nexuspowered.
+ * Central handler for exceptions that occur within user-written Runnables and handlers running in nexuspowered.
  */
 public final class NexusExceptions {
+
+    private static final ThreadLocal<AtomicBoolean> NOT_TODAY_STACK_OVERFLOW_EXCEPTION = ThreadLocal.withInitial(
+        () -> new AtomicBoolean(false));
+
     private NexusExceptions() {
     }
-
-    private static final ThreadLocal<AtomicBoolean> NOT_TODAY_STACK_OVERFLOW_EXCEPTION =
-            ThreadLocal.withInitial(() -> new AtomicBoolean(false));
 
     private static void log(InternalException exception) {
         // print to logger
@@ -52,12 +51,7 @@ public final class NexusExceptions {
         return new SchedulerWrappedRunnable(runnable);
     }
 
-    private static class SchedulerWrappedRunnable implements Runnable, Delegate<Runnable> {
-        private final Runnable delegate;
-
-        public SchedulerWrappedRunnable(Runnable delegate) {
-            this.delegate = delegate;
-        }
+    private record SchedulerWrappedRunnable(Runnable delegate) implements Runnable, Delegate<Runnable> {
 
         @Override
         public void run() {
@@ -66,11 +60,6 @@ public final class NexusExceptions {
             } catch (Throwable t) {
                 reportScheduler(t);
             }
-        }
-
-        @Override
-        public Runnable delegate() {
-            return this.delegate;
         }
     }
 }

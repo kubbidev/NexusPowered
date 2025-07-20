@@ -1,5 +1,9 @@
 package me.kubbidev.nexuspowered.plugin;
 
+import java.io.File;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import me.kubbidev.nexuspowered.Schedulers;
 import me.kubbidev.nexuspowered.Services;
 import me.kubbidev.nexuspowered.config.KeyedConfiguration;
@@ -18,11 +22,6 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 /**
  * An "extended" JavaPlugin class.
@@ -61,11 +60,11 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements NexusPlug
     public final void onEnable() {
         // schedule cleanup of the registry
         Schedulers.builder()
-                .async()
-                .after(10, TimeUnit.SECONDS)
-                .every(30, TimeUnit.SECONDS)
-                .run(this.terminableRegistry::cleanup)
-                .bindWith(this.terminableRegistry);
+            .async()
+            .after(10, TimeUnit.SECONDS)
+            .every(30, TimeUnit.SECONDS)
+            .run(this.terminableRegistry::cleanup)
+            .bindWith(this.terminableRegistry);
 
         // setup services
         if (this.isLoaderPlugin) {
@@ -109,8 +108,9 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements NexusPlug
     }
 
     @Override
-    public <T extends CommandExecutor> @NotNull T registerCommand(@NotNull T command, String permission, String permissionMessage, String description, @NotNull String... aliases) {
-        return CommandMapUtil.registerCommand(this, command, permission, permissionMessage, description, aliases);
+    public <T extends CommandExecutor> @NotNull T registerCommand(@NotNull T command, String permission,
+                                                                  String description, @NotNull String... aliases) {
+        return CommandMapUtil.registerCommand(this, command, permission, description, aliases);
     }
 
     @Override
@@ -119,7 +119,8 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements NexusPlug
     }
 
     @Override
-    public <T> @NotNull T provideService(@NotNull Class<T> clazz, @NotNull T instance, @NotNull ServicePriority priority) {
+    public <T> @NotNull T provideService(@NotNull Class<T> clazz, @NotNull T instance,
+                                         @NotNull ServicePriority priority) {
         return Services.provide(clazz, instance, this, priority);
     }
 
@@ -164,13 +165,15 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements NexusPlug
     }
 
     @Override
-    public @NotNull KeyedConfiguration loadKeyedConfig(@NotNull String file, @NotNull List<? extends ConfigKey<?>> keys) {
+    public @NotNull KeyedConfiguration loadKeyedConfig(@NotNull String file,
+                                                       @NotNull List<? extends ConfigKey<?>> keys) {
         Objects.requireNonNull(file, "file");
         return loadKeyedConfig(new BukkitConfigAdapter(this, getBundledFile(file)), keys);
     }
 
     @Override
-    public @NotNull KeyedConfiguration loadKeyedConfig(@NotNull ConfigurationAdapter adapter, @NotNull List<? extends ConfigKey<?>> keys) {
+    public @NotNull KeyedConfiguration loadKeyedConfig(@NotNull ConfigurationAdapter adapter,
+                                                       @NotNull List<? extends ConfigKey<?>> keys) {
         Objects.requireNonNull(adapter, "adapter");
         return new KeyedConfiguration(adapter, keys);
     }

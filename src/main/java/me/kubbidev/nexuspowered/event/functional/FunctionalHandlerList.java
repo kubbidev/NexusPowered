@@ -1,9 +1,8 @@
 package me.kubbidev.nexuspowered.event.functional;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A functional builder which accumulates event handlers
@@ -19,8 +18,7 @@ public interface FunctionalHandlerList<T, R> {
      * @param handler the handler
      * @return this handler list
      */
-    @NotNull
-    FunctionalHandlerList<T, R> consumer(@NotNull Consumer<? super T> handler);
+    @NotNull FunctionalHandlerList<T, R> consumer(@NotNull Consumer<? super T> handler);
 
     /**
      * Add a {@link BiConsumer} handler.
@@ -28,8 +26,7 @@ public interface FunctionalHandlerList<T, R> {
      * @param handler the handler
      * @return this handler list
      */
-    @NotNull
-    FunctionalHandlerList<T, R> biConsumer(@NotNull BiConsumer<R, ? super T> handler);
+    @NotNull FunctionalHandlerList<T, R> biConsumer(@NotNull BiConsumer<R, ? super T> handler);
 
     /**
      * Builds and registers the Handler.
@@ -37,7 +34,5 @@ public interface FunctionalHandlerList<T, R> {
      * @return a registered {@link R} instance.
      * @throws IllegalStateException if no handlers have been registered
      */
-    @NotNull
-    R register();
-
+    @NotNull R register();
 }

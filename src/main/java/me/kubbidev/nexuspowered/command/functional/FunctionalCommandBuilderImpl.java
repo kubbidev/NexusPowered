@@ -2,8 +2,12 @@ package me.kubbidev.nexuspowered.command.functional;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
 import me.kubbidev.nexuspowered.command.Command;
 import me.kubbidev.nexuspowered.command.context.CommandContext;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -11,38 +15,32 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Predicate;
-
 @NotNullByDefault
 class FunctionalCommandBuilderImpl<T extends CommandSender> implements FunctionalCommandBuilder<T> {
-    private final ImmutableList.Builder<Predicate<CommandContext<?>>> predicates;
-    private @Nullable FunctionalTabHandler<T> tabHandler;
-    private @Nullable String permission;
-    private @Nullable String description;
-    private @Nullable String permissionMessage;
+
+    private final     ImmutableList.Builder<Predicate<CommandContext<?>>> predicates;
+    private @Nullable FunctionalTabHandler<T>                             tabHandler;
+    private @Nullable String                                              permission;
+    private @Nullable String                                              description;
 
     private FunctionalCommandBuilderImpl(ImmutableList.Builder<Predicate<CommandContext<?>>> predicates,
                                          @Nullable FunctionalTabHandler<T> tabHandler,
                                          @Nullable String permission,
-                                         @Nullable String description, @Nullable String permissionMessage) {
+                                         @Nullable String description) {
         this.predicates = predicates;
         this.tabHandler = tabHandler;
         this.permission = permission;
         this.description = description;
-        this.permissionMessage = permissionMessage;
     }
 
     FunctionalCommandBuilderImpl() {
-        this(ImmutableList.builder(), null, null, null, null);
+        this(ImmutableList.builder(), null, null, null);
     }
 
     @Override
-    public FunctionalCommandBuilder<T> assertPermission(String permission, @Nullable String failureMessage) {
+    public FunctionalCommandBuilder<T> assertPermission(String permission) {
         Objects.requireNonNull(permission, "permission");
         this.permission = permission;
-        this.permissionMessage = failureMessage;
         return this;
     }
 
@@ -55,7 +53,8 @@ class FunctionalCommandBuilderImpl<T extends CommandSender> implements Functiona
 
     @SuppressWarnings("unchecked")
     @Override
-    public FunctionalCommandBuilder<T> assertFunction(Predicate<? super CommandContext<? extends T>> test, @Nullable String failureMessage) {
+    public FunctionalCommandBuilder<T> assertFunction(Predicate<? super CommandContext<? extends T>> test,
+                                                      @Nullable Component failureMessage) {
         this.predicates.add(context -> {
             if (test.test((CommandContext<? extends T>) context)) {
                 return true;
@@ -69,7 +68,7 @@ class FunctionalCommandBuilderImpl<T extends CommandSender> implements Functiona
     }
 
     @Override
-    public FunctionalCommandBuilder<T> assertOp(String failureMessage) {
+    public FunctionalCommandBuilder<T> assertOp(Component failureMessage) {
         Objects.requireNonNull(failureMessage, "failureMessage");
         this.predicates.add(context -> {
             if (context.sender().isOp()) {
@@ -84,7 +83,7 @@ class FunctionalCommandBuilderImpl<T extends CommandSender> implements Functiona
 
     @SuppressWarnings("unchecked")
     @Override
-    public FunctionalCommandBuilder<Player> assertPlayer(String failureMessage) {
+    public FunctionalCommandBuilder<Player> assertPlayer(Component failureMessage) {
         Objects.requireNonNull(failureMessage, "failureMessage");
         this.predicates.add(context -> {
             if (context.sender() instanceof Player) {
@@ -96,12 +95,12 @@ class FunctionalCommandBuilderImpl<T extends CommandSender> implements Functiona
         });
         // cast the generic type
         return (FunctionalCommandBuilder<@NotNull Player>) new FunctionalCommandBuilderImpl<>(
-                this.predicates, this.tabHandler, this.permission, this.description, this.permissionMessage);
+            this.predicates, this.tabHandler, this.permission, this.description);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public FunctionalCommandBuilder<ConsoleCommandSender> assertConsole(String failureMessage) {
+    public FunctionalCommandBuilder<ConsoleCommandSender> assertConsole(Component failureMessage) {
         Objects.requireNonNull(failureMessage, "failureMessage");
         this.predicates.add(context -> {
             if (context.sender() instanceof ConsoleCommandSender) {
@@ -113,11 +112,11 @@ class FunctionalCommandBuilderImpl<T extends CommandSender> implements Functiona
         });
         // cast the generic type
         return (FunctionalCommandBuilder<@NotNull ConsoleCommandSender>) new FunctionalCommandBuilderImpl<>(
-                this.predicates, this.tabHandler, this.permission, this.description, this.permissionMessage);
+            this.predicates, this.tabHandler, this.permission, this.description);
     }
 
     @Override
-    public FunctionalCommandBuilder<T> assertUsage(String usage, String failureMessage) {
+    public FunctionalCommandBuilder<T> assertUsage(String usage, Component failureMessage) {
         Objects.requireNonNull(usage, "usage");
         Objects.requireNonNull(failureMessage, "failureMessage");
 
@@ -137,7 +136,8 @@ class FunctionalCommandBuilderImpl<T extends CommandSender> implements Functiona
                 return true;
             }
 
-            context.reply(failureMessage.replace("{usage}", "/" + context.label() + " " + usage));
+            context.reply(failureMessage
+                .replaceText(builder -> builder.matchLiteral("{0}").replacement("/" + context.label() + " " + usage)));
             return false;
         });
 
@@ -145,7 +145,8 @@ class FunctionalCommandBuilderImpl<T extends CommandSender> implements Functiona
     }
 
     @Override
-    public FunctionalCommandBuilder<T> assertArgument(int index, Predicate<@Nullable String> test, String failureMessage) {
+    public FunctionalCommandBuilder<T> assertArgument(int index, Predicate<@Nullable String> test,
+                                                      Component failureMessage) {
         Objects.requireNonNull(test, "test");
         Objects.requireNonNull(failureMessage, "failureMessage");
         this.predicates.add(context -> {
@@ -155,8 +156,8 @@ class FunctionalCommandBuilderImpl<T extends CommandSender> implements Functiona
             }
 
             context.reply(failureMessage
-                    .replace("{arg}", String.valueOf(arg))
-                    .replace("{index}", Integer.toString(index))
+                .replaceText(builder -> builder.matchLiteral("{0}").replacement(String.valueOf(arg)))
+                .replaceText(builder -> builder.matchLiteral("{1}").replacement(Integer.toString(index)))
             );
             return false;
         });
@@ -165,7 +166,7 @@ class FunctionalCommandBuilderImpl<T extends CommandSender> implements Functiona
 
     @SuppressWarnings("unchecked")
     @Override
-    public FunctionalCommandBuilder<T> assertSender(Predicate<T> test, String failureMessage) {
+    public FunctionalCommandBuilder<T> assertSender(Predicate<T> test, Component failureMessage) {
         Objects.requireNonNull(test, "test");
         Objects.requireNonNull(failureMessage, "failureMessage");
         this.predicates.add(context -> {
@@ -189,6 +190,7 @@ class FunctionalCommandBuilderImpl<T extends CommandSender> implements Functiona
     @Override
     public Command handler(FunctionalCommandHandler<T> handler) {
         Objects.requireNonNull(handler, "handler");
-        return new FunctionalCommand<>(this.predicates.build(), handler, this.tabHandler, this.permission, this.description, this.permissionMessage);
+        return new FunctionalCommand<>(this.predicates.build(), handler, this.tabHandler, this.permission,
+            this.description);
     }
 }

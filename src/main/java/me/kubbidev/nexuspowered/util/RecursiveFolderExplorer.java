@@ -1,13 +1,13 @@
 package me.kubbidev.nexuspowered.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.function.Consumer;
+import org.jetbrains.annotations.NotNull;
 
 public class RecursiveFolderExplorer {
-    private final Consumer<File> action;
+
+    private final Consumer<File>      action;
     private final Consumer<Throwable> exceptionHandler;
 
     /**
@@ -34,7 +34,7 @@ public class RecursiveFolderExplorer {
     /**
      * Recursively explores directories and processes files.
      *
-     * @param path The root directory or file to explore.
+     * @param file The root directory or file to explore.
      */
     @SuppressWarnings("DataFlowIssue")
     public void explore(@NotNull File file) {

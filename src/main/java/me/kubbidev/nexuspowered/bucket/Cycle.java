@@ -1,8 +1,7 @@
 package me.kubbidev.nexuspowered.bucket;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An infinite cycle of elements.
@@ -20,14 +19,12 @@ public interface Cycle<E> {
      * @param <E>     the element type
      * @return the cycle
      */
-    @NotNull
-    static <E> Cycle<E> of(@NotNull List<E> objects) {
+    static @NotNull <E> Cycle<E> of(@NotNull List<E> objects) {
         return new CycleImpl<>(objects);
     }
 
     /**
-     * Gets the current position of the cursor, as as index relating to a
-     * position in the backing list.
+     * Gets the current position of the cursor, as as index relating to a position in the backing list.
      *
      * @return the cursor position
      */
@@ -46,24 +43,21 @@ public interface Cycle<E> {
      *
      * @return the current element
      */
-    @NotNull
-    E current();
+    @NotNull E current();
 
     /**
      * Advances the cursor, and returns the next element.
      *
      * @return the next element
      */
-    @NotNull
-    E next();
+    @NotNull E next();
 
     /**
      * Retreats the counter, and returns the previous element.
      *
      * @return the previous element
      */
-    @NotNull
-    E previous();
+    @NotNull E previous();
 
     /**
      * Returns the index of the next position in the cycle.
@@ -84,16 +78,14 @@ public interface Cycle<E> {
      *
      * @return the next element
      */
-    @NotNull
-    E peekNext();
+    @NotNull E peekNext();
 
     /**
      * Returns the previous element without retreating the cursor.
      *
      * @return the previous element
      */
-    @NotNull
-    E peekPrevious();
+    @NotNull E peekPrevious();
 
     /**
      * Gets the list currently backing this cycle
@@ -102,8 +94,7 @@ public interface Cycle<E> {
      *
      * @return the backing list
      */
-    @NotNull
-    List<E> getBacking();
+    @NotNull List<E> getBacking();
 
     /**
      * Creates a copy of this cycle.

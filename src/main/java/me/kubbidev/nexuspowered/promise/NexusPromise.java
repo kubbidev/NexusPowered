@@ -3,6 +3,17 @@ package me.kubbidev.nexuspowered.promise;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import me.kubbidev.nexuspowered.interfaces.Delegate;
 import me.kubbidev.nexuspowered.internal.LoaderUtils;
 import me.kubbidev.nexuspowered.internal.exception.NexusExceptions;
@@ -12,12 +23,6 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 /**
  * Implementation of {@link Promise} using the server scheduler.
  *
@@ -25,73 +30,14 @@ import java.util.function.Supplier;
  */
 final class NexusPromise<V> implements Promise<V> {
 
-    @NotNull
-    static <U> NexusPromise<U> empty() {
-        return new NexusPromise<>();
-    }
-
-    @NotNull
-    static <U> NexusPromise<U> completed(@Nullable U value) {
-        return new NexusPromise<>(value);
-    }
-
-    @NotNull
-    static <U> NexusPromise<U> exceptionally(@NotNull Throwable t) {
-        return new NexusPromise<>(t);
-    }
-
-    @NotNull
-    static <U> Promise<U> wrapFuture(@NotNull Future<U> future) {
-        if (future instanceof CompletableFuture<?>) {
-            return new NexusPromise<>(((CompletableFuture<U>) future).thenApply(Function.identity()));
-
-        } else if (future instanceof CompletionStage<?>) {
-            @SuppressWarnings("unchecked")
-            CompletionStage<U> fut = (CompletionStage<U>) future;
-            return new NexusPromise<>(fut.toCompletableFuture().thenApply(Function.identity()));
-
-        } else if (future instanceof ListenableFuture<?>) {
-            ListenableFuture<U> fut = (ListenableFuture<U>) future;
-            NexusPromise<U> promise = empty();
-            promise.supplied.set(true);
-
-            Futures.addCallback(fut, new FutureCallback<U>() {
-                @Override
-                public void onSuccess(@Nullable U result) {
-                    promise.complete(result);
-                }
-
-                @Override
-                public void onFailure(@NotNull Throwable t) {
-                    promise.completeExceptionally(t);
-                }
-            });
-
-            return promise;
-        }
-        if (future.isDone()) {
-            try {
-                return completed(future.get());
-            } catch (ExecutionException e) {
-                return exceptionally(e);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            return Promise.supplyingExceptionallyAsync(future::get);
-        }
-    }
-
     /**
      * If the promise is currently being supplied
      */
-    private final AtomicBoolean supplied = new AtomicBoolean(false);
-
+    private final AtomicBoolean        supplied  = new AtomicBoolean(false);
     /**
      * If the execution of the promise is cancelled
      */
-    private final AtomicBoolean cancelled = new AtomicBoolean(false);
-
+    private final AtomicBoolean        cancelled = new AtomicBoolean(false);
     /**
      * The completable future backing this promise
      */
@@ -118,6 +64,68 @@ final class NexusPromise<V> implements Promise<V> {
         this.cancelled.set(fut.isCancelled());
     }
 
+    @NotNull
+    static <U> NexusPromise<U> empty() {
+        return new NexusPromise<>();
+    }
+
+    @NotNull
+    static <U> NexusPromise<U> completed(@Nullable U value) {
+        return new NexusPromise<>(value);
+    }
+
+    @NotNull
+    static <U> NexusPromise<U> exceptionally(@NotNull Throwable t) {
+        return new NexusPromise<>(t);
+    }
+
+    @NotNull
+    static <U> Promise<U> wrapFuture(@NotNull Future<U> future) {
+        switch (future) {
+            case CompletableFuture<?> ignored -> {
+                return new NexusPromise<>(((CompletableFuture<U>) future).thenApply(Function.identity()));
+            }
+            case CompletionStage<?> ignored -> {
+                @SuppressWarnings("unchecked")
+                CompletionStage<U> fut = (CompletionStage<U>) future;
+                return new NexusPromise<>(fut.toCompletableFuture().thenApply(Function.identity()));
+
+            }
+            case ListenableFuture<?> ignored -> {
+                ListenableFuture<U> fut = (ListenableFuture<U>) future;
+                NexusPromise<U> promise = empty();
+                promise.supplied.set(true);
+
+                Futures.addCallback(fut, new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(@Nullable U result) {
+                        promise.complete(result);
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull Throwable t) {
+                        promise.completeExceptionally(t);
+                    }
+                }, null);
+
+                return promise;
+            }
+            default -> {
+            }
+        }
+        if (future.isDone()) {
+            try {
+                return completed(future.get());
+            } catch (ExecutionException e) {
+                return exceptionally(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            return Promise.supplyingExceptionallyAsync(future::get);
+        }
+    }
+
     /* utility methods */
 
     private void executeSync(@NotNull Runnable runnable) {
@@ -136,7 +144,8 @@ final class NexusPromise<V> implements Promise<V> {
         if (delayTicks <= 0) {
             executeSync(runnable);
         } else {
-            Bukkit.getScheduler().runTaskLater(LoaderUtils.getPlugin(), NexusExceptions.wrapSchedulerTask(runnable), delayTicks);
+            Bukkit.getScheduler()
+                .runTaskLater(LoaderUtils.getPlugin(), NexusExceptions.wrapSchedulerTask(runnable), delayTicks);
         }
     }
 
@@ -144,7 +153,9 @@ final class NexusPromise<V> implements Promise<V> {
         if (delayTicks <= 0) {
             executeAsync(runnable);
         } else {
-            Bukkit.getScheduler().runTaskLaterAsynchronously(LoaderUtils.getPlugin(), NexusExceptions.wrapSchedulerTask(runnable), delayTicks);
+            Bukkit.getScheduler()
+                .runTaskLaterAsynchronously(LoaderUtils.getPlugin(), NexusExceptions.wrapSchedulerTask(runnable),
+                    delayTicks);
         }
     }
 
@@ -152,7 +163,9 @@ final class NexusPromise<V> implements Promise<V> {
         if (delay <= 0) {
             executeSync(runnable);
         } else {
-            Bukkit.getScheduler().runTaskLater(LoaderUtils.getPlugin(), NexusExceptions.wrapSchedulerTask(runnable), Ticks.from(delay, unit));
+            Bukkit.getScheduler()
+                .runTaskLater(LoaderUtils.getPlugin(), NexusExceptions.wrapSchedulerTask(runnable),
+                    Ticks.from(delay, unit));
         }
     }
 
@@ -202,7 +215,8 @@ final class NexusPromise<V> implements Promise<V> {
     }
 
     @Override
-    public V get(long timeout, @NotNull TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public V get(long timeout, @NotNull TimeUnit unit)
+        throws InterruptedException, ExecutionException, TimeoutException {
         return this.fut.get(timeout, unit);
     }
 
@@ -323,7 +337,8 @@ final class NexusPromise<V> implements Promise<V> {
 
     @NotNull
     @Override
-    public Promise<V> supplyExceptionallyDelayedSync(@NotNull Callable<V> callable, long delay, @NotNull TimeUnit unit) {
+    public Promise<V> supplyExceptionallyDelayedSync(@NotNull Callable<V> callable, long delay,
+                                                     @NotNull TimeUnit unit) {
         markAsSupplied();
         executeDelayedSync(new ThrowingSupplyRunnable(callable), delay, unit);
         return this;
@@ -339,7 +354,8 @@ final class NexusPromise<V> implements Promise<V> {
 
     @NotNull
     @Override
-    public Promise<V> supplyExceptionallyDelayedAsync(@NotNull Callable<V> callable, long delay, @NotNull TimeUnit unit) {
+    public Promise<V> supplyExceptionallyDelayedAsync(@NotNull Callable<V> callable, long delay,
+                                                      @NotNull TimeUnit unit) {
         markAsSupplied();
         executeDelayedAsync(new ThrowingSupplyRunnable(callable), delay, unit);
         return this;
@@ -389,7 +405,8 @@ final class NexusPromise<V> implements Promise<V> {
 
     @NotNull
     @Override
-    public <U> Promise<U> thenApplyDelayedSync(@NotNull Function<? super V, ? extends U> fn, long delay, @NotNull TimeUnit unit) {
+    public <U> Promise<U> thenApplyDelayedSync(@NotNull Function<? super V, ? extends U> fn, long delay,
+                                               @NotNull TimeUnit unit) {
         NexusPromise<U> promise = empty();
         this.fut.whenComplete((value, t) -> {
             if (t != null) {
@@ -417,7 +434,8 @@ final class NexusPromise<V> implements Promise<V> {
 
     @NotNull
     @Override
-    public <U> Promise<U> thenApplyDelayedAsync(@NotNull Function<? super V, ? extends U> fn, long delay, @NotNull TimeUnit unit) {
+    public <U> Promise<U> thenApplyDelayedAsync(@NotNull Function<? super V, ? extends U> fn, long delay,
+                                                @NotNull TimeUnit unit) {
         NexusPromise<U> promise = empty();
         this.fut.whenComplete((value, t) -> {
             if (t != null) {
@@ -459,7 +477,8 @@ final class NexusPromise<V> implements Promise<V> {
 
     @NotNull
     @Override
-    public <U> Promise<U> thenComposeDelayedSync(@NotNull Function<? super V, ? extends Promise<U>> fn, long delayTicks) {
+    public <U> Promise<U> thenComposeDelayedSync(@NotNull Function<? super V, ? extends Promise<U>> fn,
+                                                 long delayTicks) {
         NexusPromise<U> promise = empty();
         this.fut.whenComplete((value, t) -> {
             if (t != null) {
@@ -473,7 +492,8 @@ final class NexusPromise<V> implements Promise<V> {
 
     @NotNull
     @Override
-    public <U> Promise<U> thenComposeDelayedSync(@NotNull Function<? super V, ? extends Promise<U>> fn, long delay, @NotNull TimeUnit unit) {
+    public <U> Promise<U> thenComposeDelayedSync(@NotNull Function<? super V, ? extends Promise<U>> fn, long delay,
+                                                 @NotNull TimeUnit unit) {
         NexusPromise<U> promise = empty();
         this.fut.whenComplete((value, t) -> {
             if (t != null) {
@@ -487,7 +507,8 @@ final class NexusPromise<V> implements Promise<V> {
 
     @NotNull
     @Override
-    public <U> Promise<U> thenComposeDelayedAsync(@NotNull Function<? super V, ? extends Promise<U>> fn, long delayTicks) {
+    public <U> Promise<U> thenComposeDelayedAsync(@NotNull Function<? super V, ? extends Promise<U>> fn,
+                                                  long delayTicks) {
         NexusPromise<U> promise = empty();
         this.fut.whenComplete((value, t) -> {
             if (t != null) {
@@ -501,7 +522,8 @@ final class NexusPromise<V> implements Promise<V> {
 
     @NotNull
     @Override
-    public <U> Promise<U> thenComposeDelayedAsync(@NotNull Function<? super V, ? extends Promise<U>> fn, long delay, @NotNull TimeUnit unit) {
+    public <U> Promise<U> thenComposeDelayedAsync(@NotNull Function<? super V, ? extends Promise<U>> fn, long delay,
+                                                  @NotNull TimeUnit unit) {
         NexusPromise<U> promise = empty();
         this.fut.whenComplete((value, t) -> {
             if (t != null) {
@@ -557,7 +579,8 @@ final class NexusPromise<V> implements Promise<V> {
 
     @NotNull
     @Override
-    public Promise<V> exceptionallyDelayedSync(@NotNull Function<Throwable, ? extends V> fn, long delay, @NotNull TimeUnit unit) {
+    public Promise<V> exceptionallyDelayedSync(@NotNull Function<Throwable, ? extends V> fn, long delay,
+                                               @NotNull TimeUnit unit) {
         NexusPromise<V> promise = empty();
         this.fut.whenComplete((value, t) -> {
             if (t == null) {
@@ -585,7 +608,8 @@ final class NexusPromise<V> implements Promise<V> {
 
     @NotNull
     @Override
-    public Promise<V> exceptionallyDelayedAsync(@NotNull Function<Throwable, ? extends V> fn, long delay, @NotNull TimeUnit unit) {
+    public Promise<V> exceptionallyDelayedAsync(@NotNull Function<Throwable, ? extends V> fn, long delay,
+                                                @NotNull TimeUnit unit) {
         NexusPromise<V> promise = empty();
         this.fut.whenComplete((value, t) -> {
             if (t == null) {
@@ -600,6 +624,7 @@ final class NexusPromise<V> implements Promise<V> {
     /* delegating behaviour runnables */
 
     private final class ThrowingSupplyRunnable implements Runnable, Delegate<Callable<V>> {
+
         private final Callable<V> supplier;
 
         private ThrowingSupplyRunnable(Callable<V> supplier) {
@@ -625,6 +650,7 @@ final class NexusPromise<V> implements Promise<V> {
     }
 
     private final class SupplyRunnable implements Runnable, Delegate<Supplier<V>> {
+
         private final Supplier<V> supplier;
 
         private SupplyRunnable(Supplier<V> supplier) {
@@ -650,9 +676,10 @@ final class NexusPromise<V> implements Promise<V> {
     }
 
     private final class ApplyRunnable<U> implements Runnable, Delegate<Function<? super V, ? extends U>> {
-        private final NexusPromise<U> promise;
+
+        private final NexusPromise<U>                  promise;
         private final Function<? super V, ? extends U> function;
-        private final V value;
+        private final V                                value;
 
         private ApplyRunnable(NexusPromise<U> promise, Function<? super V, ? extends U> function, V value) {
             this.promise = promise;
@@ -679,12 +706,14 @@ final class NexusPromise<V> implements Promise<V> {
     }
 
     private final class ComposeRunnable<U> implements Runnable, Delegate<Function<? super V, ? extends Promise<U>>> {
-        private final NexusPromise<U> promise;
-        private final Function<? super V, ? extends Promise<U>> function;
-        private final V value;
-        private final boolean sync;
 
-        private ComposeRunnable(NexusPromise<U> promise, Function<? super V, ? extends Promise<U>> function, V value, boolean sync) {
+        private final NexusPromise<U>                           promise;
+        private final Function<? super V, ? extends Promise<U>> function;
+        private final V                                         value;
+        private final boolean                                   sync;
+
+        private ComposeRunnable(NexusPromise<U> promise, Function<? super V, ? extends Promise<U>> function, V value,
+                                boolean sync) {
             this.promise = promise;
             this.function = function;
             this.value = value;
@@ -719,9 +748,10 @@ final class NexusPromise<V> implements Promise<V> {
     }
 
     private final class ExceptionallyRunnable<U> implements Runnable, Delegate<Function<Throwable, ? extends U>> {
-        private final NexusPromise<U> promise;
+
+        private final NexusPromise<U>                  promise;
         private final Function<Throwable, ? extends U> function;
-        private final Throwable t;
+        private final Throwable                        t;
 
         private ExceptionallyRunnable(NexusPromise<U> promise, Function<Throwable, ? extends U> function, Throwable t) {
             this.promise = promise;

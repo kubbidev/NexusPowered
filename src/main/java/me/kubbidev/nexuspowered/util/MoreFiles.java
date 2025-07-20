@@ -10,6 +10,7 @@ import java.nio.file.Path;
  * Utility class for common file and directory operations.
  */
 public final class MoreFiles {
+
     private MoreFiles() {
     }
 

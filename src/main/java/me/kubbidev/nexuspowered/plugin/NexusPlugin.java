@@ -1,5 +1,7 @@
 package me.kubbidev.nexuspowered.plugin;
 
+import java.io.File;
+import java.util.List;
 import me.kubbidev.nexuspowered.config.KeyedConfiguration;
 import me.kubbidev.nexuspowered.config.adapter.ConfigurationAdapter;
 import me.kubbidev.nexuspowered.config.key.ConfigKey;
@@ -11,9 +13,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.util.List;
 
 public interface NexusPlugin extends Plugin, TerminableConsumer {
 
@@ -39,7 +38,7 @@ public interface NexusPlugin extends Plugin, TerminableConsumer {
      */
     @NotNull
     default <T extends CommandExecutor> T registerCommand(@NotNull T command, @NotNull String... aliases) {
-        return registerCommand(command, null, null, null, aliases);
+        return registerCommand(command, null, null, aliases);
     }
 
     /**
@@ -47,14 +46,14 @@ public interface NexusPlugin extends Plugin, TerminableConsumer {
      *
      * @param command           the command instance
      * @param permission        the command permission
-     * @param permissionMessage the message sent when the sender doesn't the required permission
      * @param description       the command description
      * @param aliases           the command aliases
      * @param <T>               the command executor class type
      * @return the command executor
      */
     @NotNull
-    <T extends CommandExecutor> T registerCommand(@NotNull T command, String permission, String permissionMessage, String description, @NotNull String... aliases);
+    <T extends CommandExecutor> T registerCommand(@NotNull T command, String permission, String description,
+                                                  @NotNull String... aliases);
 
     /**
      * Gets a service provided by the ServiceManager.
@@ -150,7 +149,8 @@ public interface NexusPlugin extends Plugin, TerminableConsumer {
      * @return the keyed config instance
      */
     @NotNull
-    KeyedConfiguration loadKeyedConfig(@NotNull ConfigurationAdapter adapter, @NotNull List<? extends ConfigKey<?>> keys);
+    KeyedConfiguration loadKeyedConfig(@NotNull ConfigurationAdapter adapter,
+                                       @NotNull List<? extends ConfigKey<?>> keys);
 
     /**
      * Gets the plugin jar file instance.

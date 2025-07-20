@@ -4,7 +4,6 @@ import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -21,7 +20,17 @@ public final class SettingMapFactory<S extends Setting<V>, V extends Setting.Sta
     /**
      * The instance used for encoding/decoding setting maps
      */
-    static final BaseEncoding ENCODING = BaseEncoding.base64().omitPadding();
+    static final  BaseEncoding ENCODING = BaseEncoding.base64().omitPadding();
+    final         S[]          settings;
+    final         V[]          states;
+    // the index corresponds to the setting ordinal, the value corresponds to the state ordinal
+    private final byte[]       defaultStates;
+
+    private SettingMapFactory(S[] settings, V[] states, byte[] defaultStates) {
+        this.settings = settings;
+        this.states = states;
+        this.defaultStates = defaultStates;
+    }
 
     /**
      * Creates a new {@link SettingMapFactory} for the given {@link Setting} and {@link Setting.State} enums.
@@ -34,7 +43,8 @@ public final class SettingMapFactory<S extends Setting<V>, V extends Setting.Sta
      * @param <S>          the class type
      * @return a new factory
      */
-    public static <S extends Enum<S> & Setting<V>, V extends Enum<V> & Setting.State> SettingMapFactory<S, V> create(Class<S> settingsEnum, Class<V> statesEnum) {
+    public static <S extends Enum<S> & Setting<V>, V extends Enum<V> & Setting.State> SettingMapFactory<S, V> create(
+        Class<S> settingsEnum, Class<V> statesEnum) {
         Objects.requireNonNull(settingsEnum, "settingsEnum");
         Objects.requireNonNull(statesEnum, "statesEnum");
         return create(settingsEnum.getEnumConstants(), statesEnum.getEnumConstants());
@@ -50,7 +60,8 @@ public final class SettingMapFactory<S extends Setting<V>, V extends Setting.Sta
      * @param <S>      the class type
      * @return a new factory
      */
-    public static <S extends Setting<V>, V extends Setting.State> SettingMapFactory<S, V> create(S[] settings, V[] states) {
+    public static <S extends Setting<V>, V extends Setting.State> SettingMapFactory<S, V> create(S[] settings,
+                                                                                                 V[] states) {
         Objects.requireNonNull(settings, "settings");
         Objects.requireNonNull(states, "states");
 
@@ -70,7 +81,9 @@ public final class SettingMapFactory<S extends Setting<V>, V extends Setting.Sta
         for (int i = 0; i < states.length; i++) {
             V state = states[i];
             if (state.ordinal() != i) {
-                throw new IllegalArgumentException("The ordinal of state " + state + " does not equal its array index. ordinal=" + state.ordinal() + ", index=" + i);
+                throw new IllegalArgumentException(
+                    "The ordinal of state " + state + " does not equal its array index. ordinal=" + state.ordinal()
+                        + ", index=" + i);
             }
         }
 
@@ -80,25 +93,15 @@ public final class SettingMapFactory<S extends Setting<V>, V extends Setting.Sta
 
             // ensure ordinal has been correctly implemented for the settings
             if (setting.ordinal() != i) {
-                throw new IllegalArgumentException("The ordinal of setting " + setting + " does not equal its array index. ordinal=" + setting.ordinal() + ", index=" + i);
+                throw new IllegalArgumentException(
+                    "The ordinal of setting " + setting + " does not equal its array index. ordinal="
+                        + setting.ordinal() + ", index=" + i);
             }
 
             defaultStates[i] = (byte) setting.defaultState().ordinal();
         }
 
         return new SettingMapFactory<>(settings, states, defaultStates);
-    }
-
-    final S[] settings;
-    final V[] states;
-
-    // the index corresponds to the setting ordinal, the value corresponds to the state ordinal
-    private final byte[] defaultStates;
-
-    private SettingMapFactory(S[] settings, V[] states, byte[] defaultStates) {
-        this.settings = settings;
-        this.states = states;
-        this.defaultStates = defaultStates;
     }
 
     /**

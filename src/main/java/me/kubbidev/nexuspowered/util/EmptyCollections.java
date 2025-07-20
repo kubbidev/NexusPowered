@@ -1,19 +1,26 @@
 package me.kubbidev.nexuspowered.util;
 
+import java.util.AbstractList;
+import java.util.AbstractMap;
+import java.util.AbstractSet;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
 
 /**
  * Empty collections that do not throw {@link UnsupportedOperationException} on mutate operations.
  */
 public final class EmptyCollections {
+
+    private static final EmptyList<?>   LIST = new EmptyList<>();
+    private static final EmptySet<?>    SET  = new EmptySet<>();
+    private static final EmptyMap<?, ?> MAP  = new EmptyMap<>();
+
     private EmptyCollections() {
     }
-
-    private static final EmptyList<?> LIST = new EmptyList<>();
-    private static final EmptySet<?> SET = new EmptySet<>();
-    private static final EmptyMap<?, ?> MAP = new EmptyMap<>();
 
     @SuppressWarnings("unchecked")
     public static <E> List<E> list() {
@@ -31,6 +38,7 @@ public final class EmptyCollections {
     }
 
     private static final class EmptyList<E> extends AbstractList<E> {
+
         @Override
         public int size() {
             return 0;
@@ -58,6 +66,7 @@ public final class EmptyCollections {
     }
 
     private static final class EmptySet<E> extends AbstractSet<E> {
+
         @Override
         public @NotNull Iterator<E> iterator() {
             return Collections.emptyIterator();
@@ -75,6 +84,7 @@ public final class EmptyCollections {
     }
 
     private static final class EmptyMap<K, V> extends AbstractMap<K, V> {
+
         @Override
         public @NotNull Set<Entry<K, V>> entrySet() {
             return Collections.emptySet();

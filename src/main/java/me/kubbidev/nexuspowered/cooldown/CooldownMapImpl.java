@@ -1,18 +1,17 @@
 package me.kubbidev.nexuspowered.cooldown;
 
 import com.google.common.collect.ImmutableMap;
-import org.jetbrains.annotations.NotNull;
-
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import org.jetbrains.annotations.NotNull;
 
 class CooldownMapImpl<T> implements CooldownMap<T> {
-    private final Map<T, Cooldown> cache = new ConcurrentHashMap<>();
 
-    @NotNull
-    public Optional<Cooldown> get(@NotNull T key) {
+    private final Map<T, Cooldown> cache = new HashMap<>();
+
+    public @NotNull Optional<Cooldown> get(@NotNull T key) {
         return Optional.ofNullable(this.cache.get(key));
     }
 
@@ -22,8 +21,7 @@ class CooldownMapImpl<T> implements CooldownMap<T> {
         this.cache.put(key, cooldown);
     }
 
-    @NotNull
-    public Map<T, Cooldown> getAll() {
+    public @NotNull Map<T, Cooldown> getAll() {
         return ImmutableMap.copyOf(this.cache);
     }
 }

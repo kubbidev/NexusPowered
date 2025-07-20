@@ -1,22 +1,22 @@
 package me.kubbidev.nexuspowered.util;
 
 import com.google.common.collect.ImmutableList;
-
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 public final class CompletableFutures {
+
     private CompletableFutures() {
     }
 
     public static <T extends CompletableFuture<?>> Collector<T, ImmutableList.Builder<T>, CompletableFuture<Void>> collector() {
         return Collector.of(
-                ImmutableList.Builder::new,
-                ImmutableList.Builder::add,
-                (l, r) -> l.addAll(r.build()),
-                builder -> allOf(builder.build())
+            ImmutableList.Builder::new,
+            ImmutableList.Builder::add,
+            (l, r) -> l.addAll(r.build()),
+            builder -> allOf(builder.build())
         );
     }
 

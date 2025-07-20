@@ -3,8 +3,7 @@ package me.kubbidev.nexuspowered.bucket.partitioning;
 import me.kubbidev.nexuspowered.bucket.Bucket;
 
 /**
- * A {@link PartitioningStrategy} which allocates partitions without reference
- * to the object being added.
+ * A {@link PartitioningStrategy} which allocates partitions without reference to the object being added.
  */
 @FunctionalInterface
 public interface GenericPartitioningStrategy extends PartitioningStrategy<Object> {
@@ -31,7 +30,7 @@ public interface GenericPartitioningStrategy extends PartitioningStrategy<Object
     @Override
     @Deprecated
     default int allocate(Object object, Bucket<Object> bucket) {
-        return allocate(bucket);
+        return this.allocate(bucket);
     }
 
 }

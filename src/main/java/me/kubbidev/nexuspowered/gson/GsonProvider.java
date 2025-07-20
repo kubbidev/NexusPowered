@@ -1,62 +1,59 @@
 package me.kubbidev.nexuspowered.gson;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.io.Reader;
+import java.util.Objects;
 import me.kubbidev.nexuspowered.datatree.DataTree;
 import me.kubbidev.nexuspowered.gson.typeadapters.BukkitSerializableAdapterFactory;
 import me.kubbidev.nexuspowered.gson.typeadapters.GsonSerializableAdapterFactory;
 import me.kubbidev.nexuspowered.gson.typeadapters.JsonElementTreeSerializer;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.Reader;
-import java.util.Objects;
 
 /**
  * Provides static instances of Gson
  */
 public final class GsonProvider {
 
-    private static final Gson NORMAL = new GsonBuilder()
+    private static final Gson NORMAL = GsonComponentSerializer.gson().populator().apply(new GsonBuilder()
+            .registerTypeHierarchyAdapter(DataTree.class, JsonElementTreeSerializer.INSTANCE)
+            .registerTypeAdapterFactory(GsonSerializableAdapterFactory.INSTANCE)
+            .registerTypeAdapterFactory(BukkitSerializableAdapterFactory.INSTANCE)
+            .serializeNulls()
+            .disableHtmlEscaping())
+        .create();
+
+    private static final Gson PRETTY_PRINT = GsonComponentSerializer.gson().populator().apply(new GsonBuilder()
             .registerTypeHierarchyAdapter(DataTree.class, JsonElementTreeSerializer.INSTANCE)
             .registerTypeAdapterFactory(GsonSerializableAdapterFactory.INSTANCE)
             .registerTypeAdapterFactory(BukkitSerializableAdapterFactory.INSTANCE)
             .serializeNulls()
             .disableHtmlEscaping()
-            .create();
+            .setPrettyPrinting())
+        .create();
 
-    private static final Gson PRETTY_PRINT = new GsonBuilder()
-            .registerTypeHierarchyAdapter(DataTree.class, JsonElementTreeSerializer.INSTANCE)
-            .registerTypeAdapterFactory(GsonSerializableAdapterFactory.INSTANCE)
-            .registerTypeAdapterFactory(BukkitSerializableAdapterFactory.INSTANCE)
-            .serializeNulls()
-            .disableHtmlEscaping()
-            .setPrettyPrinting()
-            .create();
-
-    private static final JsonParser NORMAL_PARSER = new JsonParser();
-
-    @NotNull
-    public static JsonParser parser() {
-        return NORMAL_PARSER;
+    private GsonProvider() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 
-    @NotNull
-    public static Gson normal() {
+    public static @NotNull Gson normal() {
         return NORMAL;
     }
 
-    @NotNull
-    public static Gson prettyPrinting() {
+    public static @NotNull Gson prettyPrinting() {
         return PRETTY_PRINT;
     }
 
-    @NotNull
-    public static JsonObject readObject(@NotNull Reader reader) {
-        return NORMAL_PARSER.parse(reader).getAsJsonObject();
+    public static @NotNull JsonObject readObject(@NotNull Reader reader) {
+        return JsonParser.parseReader(reader).getAsJsonObject();
     }
 
-    @NotNull
-    public static JsonObject readObject(@NotNull String s) {
-        return NORMAL_PARSER.parse(s).getAsJsonObject();
+    public static @NotNull JsonObject readObject(@NotNull String s) {
+        return JsonParser.parseString(s).getAsJsonObject();
     }
 
     public static void writeObject(@NotNull Appendable writer, @NotNull JsonObject object) {
@@ -75,18 +72,12 @@ public final class GsonProvider {
         prettyPrinting().toJson(element, writer);
     }
 
-    @NotNull
-    public static String toString(@NotNull JsonElement element) {
+    public static @NotNull String toString(@NotNull JsonElement element) {
         return Objects.requireNonNull(normal().toJson(element));
     }
 
-    @NotNull
-    public static String toStringPretty(@NotNull JsonElement element) {
+    public static @NotNull String toStringPretty(@NotNull JsonElement element) {
         return Objects.requireNonNull(prettyPrinting().toJson(element));
-    }
-
-    private GsonProvider() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 
 }

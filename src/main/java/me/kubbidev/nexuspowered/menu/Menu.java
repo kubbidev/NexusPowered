@@ -1,9 +1,18 @@
 package me.kubbidev.nexuspowered.menu;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 import me.kubbidev.nexuspowered.Events;
 import me.kubbidev.nexuspowered.Schedulers;
 import me.kubbidev.nexuspowered.terminable.TerminableConsumer;
 import me.kubbidev.nexuspowered.terminable.composite.CompositeTerminable;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -19,35 +28,25 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.IntStream;
-
-@NotNullByDefault
 public class Menu implements InventoryHolder, TerminableConsumer {
 
-    private final Map<Integer, Consumer<InventoryClickEvent>> itemHandlers = new HashMap<>();
-    private final List<Consumer<InventoryOpenEvent>> openHandlers = new ArrayList<>();
-    private final List<Consumer<InventoryCloseEvent>> closeHandlers = new ArrayList<>();
-    private final List<Consumer<InventoryClickEvent>> clickHandlers = new ArrayList<>();
+    private final Map<Integer, Consumer<InventoryClickEvent>> itemHandlers  = new HashMap<>();
+    private final List<Consumer<InventoryOpenEvent>>          openHandlers  = new ArrayList<>();
+    private final List<Consumer<InventoryCloseEvent>>         closeHandlers = new ArrayList<>();
+    private final List<Consumer<InventoryClickEvent>>         clickHandlers = new ArrayList<>();
 
-    private final Inventory inventory;
-
-    // A function used to build a fallback page when this page is closed.
-    @Nullable
-    private Function<Player, Menu> fallbackMenu = null;
-
-    // This remains true until after #redraw is called for the first time
-    private boolean firstDraw = true;
-    private boolean valid = false;
-
+    private final Inventory              inventory;
     // Callbacks to be ran when the GUI is invalidated (closed). useful for cancelling tick tasks
     // Also contains the event handlers bound to this GUI, currently listening to events
-    private final CompositeTerminable compositeTerminable = CompositeTerminable.create();
+    private final CompositeTerminable    compositeTerminable = CompositeTerminable.create();
+    // A function used to build a fallback page when this page is closed.
+    @Nullable
+    private       Function<Player, Menu> fallbackMenu        = null;
+    // This remains true until after #redraw is called for the first time
+    private       boolean                firstDraw           = true;
+    private       boolean                valid               = false;
 
     /**
      * Create a new FastInv with a custom size.
@@ -64,7 +63,7 @@ public class Menu implements InventoryHolder, TerminableConsumer {
      * @param size  The size of the inventory.
      * @param title The title (name) of the inventory.
      */
-    public Menu(int size, String title) {
+    public Menu(int size, Component title) {
         this(owner -> Bukkit.createInventory(owner, size, title));
     }
 
@@ -83,7 +82,7 @@ public class Menu implements InventoryHolder, TerminableConsumer {
      * @param type  The type of the inventory.
      * @param title The title of the inventory.
      */
-    public Menu(InventoryType type, String title) {
+    public Menu(InventoryType type, Component title) {
         this(owner -> Bukkit.createInventory(owner, type, title));
     }
 
@@ -123,7 +122,7 @@ public class Menu implements InventoryHolder, TerminableConsumer {
      * @param item The ItemStack to add
      */
     public void addItem(ItemStack item) {
-        addItem(item, null);
+        this.addItem(item, null);
     }
 
     /**
@@ -132,10 +131,10 @@ public class Menu implements InventoryHolder, TerminableConsumer {
      * @param item    The item to add.
      * @param handler The click handler for the item.
      */
-    public void addItem(ItemStack item, Consumer<InventoryClickEvent> handler) {
+    public void addItem(ItemStack item, @Nullable Consumer<InventoryClickEvent> handler) {
         int slot = this.inventory.firstEmpty();
         if (slot >= 0) {
-            setItem(slot, item, handler);
+            this.setItem(slot, item, handler);
         }
     }
 
@@ -146,7 +145,7 @@ public class Menu implements InventoryHolder, TerminableConsumer {
      * @param item The item to add.
      */
     public void setItem(int slot, ItemStack item) {
-        setItem(slot, item, null);
+        this.setItem(slot, item, null);
     }
 
     /**
@@ -156,7 +155,7 @@ public class Menu implements InventoryHolder, TerminableConsumer {
      * @param item    The item to add.
      * @param handler The click handler for the item
      */
-    public void setItem(int slot, ItemStack item, Consumer<InventoryClickEvent> handler) {
+    public void setItem(int slot, ItemStack item, @Nullable Consumer<InventoryClickEvent> handler) {
         this.inventory.setItem(slot, item);
 
         if (handler != null) {
@@ -174,7 +173,7 @@ public class Menu implements InventoryHolder, TerminableConsumer {
      * @param item     The item to add.
      */
     public void setItems(int slotFrom, int slotTo, ItemStack item) {
-        setItems(slotFrom, slotTo, item, null);
+        this.setItems(slotFrom, slotTo, item, null);
     }
 
     /**
@@ -185,9 +184,9 @@ public class Menu implements InventoryHolder, TerminableConsumer {
      * @param item     The item to add.
      * @param handler  The click handler for the item
      */
-    public void setItems(int slotFrom, int slotTo, ItemStack item, Consumer<InventoryClickEvent> handler) {
+    public void setItems(int slotFrom, int slotTo, ItemStack item, @Nullable Consumer<InventoryClickEvent> handler) {
         for (int i = slotFrom; i <= slotTo; i++) {
-            setItem(i, item, handler);
+            this.setItem(i, item, handler);
         }
     }
 
@@ -198,7 +197,7 @@ public class Menu implements InventoryHolder, TerminableConsumer {
      * @param item  The item to add.
      */
     public void setItems(int[] slots, ItemStack item) {
-        setItems(slots, item, null);
+        this.setItems(slots, item, null);
     }
 
     /**
@@ -208,9 +207,9 @@ public class Menu implements InventoryHolder, TerminableConsumer {
      * @param item    The item to add.
      * @param handler The click handler for the item
      */
-    public void setItems(int[] slots, ItemStack item, Consumer<InventoryClickEvent> handler) {
+    public void setItems(int[] slots, ItemStack item, @Nullable Consumer<InventoryClickEvent> handler) {
         for (int slot : slots) {
-            setItem(slot, item, handler);
+            this.setItem(slot, item, handler);
         }
     }
 
@@ -231,7 +230,7 @@ public class Menu implements InventoryHolder, TerminableConsumer {
      */
     public void removeItems(int... slots) {
         for (int slot : slots) {
-            removeItem(slot);
+            this.removeItem(slot);
         }
     }
 
@@ -284,7 +283,7 @@ public class Menu implements InventoryHolder, TerminableConsumer {
      * @param player The player to open the menu.
      */
     public void open(Player player) {
-        handleOpen(player);
+        this.handleOpen(player);
     }
 
     /**
@@ -294,8 +293,8 @@ public class Menu implements InventoryHolder, TerminableConsumer {
      */
     public int[] getBorders() {
         int size = this.inventory.getSize();
-        return IntStream.range(0, size).filter(i -> size < 27 || i < 9
-                || i % 9 == 0 || (i - 8) % 9 == 0 || i > size - 9).toArray();
+        return IntStream.range(0, size)
+            .filter(i -> size < 27 || i < 9 || i % 9 == 0 || (i - 8) % 9 == 0 || i > size - 9).toArray();
     }
 
     /**
@@ -305,9 +304,9 @@ public class Menu implements InventoryHolder, TerminableConsumer {
      */
     public int[] getCorners() {
         int size = this.inventory.getSize();
-        return IntStream.range(0, size).filter(i -> i < 2 || (i > 6 && i < 10)
-                || i == 17 || i == size - 18
-                || (i > size - 11 && i < size - 7) || i > size - 3).toArray();
+        return IntStream.range(0, size).filter(
+            i -> i < 2 || (i > 6 && i < 10) || i == 17 || i == size - 18 || (i > size - 11 && i < size - 7)
+                || i > size - 3).toArray();
     }
 
     public boolean isFirstDraw() {
@@ -329,7 +328,7 @@ public class Menu implements InventoryHolder, TerminableConsumer {
      * @return The Bukkit inventory.
      */
     @Override
-    public Inventory getInventory() {
+    public @NotNull Inventory getInventory() {
         return this.inventory;
     }
 
@@ -339,20 +338,20 @@ public class Menu implements InventoryHolder, TerminableConsumer {
     }
 
     void handleOpen(InventoryOpenEvent e) {
-        onOpen(e);
+        this.onOpen(e);
 
         this.openHandlers.forEach(c -> c.accept(e));
     }
 
     void handleClose(InventoryCloseEvent e) {
-        onClose(e);
+        this.onClose(e);
 
         this.closeHandlers.forEach(c -> c.accept(e));
         invalidate();
     }
 
     void handleClick(InventoryClickEvent e) {
-        onClick(e);
+        this.onClick(e);
 
         this.clickHandlers.forEach(c -> c.accept(e));
 
@@ -377,7 +376,7 @@ public class Menu implements InventoryHolder, TerminableConsumer {
         }
 
         this.firstDraw = false;
-        startListening(viewer);
+        this.startListening(viewer);
         viewer.openInventory(this.inventory);
         this.valid = true;
     }
@@ -389,7 +388,7 @@ public class Menu implements InventoryHolder, TerminableConsumer {
         this.compositeTerminable.closeAndReportException();
 
         // clear all items from the Menu, just in case the menu didn't close properly.
-        clearItems();
+        this.clearItems();
     }
 
     /**
@@ -397,81 +396,82 @@ public class Menu implements InventoryHolder, TerminableConsumer {
      */
     private void startListening(Player viewer) {
         Events.merge(Player.class)
-                .bindEvent(PlayerDeathEvent.class, PlayerDeathEvent::getEntity)
-                .bindEvent(PlayerQuitEvent.class, PlayerEvent::getPlayer)
-                .bindEvent(PlayerChangedWorldEvent.class, PlayerEvent::getPlayer)
-                .bindEvent(PlayerTeleportEvent.class, PlayerEvent::getPlayer)
-                .filter(p -> p.equals(viewer))
-                .filter(p -> isValid())
-                .handler(p -> invalidate())
-                .bindWith(this);
+            .bindEvent(PlayerDeathEvent.class, PlayerDeathEvent::getEntity)
+            .bindEvent(PlayerQuitEvent.class, PlayerEvent::getPlayer)
+            .bindEvent(PlayerChangedWorldEvent.class, PlayerEvent::getPlayer)
+            .bindEvent(PlayerTeleportEvent.class, PlayerEvent::getPlayer)
+            .filter(p -> p.equals(viewer))
+            .filter(p -> isValid())
+            .handler(p -> invalidate())
+            .bindWith(this);
 
         Events.subscribe(InventoryClickEvent.class)
-                .filter(e -> e.getWhoClicked().equals(viewer))
-                .handler(e -> {
-                    boolean wasCancelled = e.isCancelled();
-                    e.setCancelled(true);
+            .filter(e -> e.getWhoClicked().equals(viewer))
+            .handler(e -> {
+                boolean wasCancelled = e.isCancelled();
+                e.setCancelled(true);
 
-                    if (!isValid()) {
-                        viewer.closeInventory();
-                        return;
-                    }
+                if (!isValid()) {
+                    viewer.closeInventory();
+                    return;
+                }
 
-                    if (!e.getInventory().equals(this.inventory)) {
-                        return;
-                    }
+                if (!e.getInventory().equals(this.inventory)) {
+                    return;
+                }
 
-                    handleClick(e);
+                this.handleClick(e);
 
-                    // This prevents un-canceling the event if another plugin canceled it before
-                    if (!wasCancelled && !e.isCancelled()) {
-                        e.setCancelled(false);
-                    }
-                })
-                .bindWith(this);
-
+                // This prevents un-canceling the event if another plugin canceled it before
+                if (!wasCancelled && !e.isCancelled()) {
+                    e.setCancelled(false);
+                }
+            })
+            .bindWith(this);
 
         Events.subscribe(InventoryOpenEvent.class)
-                .filter(e -> e.getPlayer().equals(viewer))
-                .handler(e -> {
-                    if (!e.getInventory().equals(this.inventory) && isValid()) {
-                        invalidate();
-                    } else {
-                        handleOpen(e);
-                    }
-                })
-                .bindWith(this);
+            .filter(e -> e.getPlayer().equals(viewer))
+            .handler(e -> {
+                if (!e.getInventory().equals(this.inventory) && isValid()) {
+                    this.invalidate();
+                } else {
+                    this.handleOpen(e);
+                }
+            })
+            .bindWith(this);
 
         Events.subscribe(InventoryCloseEvent.class)
-                .filter(e -> e.getPlayer().equals(viewer))
-                .filter(e -> isValid())
-                .handler(e -> {
-                    handleClose(e);
+            .filter(e -> e.getPlayer().equals(viewer))
+            .filter(e -> isValid())
+            .handler(e -> {
+                this.handleClose(e);
 
-                    if (!e.getInventory().equals(this.inventory)) {
+                if (!e.getInventory().equals(this.inventory)) {
+                    return;
+                }
+
+                Function<Player, Menu> fallback = this.fallbackMenu;
+                if (fallback == null) {
+                    return;
+                }
+
+                // Open at a delay
+                Schedulers.sync().runLater(() -> {
+                    if (!viewer.isOnline()) {
                         return;
                     }
-
-                    Function<Player, Menu> fallback = this.fallbackMenu;
-                    if (fallback == null) {
-                        return;
+                    Menu fallbackMenu = fallback.apply(viewer);
+                    if (fallbackMenu == null) {
+                        throw new IllegalStateException("Fallback function " + fallback + " returned null");
                     }
-
-                    // Open at a delay
-                    Schedulers.sync().runLater(() -> {
-                        if (!viewer.isOnline()) {
-                            return;
-                        }
-                        Menu fallbackMenu = fallback.apply(viewer);
-                        if (fallbackMenu == null) {
-                            throw new IllegalStateException("Fallback function " + fallback + " returned null");
-                        }
-                        if (fallbackMenu.valid) {
-                            throw new IllegalStateException("Fallback function " + fallback + " produced a Menu " + fallbackMenu + " which is already open");
-                        }
-                        fallbackMenu.open(viewer);
-                    }, 1L);
-                })
-                .bindWith(this);
+                    if (fallbackMenu.valid) {
+                        throw new IllegalStateException(
+                            "Fallback function " + fallback + " produced a Menu " + fallbackMenu
+                                + " which is already open");
+                    }
+                    fallbackMenu.open(viewer);
+                }, 1L);
+            })
+            .bindWith(this);
     }
 }

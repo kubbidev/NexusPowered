@@ -10,6 +10,7 @@ import java.util.Map;
  * @param <S> the setting type
  */
 public final class SettingMap<S extends Setting<V>, V extends Setting.State> {
+
     private final SettingMapFactory<S, V> factory;
 
     // the index corresponds to the setting ordinal, the value corresponds to the state ordinal
@@ -106,12 +107,11 @@ public final class SettingMap<S extends Setting<V>, V extends Setting.State> {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof SettingMap<?, ?>)) {
+        if (!(o instanceof SettingMap<?, ?> other)) {
             return false;
         }
-        SettingMap<?, ?> other = (SettingMap<?, ?>) o;
         return this.factory.equals(other.factory) &&
-                Arrays.equals(this.states, other.states);
+            Arrays.equals(this.states, other.states);
     }
 
     @Override

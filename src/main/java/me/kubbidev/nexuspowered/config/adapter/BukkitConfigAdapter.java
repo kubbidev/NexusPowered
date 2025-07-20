@@ -1,23 +1,23 @@
 package me.kubbidev.nexuspowered.config.adapter;
 
-import me.kubbidev.nexuspowered.plugin.NexusPlugin;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import me.kubbidev.nexuspowered.plugin.NexusPlugin;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 public class BukkitConfigAdapter implements ConfigurationAdapter {
-    private final NexusPlugin plugin;
-    private final File file;
-    private YamlConfiguration configuration;
+
+    private final NexusPlugin       plugin;
+    private final File              file;
+    private       YamlConfiguration configuration;
 
     public BukkitConfigAdapter(NexusPlugin plugin, File file) {
         this.plugin = plugin;
         this.file = file;
-        reload();
+        this.reload();
     }
 
     @Override

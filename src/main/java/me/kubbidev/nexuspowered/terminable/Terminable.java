@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
  */
 @FunctionalInterface
 public interface Terminable extends AutoCloseable {
+
     Terminable EMPTY = () -> {
     };
 

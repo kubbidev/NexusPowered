@@ -1,22 +1,23 @@
 package me.kubbidev.nexuspowered.config.key;
 
 import com.google.common.collect.ImmutableMap;
-import me.kubbidev.nexuspowered.config.adapter.ConfigurationAdapter;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+import me.kubbidev.nexuspowered.config.adapter.ConfigurationAdapter;
 
 public interface ConfigKeyFactory<T> {
 
-    ConfigKeyFactory<Boolean> BOOLEAN = ConfigurationAdapter::getBoolean;
-    ConfigKeyFactory<Integer> INTEGER = ConfigurationAdapter::getInteger;
-    ConfigKeyFactory<Double> DOUBLE = ConfigurationAdapter::getDouble;
-    ConfigKeyFactory<String> STRING = ConfigurationAdapter::getString;
-    ConfigKeyFactory<List<String>> STRING_LIST = ConfigurationAdapter::getStringList;
-    ConfigKeyFactory<String> LOWERCASE_STRING = (adapter, path, def) -> adapter.getString(path, def).toLowerCase(Locale.ROOT);
-    ConfigKeyFactory<Map<String, String>> STRING_MAP = (config, path, def) -> ImmutableMap.copyOf(config.getStringMap(path, ImmutableMap.of()));
+    ConfigKeyFactory<Boolean>             BOOLEAN          = ConfigurationAdapter::getBoolean;
+    ConfigKeyFactory<Integer>             INTEGER          = ConfigurationAdapter::getInteger;
+    ConfigKeyFactory<Double>              DOUBLE           = ConfigurationAdapter::getDouble;
+    ConfigKeyFactory<String>              STRING           = ConfigurationAdapter::getString;
+    ConfigKeyFactory<List<String>>        STRING_LIST      = ConfigurationAdapter::getStringList;
+    ConfigKeyFactory<String>              LOWERCASE_STRING = (adapter, path, def) -> adapter.getString(path, def)
+        .toLowerCase(Locale.ROOT);
+    ConfigKeyFactory<Map<String, String>> STRING_MAP       = (adapter, path, def) -> ImmutableMap.copyOf(
+        adapter.getStringMap(path, ImmutableMap.of()));
 
     static <T> SimpleConfigKey<T> key(Function<ConfigurationAdapter, T> function) {
         return new SimpleConfigKey<>(function);
@@ -59,8 +60,8 @@ public interface ConfigKeyFactory<T> {
      * Extracts the value from the config.
      *
      * @param config the config
-     * @param path the path where the value is
-     * @param def the default value
+     * @param path   the path where the value is
+     * @param def    the default value
      * @return the value
      */
     T getValue(ConfigurationAdapter config, String path, T def);
@@ -71,9 +72,10 @@ public interface ConfigKeyFactory<T> {
      * @param <T> the value type
      */
     class Bound<T> implements Function<ConfigurationAdapter, T> {
+
         private final ConfigKeyFactory<T> factory;
-        private final String path;
-        private final T def;
+        private final String              path;
+        private final T                   def;
 
         Bound(ConfigKeyFactory<T> factory, String path, T def) {
             this.factory = factory;

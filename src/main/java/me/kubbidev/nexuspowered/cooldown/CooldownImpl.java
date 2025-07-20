@@ -1,21 +1,19 @@
 package me.kubbidev.nexuspowered.cooldown;
 
 import com.google.gson.JsonElement;
-import me.kubbidev.nexuspowered.gson.JsonBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.NotNullByDefault;
-
 import java.util.OptionalLong;
 import java.util.concurrent.TimeUnit;
+import me.kubbidev.nexuspowered.gson.GsonBuilder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 
 @NotNullByDefault
 class CooldownImpl implements Cooldown {
 
-    // when the last test occurred.
-    private long lastTested;
-
     // the cooldown duration in millis
     private final long timeout;
+    // when the last test occurred.
+    private       long lastTested;
 
     CooldownImpl(long amount, TimeUnit unit) {
         this.timeout = unit.toMillis(amount);
@@ -46,12 +44,11 @@ class CooldownImpl implements Cooldown {
         return new CooldownImpl(this.timeout, TimeUnit.MILLISECONDS);
     }
 
-    @NotNull
     @Override
-    public JsonElement serialize() {
-        return JsonBuilder.object()
-                .add("lastTested", lastTested)
-                .add("timeout", timeout)
-                .build();
+    public @NotNull JsonElement serialize() {
+        return GsonBuilder.object()
+            .add("lastTested", lastTested)
+            .add("timeout", timeout)
+            .build();
     }
 }

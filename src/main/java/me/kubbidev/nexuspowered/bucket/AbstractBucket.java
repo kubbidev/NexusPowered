@@ -1,11 +1,14 @@
 package me.kubbidev.nexuspowered.bucket;
 
 import com.google.common.collect.ImmutableList;
+import java.util.AbstractSet;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
 import me.kubbidev.nexuspowered.bucket.partitioning.PartitioningStrategy;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
-import java.util.function.Consumer;
 
 /**
  * An abstract implementation of {@link Bucket}.
@@ -17,32 +20,27 @@ public abstract class AbstractBucket<E> extends AbstractSet<E> implements Bucket
     /**
      * The function used to partition objects
      */
-    protected final PartitioningStrategy<E> strategy;
-
+    protected final PartitioningStrategy<E>           strategy;
     /**
      * The number of partitions in this bucket
      */
-    protected final int size;
-
+    protected final int                               size;
     /**
      * The content in the bucket
      */
-    protected final Set<E> content;
-
+    protected final Set<E>                            content;
     /**
      * The partitions in the bucket
      */
-    protected final ImmutableList<Set<E>> partitions;
-
+    protected final ImmutableList<Set<E>>             partitions;
     /**
      * A view of the {@link #partitions} list - with all contained values wrapped by {@link SetView}.
      */
     protected final ImmutableList<BucketPartition<E>> partitionView;
-
     /**
      * A cycle of the partitions in this bucket
      */
-    private final Cycle<BucketPartition<E>> partitionCycle;
+    private final   Cycle<BucketPartition<E>>         partitionCycle;
 
     protected AbstractBucket(int size, PartitioningStrategy<E> strategy) {
         this.strategy = strategy;
@@ -78,21 +76,18 @@ public abstract class AbstractBucket<E> extends AbstractSet<E> implements Bucket
         return this.size;
     }
 
-    @NotNull
     @Override
-    public BucketPartition<E> getPartition(int index) {
+    public @NotNull BucketPartition<E> getPartition(int index) {
         return this.partitionView.get(index);
     }
 
-    @NotNull
     @Override
-    public List<BucketPartition<E>> getPartitions() {
+    public @NotNull List<BucketPartition<E>> getPartitions() {
         return this.partitionView;
     }
 
-    @NotNull
     @Override
-    public Cycle<BucketPartition<E>> asCycle() {
+    public @NotNull Cycle<BucketPartition<E>> asCycle() {
         return this.partitionCycle;
     }
 
@@ -131,9 +126,8 @@ public abstract class AbstractBucket<E> extends AbstractSet<E> implements Bucket
         this.content.clear();
     }
 
-    @NotNull
     @Override
-    public Iterator<E> iterator() {
+    public @NotNull Iterator<E> iterator() {
         return new BucketIterator();
     }
 
@@ -158,12 +152,13 @@ public abstract class AbstractBucket<E> extends AbstractSet<E> implements Bucket
     /**
      * Class used to wrap the result of {@link Bucket}'s {@link #iterator()} method.
      * <p>
-     * This wrapping overrides the #remove method, and ensures that when removed,
-     * elements are also removed from their backing partition.
+     * This wrapping overrides the #remove method, and ensures that when removed, elements are also removed from their
+     * backing partition.
      */
     private final class BucketIterator implements Iterator<E> {
+
         private final Iterator<E> delegate = AbstractBucket.this.content.iterator();
-        private E current;
+        private       E           current;
 
         @Override
         public boolean hasNext() {
@@ -201,12 +196,12 @@ public abstract class AbstractBucket<E> extends AbstractSet<E> implements Bucket
     /**
      * Class used to wrap the backing sets returned by {@link #getPartition(int)}.
      * <p>
-     * This wrapping prevents add operations, and propagates calls with remove objects
-     * back to the parent bucket.
+     * This wrapping prevents add operations, and propagates calls with remove objects back to the parent bucket.
      */
     private final class SetView extends AbstractSet<E> implements BucketPartition<E> {
+
         private final Set<E> backing;
-        private final int index;
+        private final int    index;
 
         private SetView(Set<E> backing, int index) {
             this.backing = backing;
@@ -281,12 +276,12 @@ public abstract class AbstractBucket<E> extends AbstractSet<E> implements Bucket
     }
 
     /**
-     * Wrapping around {@link SetView}'s iterators, to propagate calls to the
-     * #remove method to the parent bucket.
+     * Wrapping around {@link SetView}'s iterators, to propagate calls to the #remove method to the parent bucket.
      */
     private final class SetViewIterator implements Iterator<E> {
+
         private final Iterator<E> delegate;
-        private E current;
+        private       E           current;
 
         private SetViewIterator(Iterator<E> delegate) {
             this.delegate = delegate;

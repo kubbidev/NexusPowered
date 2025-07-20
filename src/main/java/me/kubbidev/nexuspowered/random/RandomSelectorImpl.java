@@ -1,13 +1,20 @@
 package me.kubbidev.nexuspowered.random;
 
 import com.google.common.base.Preconditions;
-
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Stream;
 
 final class RandomSelectorImpl<E> implements RandomSelector<E> {
+
+    private final E[]           elements;
+    private final IndexSelector selection;
+
+    private RandomSelectorImpl(E[] elements, IndexSelector selection) {
+        this.elements = elements;
+        this.selection = selection;
+    }
 
     @SuppressWarnings("unchecked")
     static <E> RandomSelector<E> uniform(Collection<E> elements) {
@@ -48,14 +55,6 @@ final class RandomSelectorImpl<E> implements RandomSelector<E> {
         return new RandomSelectorImpl<>(elementArray, new WeightedSelector(probabilities));
     }
 
-    private final E[] elements;
-    private final IndexSelector selection;
-
-    private RandomSelectorImpl(E[] elements, IndexSelector selection) {
-        this.elements = elements;
-        this.selection = selection;
-    }
-
     @Override
     public E pick(Random random) {
         return this.elements[this.selection.pickIndex(random)];
@@ -67,18 +66,13 @@ final class RandomSelectorImpl<E> implements RandomSelector<E> {
         return Stream.generate(() -> pick(random));
     }
 
+    @FunctionalInterface
     private interface IndexSelector {
 
         int pickIndex(Random random);
-
     }
 
-    private static class BoundedRandomSelector implements IndexSelector {
-        private final int bound;
-
-        public BoundedRandomSelector(int bound) {
-            this.bound = bound;
-        }
+    private record BoundedRandomSelector(int bound) implements IndexSelector {
 
         @Override
         public int pickIndex(Random random) {
@@ -94,7 +88,7 @@ final class RandomSelectorImpl<E> implements RandomSelector<E> {
     private static final class WeightedSelector implements IndexSelector {
 
         private final double[] probabilities;
-        private final int[] alias;
+        private final int[]    alias;
 
         WeightedSelector(double[] probabilities) {
             int size = probabilities.length;

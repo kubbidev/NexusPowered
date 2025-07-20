@@ -1,9 +1,8 @@
 package me.kubbidev.nexuspowered.time;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import org.jetbrains.annotations.NotNull;
 
 public enum DurationFormatter {
     LONG {
@@ -22,13 +21,13 @@ public enum DurationFormatter {
     CONCISE;
 
     private final Unit[] units = new Unit[]{
-            new Unit(ChronoUnit.YEARS),
-            new Unit(ChronoUnit.MONTHS),
-            new Unit(ChronoUnit.WEEKS),
-            new Unit(ChronoUnit.DAYS),
-            new Unit(ChronoUnit.HOURS),
-            new Unit(ChronoUnit.MINUTES),
-            new Unit(ChronoUnit.SECONDS)
+        new Unit(ChronoUnit.YEARS),
+        new Unit(ChronoUnit.MONTHS),
+        new Unit(ChronoUnit.WEEKS),
+        new Unit(ChronoUnit.DAYS),
+        new Unit(ChronoUnit.HOURS),
+        new Unit(ChronoUnit.MINUTES),
+        new Unit(ChronoUnit.SECONDS)
     };
 
     private final int accuracy;
@@ -58,7 +57,7 @@ public enum DurationFormatter {
             }
         }
 
-        if (output.length() == 0) {
+        if (output.isEmpty()) {
             return '0' + this.units[this.units.length - 1].plural;
         }
         return output.substring(1);
@@ -73,7 +72,8 @@ public enum DurationFormatter {
     }
 
     private final class Unit {
-        private final long seconds;
+
+        private final long   seconds;
         private final String plural;
         private final String single;
 

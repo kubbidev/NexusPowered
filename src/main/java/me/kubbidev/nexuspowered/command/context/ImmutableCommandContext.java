@@ -1,17 +1,17 @@
 package me.kubbidev.nexuspowered.command.context;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import me.kubbidev.nexuspowered.command.argument.Argument;
 import me.kubbidev.nexuspowered.command.argument.SimpleArgument;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 public class ImmutableCommandContext<T extends CommandSender> implements CommandContext<T> {
-    private final T sender;
-    private final String label;
+
+    private final T                     sender;
+    private final String                label;
     private final ImmutableList<String> args;
     private final ImmutableList<String> aliases;
 
@@ -37,9 +37,8 @@ public class ImmutableCommandContext<T extends CommandSender> implements Command
         return new SimpleArgument(index, rawArg(index));
     }
 
-    @Nullable
     @Override
-    public String rawArg(int index) {
+    public @Nullable String rawArg(int index) {
         if (index < 0 || index >= this.args.size()) {
             return null;
         }

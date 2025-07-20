@@ -9,20 +9,29 @@ import java.time.Instant;
 import java.util.Optional;
 
 /**
- * Utility class for handling storage file i/o.
- * Saves backups of the data files on each save.
+ * Utility class for handling storage file i/o. Saves backups of the data files on each save.
  *
  * @param <T> the type being stored
  */
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public abstract class FileStorageHandler<T> {
+
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
+    private final        String           fileName;
+    private final        String           fileExtension;
+    private final        File             dataFolder;
+
+    public FileStorageHandler(String fileName, String fileExtension, File dataFolder) {
+        this.fileName = fileName;
+        this.fileExtension = fileExtension;
+        this.dataFolder = dataFolder;
+    }
 
     public static <T> FileStorageHandler<T> build(
-            String fileName, String fileExtension, File dataFolder,
-            LoadFile<T> loadFile,
-            SaveFile<T> saveFile) {
-        return new FileStorageHandler<T>(fileName, fileExtension, dataFolder) {
+        String fileName, String fileExtension, File dataFolder,
+        LoadFile<T> loadFile,
+        SaveFile<T> saveFile) {
+        return new FileStorageHandler<>(fileName, fileExtension, dataFolder) {
 
             @Override
             protected T readFromFile(Path path) {
@@ -36,26 +45,6 @@ public abstract class FileStorageHandler<T> {
         };
     }
 
-    @FunctionalInterface
-    public interface LoadFile<T> {
-        T loadFrom(Path path);
-    }
-
-    @FunctionalInterface
-    public interface SaveFile<T> {
-        void saveTo(Path path, T t);
-    }
-
-    private final String fileName;
-    private final String fileExtension;
-    private final File dataFolder;
-
-    public FileStorageHandler(String fileName, String fileExtension, File dataFolder) {
-        this.fileName = fileName;
-        this.fileExtension = fileExtension;
-        this.dataFolder = dataFolder;
-    }
-
     protected abstract T readFromFile(Path path);
 
     protected abstract void saveToFile(Path path, T t);
@@ -67,12 +56,14 @@ public abstract class FileStorageHandler<T> {
     public Optional<T> load() {
         File file = resolveFile();
         return file.exists()
-                ? Optional.ofNullable(readFromFile(file.toPath()))
-                : Optional.empty();
+            ? Optional.ofNullable(readFromFile(file.toPath()))
+            : Optional.empty();
     }
 
     public void save(T data) throws IOException {
-        if (!this.dataFolder.mkdirs()) return;
+        if (!this.dataFolder.mkdirs()) {
+            return;
+        }
 
         File file = resolveFile();
         if (file.exists()) {
@@ -84,7 +75,9 @@ public abstract class FileStorageHandler<T> {
     }
 
     public void saveAndBackup(T data) throws IOException {
-        if (!this.dataFolder.mkdirs()) return;
+        if (!this.dataFolder.mkdirs()) {
+            return;
+        }
 
         File file = resolveFile();
         if (file.exists()) {
@@ -108,5 +101,17 @@ public abstract class FileStorageHandler<T> {
 
     protected String getBackupFileName() {
         return this.fileName + "-" + DATE_FORMAT.format(Instant.now()) + this.fileExtension;
+    }
+
+    @FunctionalInterface
+    public interface LoadFile<T> {
+
+        T loadFrom(Path path);
+    }
+
+    @FunctionalInterface
+    public interface SaveFile<T> {
+
+        void saveTo(Path path, T t);
     }
 }

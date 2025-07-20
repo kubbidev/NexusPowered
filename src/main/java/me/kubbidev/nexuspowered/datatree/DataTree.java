@@ -3,10 +3,9 @@ package me.kubbidev.nexuspowered.datatree;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Map;
 import java.util.stream.Stream;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An easier way of parsing in-memory data structures.
@@ -43,8 +42,7 @@ public interface DataTree {
      * @param element the element
      * @return a tree
      */
-    @NotNull
-    static GsonDataTree from(@NotNull JsonElement element) {
+    static @NotNull GsonDataTree from(@NotNull JsonElement element) {
         return new GsonDataTree(element);
     }
 
@@ -57,48 +55,42 @@ public interface DataTree {
      * @param path the path
      * @return the resultant tree node
      */
-    @NotNull
-    DataTree resolve(@NotNull Object... path);
+    @NotNull DataTree resolve(@NotNull Object... path);
 
     /**
      * Gets a stream of the member nodes, as if this tree was a {@link JsonObject}.
      *
      * @return the members
      */
-    @NotNull
-    Stream<? extends Map.Entry<String, ? extends DataTree>> asObject();
+    @NotNull Stream<? extends Map.Entry<String, ? extends DataTree>> asObject();
 
     /**
      * Gets a stream of the member nodes, as if this tree was a {@link JsonArray}.
      *
      * @return the members
      */
-    @NotNull
-    Stream<? extends DataTree> asArray();
+    @NotNull Stream<? extends DataTree> asArray();
 
     /**
      * Gets an indexed stream of the member nodes, as if this tree was a {@link JsonArray}.
      *
      * @return the members
      */
-    @NotNull
-    Stream<? extends Map.Entry<Integer, ? extends DataTree>> asIndexedArray();
+    @NotNull Stream<? extends Map.Entry<Integer, ? extends DataTree>> asIndexedArray();
 
     /**
      * Returns a {@link String} representation of this node.
      *
      * @return this as a string
      */
-    @NotNull
-    String asString();
+    @NotNull String asString();
 
     /**
      * Returns a {@link Number} representation of this node.
      *
      * @return this as a number
      */
-    @NotNull
-    Number asNumber();
+    @NotNull Number asNumber();
 
     /**
      * Returns an {@link Integer} representation of this node.

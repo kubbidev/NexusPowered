@@ -4,10 +4,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Exception thrown to propagate exceptions thrown by
- * {@link CompositeTerminable#close()}.
+ * Exception thrown to propagate exceptions thrown by {@link CompositeTerminable#close()}.
  */
 public class CompositeClosingException extends Exception {
+
     private final List<? extends Throwable> causes;
 
     public CompositeClosingException(List<? extends Throwable> causes) {

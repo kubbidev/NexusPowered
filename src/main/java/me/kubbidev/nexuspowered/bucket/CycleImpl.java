@@ -1,23 +1,20 @@
 package me.kubbidev.nexuspowered.bucket;
 
 import com.google.common.collect.ImmutableList;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.jetbrains.annotations.NotNull;
 
 final class CycleImpl<E> implements Cycle<E> {
 
     /**
      * The list that backs this instance
      */
-    private final List<E> objects;
-
+    private final List<E>       objects;
     /**
      * The number of elements in the cycle
      */
-    private final int size;
-
+    private final int           size;
     /**
      * The current position of the cursor
      */

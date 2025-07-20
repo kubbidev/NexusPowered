@@ -5,20 +5,27 @@ import java.util.Map;
 
 public final class DoubleEvaluator {
 
+    private DoubleEvaluator() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
+
     public static double eval(String exp) {
         return eval(exp, Collections.emptyMap());
     }
 
     public static double eval(String exp, Map<String, Double> vars) {
         return new Object() {
-            int pos = -1, ch;
+            int pos = -1;
+            int ch;
 
             void nextChar() {
                 ch = (++pos < exp.length()) ? exp.charAt(pos) : -1;
             }
 
             boolean eat(int charToEat) {
-                while (ch == ' ') nextChar();
+                while (ch == ' ') {
+                    nextChar();
+                }
                 if (ch == charToEat) {
                     nextChar();
                     return true;
@@ -29,68 +36,80 @@ public final class DoubleEvaluator {
             double parse() {
                 nextChar();
                 double x = parseExpression();
-                if (pos < exp.length()) throw new RuntimeException("Unexpected: " + (char) ch);
+                if (pos < exp.length()) {
+                    throw new RuntimeException("Unexpected: " + (char) ch);
+                }
                 return x;
             }
 
             double parseExpression() {
                 double x = parseTerm();
                 for (; ; ) {
-                    if (eat('+')) x += parseTerm(); // addition
-                    else if (eat('-')) x -= parseTerm(); // subtraction
-                    else return x;
+                    if (eat('+')) {
+                        x += parseTerm(); // addition
+                    } else if (eat('-')) {
+                        x -= parseTerm(); // subtraction
+                    } else {
+                        return x;
+                    }
                 }
             }
 
             double parseTerm() {
                 double x = parseFactor();
                 for (; ; ) {
-                    if (eat('*')) x *= parseFactor(); // multiplication
-                    else if (eat('/')) x /= parseFactor(); // division
-                    else return x;
+                    if (eat('*')) {
+                        x *= parseFactor(); // multiplication
+                    } else if (eat('/')) {
+                        x /= parseFactor(); // division
+                    } else {
+                        return x;
+                    }
                 }
             }
 
             double parseFactor() {
-                if (eat('+')) return +parseFactor(); // unary plus
-                if (eat('-')) return -parseFactor(); // unary minus
+                if (eat('+')) {
+                    return +parseFactor(); // unary plus
+                }
+                if (eat('-')) {
+                    return -parseFactor(); // unary minus
+                }
 
                 double x;
                 int startPos = this.pos;
                 if (eat('(')) { // parentheses
                     x = parseExpression();
-                    if (!eat(')')) throw new RuntimeException("Missing ')'");
+                    if (!eat(')')) {
+                        throw new RuntimeException("Missing ')'");
+                    }
                 } else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
-                    while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
+                    while ((ch >= '0' && ch <= '9') || ch == '.') {
+                        nextChar();
+                    }
                     x = Double.parseDouble(exp.substring(startPos, this.pos));
                 } else if (ch >= 'a' && ch <= 'z') { // functions
-                    while (ch >= 'a' && ch <= 'z') nextChar();
+                    while (ch >= 'a' && ch <= 'z') {
+                        nextChar();
+                    }
                     String func = exp.substring(startPos, this.pos);
-
                     Double var = vars.get(func);
                     if (var == null) {
                         if (eat('(')) {
                             x = parseExpression();
-                            if (!eat(')')) throw new RuntimeException("Missing ')' after argument to " + func);
+                            if (!eat(')')) {
+                                throw new RuntimeException("Missing ')' after argument to " + func);
+                            }
                         } else {
                             x = parseFactor();
                         }
-                        switch (func) {
-                            case "sqrt":
-                                x = Math.sqrt(x);
-                                break;
-                            case "sin":
-                                x = Math.sin(Math.toRadians(x));
-                                break;
-                            case "cos":
-                                x = Math.cos(Math.toRadians(x));
-                                break;
-                            case "tan":
-                                x = Math.tan(Math.toRadians(x));
-                                break;
-                            default:
-                                throw new RuntimeException("Unknown function: " + func);
-                        }
+                        x = switch (func) {
+                            case "sqrt" -> Math.sqrt(x);
+                            case "sin" -> Math.sin(Math.toRadians(x));
+                            case "cos" -> Math.cos(Math.toRadians(x));
+                            case "tan" -> Math.tan(Math.toRadians(x));
+                            default -> throw new RuntimeException("Unknown function: " + func);
+                        };
                     } else {
                         x = var;
                     }
@@ -98,13 +117,11 @@ public final class DoubleEvaluator {
                     throw new RuntimeException("Unexpected: " + (char) ch);
                 }
 
-                if (eat('^')) x = Math.pow(x, parseFactor()); // exponentiation
+                if (eat('^')) {
+                    x = Math.pow(x, parseFactor()); // exponentiation
+                }
                 return x;
             }
         }.parse();
-    }
-
-    private DoubleEvaluator() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 }

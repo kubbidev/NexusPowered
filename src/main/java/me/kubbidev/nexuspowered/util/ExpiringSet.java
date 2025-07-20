@@ -1,7 +1,6 @@
 package me.kubbidev.nexuspowered.util;
 
 import com.google.common.cache.CacheBuilder;
-
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -12,6 +11,7 @@ import java.util.concurrent.TimeUnit;
  * @param <E> element type
  */
 public class ExpiringSet<E> {
+
     private ExpiringSet() {
     }
 
@@ -22,6 +22,7 @@ public class ExpiringSet<E> {
      * @return a new expiring set
      */
     public static <E> Set<E> newExpiringSet(long duration, TimeUnit unit) {
-        return Collections.newSetFromMap(CacheBuilder.newBuilder().expireAfterWrite(duration, unit).<E, Boolean>build().asMap());
+        return Collections.newSetFromMap(
+            CacheBuilder.newBuilder().expireAfterWrite(duration, unit).<E, Boolean>build().asMap());
     }
 }

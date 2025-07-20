@@ -8,8 +8,9 @@ import java.util.BitSet;
  * @param <S> the setting type
  */
 public final class BooleanSettingMap<S extends BooleanSetting> {
+
     private final BooleanSettingMapFactory<S> factory;
-    private final BitSet bits;
+    private final BitSet                      bits;
 
     BooleanSettingMap(BooleanSettingMapFactory<S> factory, BitSet bits) {
         this.factory = factory;
@@ -30,7 +31,7 @@ public final class BooleanSettingMap<S extends BooleanSetting> {
      * Sets the state of a given setting.
      *
      * @param setting the setting
-     * @param state the state to set
+     * @param state   the state to set
      * @return the previous state of the setting
      */
     public boolean set(S setting, boolean state) {
@@ -101,12 +102,11 @@ public final class BooleanSettingMap<S extends BooleanSetting> {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof BooleanSettingMap<?>)) {
+        if (!(o instanceof BooleanSettingMap<?> other)) {
             return false;
         }
-        BooleanSettingMap<?> other = (BooleanSettingMap<?>) o;
         return this.factory.equals(other.factory) &&
-                this.bits.equals(other.bits);
+            this.bits.equals(other.bits);
     }
 
     @Override

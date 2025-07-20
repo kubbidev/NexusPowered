@@ -12,6 +12,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class Events {
 
+    private Events() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
+
     /**
      * Makes a SingleSubscriptionBuilder for a given event
      *
@@ -35,7 +39,8 @@ public final class Events {
      * @throws NullPointerException if eventClass or priority is null
      */
     @NotNull
-    public static <T extends Event> SingleSubscriptionBuilder<T> subscribe(@NotNull Class<T> eventClass, @NotNull EventPriority priority) {
+    public static <T extends Event> SingleSubscriptionBuilder<T> subscribe(@NotNull Class<T> eventClass,
+                                                                           @NotNull EventPriority priority) {
         return SingleSubscriptionBuilder.newBuilder(eventClass, priority);
     }
 
@@ -73,7 +78,8 @@ public final class Events {
      */
     @NotNull
     @SafeVarargs
-    public static <S extends Event> MergedSubscriptionBuilder<S> merge(@NotNull Class<S> superClass, @NotNull Class<? extends S>... eventClasses) {
+    public static <S extends Event> MergedSubscriptionBuilder<S> merge(@NotNull Class<S> superClass,
+                                                                       @NotNull Class<? extends S>... eventClasses) {
         return MergedSubscriptionBuilder.newBuilder(superClass, eventClasses);
     }
 
@@ -88,7 +94,9 @@ public final class Events {
      */
     @NotNull
     @SafeVarargs
-    public static <S extends Event> MergedSubscriptionBuilder<S> merge(@NotNull Class<S> superClass, @NotNull EventPriority priority, @NotNull Class<? extends S>... eventClasses) {
+    public static <S extends Event> MergedSubscriptionBuilder<S> merge(@NotNull Class<S> superClass,
+                                                                       @NotNull EventPriority priority,
+                                                                       @NotNull Class<? extends S>... eventClasses) {
         return MergedSubscriptionBuilder.newBuilder(superClass, priority, eventClasses);
     }
 
@@ -148,9 +156,5 @@ public final class Events {
     @NotNull
     public static <T extends Event> T callSyncAndJoin(@NotNull T event) {
         return Schedulers.sync().supply(() -> callAndReturn(event)).join();
-    }
-
-    private Events() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 }

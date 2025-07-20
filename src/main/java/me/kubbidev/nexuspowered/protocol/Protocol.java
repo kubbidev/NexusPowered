@@ -28,12 +28,13 @@ public final class Protocol {
     /**
      * Makes a HandlerBuilder for the given packets.
      *
-     * @param priority   the priority to listen at
-     * @param packets the packets to handle
+     * @param priority the priority to listen at
+     * @param packets  the packets to handle
      * @return a {@link ProtocolSubscriptionBuilder} to construct the event handler
      */
     @NotNull
-    public static ProtocolSubscriptionBuilder subscribe(@NotNull ListenerPriority priority, @NotNull PacketType... packets) {
+    public static ProtocolSubscriptionBuilder subscribe(@NotNull ListenerPriority priority,
+                                                        @NotNull PacketType... packets) {
         return ProtocolSubscriptionBuilder.newBuilder(priority, packets);
     }
 
@@ -70,7 +71,7 @@ public final class Protocol {
      * Sends a packet to each of the given players
      *
      * @param players the players
-     * @param packet the packet
+     * @param packet  the packet
      */
     public static void broadcastPacket(@NotNull Iterable<Player> players, @NotNull PacketContainer packet) {
         for (Player player : players) {

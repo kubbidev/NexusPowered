@@ -15,7 +15,5 @@ public interface SingleSubscription<T extends Event> extends Subscription {
      *
      * @return the class the handler is handling.
      */
-    @NotNull
-    Class<T> getEventClass();
-
+    @NotNull Class<T> getEventClass();
 }

@@ -1,14 +1,13 @@
 package me.kubbidev.nexuspowered.util.chain;
 
-import org.jetbrains.annotations.NotNullByDefault;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.NotNullByDefault;
+import org.jetbrains.annotations.Nullable;
 
 @NotNullByDefault
 class SimpleChain<T> implements Chain<T> {
@@ -104,7 +103,8 @@ class SimpleChain<T> implements Chain<T> {
     }
 
     @Override
-    public <R> Chain<R> mapOrElse(Predicate<? super T> test, Function<? super T, ? extends R> passedMapper, R otherValue) {
+    public <R> Chain<R> mapOrElse(Predicate<? super T> test, Function<? super T, ? extends R> passedMapper,
+                                  R otherValue) {
         Objects.requireNonNull(test, "test");
         Objects.requireNonNull(passedMapper, "passedMapper");
 
@@ -112,7 +112,8 @@ class SimpleChain<T> implements Chain<T> {
     }
 
     @Override
-    public <R> Chain<R> mapOrElse(Predicate<? super T> test, Function<? super T, ? extends R> passedMapper, Function<? super T, ? extends R> failedMapper) {
+    public <R> Chain<R> mapOrElse(Predicate<? super T> test, Function<? super T, ? extends R> passedMapper,
+                                  Function<? super T, ? extends R> failedMapper) {
         Objects.requireNonNull(test, "test");
         Objects.requireNonNull(passedMapper, "passedMapper");
         Objects.requireNonNull(failedMapper, "failedMapper");
@@ -128,7 +129,8 @@ class SimpleChain<T> implements Chain<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <R> Chain<R> mapNullSafeGet(Function<? super T, ? extends R> nonNullMapper, Supplier<? extends R> nullSupplier) {
+    public <R> Chain<R> mapNullSafeGet(Function<? super T, ? extends R> nonNullMapper,
+                                       Supplier<? extends R> nullSupplier) {
         Objects.requireNonNull(nonNullMapper, "nonNullMapper");
         Objects.requireNonNull(nullSupplier, "nullSupplier");
 

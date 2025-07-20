@@ -1,9 +1,8 @@
 package me.kubbidev.nexuspowered.reflect;
 
-import org.bukkit.Bukkit;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.bukkit.Bukkit;
 
 /**
  * Utility class which holds some common versions of Minecraft.
@@ -117,6 +116,9 @@ public final class MinecraftVersions {
      */
     static final MinecraftVersion RUNTIME_VERSION = parseServerVersion(Bukkit.getVersion());
 
+    private MinecraftVersions() {
+    }
+
     private static MinecraftVersion parseServerVersion(String serverVersion) {
         Matcher version = VERSION_PATTERN.matcher(serverVersion);
 
@@ -125,8 +127,5 @@ public final class MinecraftVersions {
         } else {
             throw new IllegalStateException("Cannot parse version String '" + serverVersion + "'");
         }
-    }
-
-    private MinecraftVersions() {
     }
 }

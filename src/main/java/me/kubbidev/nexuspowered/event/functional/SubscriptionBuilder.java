@@ -1,11 +1,10 @@
 package me.kubbidev.nexuspowered.event.functional;
 
-import me.kubbidev.nexuspowered.internal.exception.NexusExceptions;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
+import me.kubbidev.nexuspowered.internal.exception.NexusExceptions;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Abstract {@link me.kubbidev.nexuspowered.event.Subscription} builder.
@@ -22,8 +21,7 @@ public interface SubscriptionBuilder<T> {
      * @param predicate the expiry test
      * @return ths builder instance
      */
-    @NotNull
-    SubscriptionBuilder<T> expireIf(@NotNull Predicate<T> predicate);
+    @NotNull SubscriptionBuilder<T> expireIf(@NotNull Predicate<T> predicate);
 
     /**
      * Sets the expiry time on the handler.
@@ -33,8 +31,7 @@ public interface SubscriptionBuilder<T> {
      * @return the builder instance
      * @throws IllegalArgumentException if duration is not greater than or equal to 1
      */
-    @NotNull
-    SubscriptionBuilder<T> expireAfter(long duration, @NotNull TimeUnit unit);
+    @NotNull SubscriptionBuilder<T> expireAfter(long duration, @NotNull TimeUnit unit);
 
     /**
      * Sets the number of calls until the handler will automatically be unregistered.
@@ -46,8 +43,7 @@ public interface SubscriptionBuilder<T> {
      * @return the builder instance
      * @throws IllegalArgumentException if maxCalls is not greater than or equal to 1
      */
-    @NotNull
-    SubscriptionBuilder<T> expireAfter(long maxCalls);
+    @NotNull SubscriptionBuilder<T> expireAfter(long maxCalls);
 
     /**
      * Adds a filter to the handler.
@@ -58,7 +54,5 @@ public interface SubscriptionBuilder<T> {
      * @param predicate the filter
      * @return the builder instance
      */
-    @NotNull
-    SubscriptionBuilder<T> filter(@NotNull Predicate<T> predicate);
-
+    @NotNull SubscriptionBuilder<T> filter(@NotNull Predicate<T> predicate);
 }

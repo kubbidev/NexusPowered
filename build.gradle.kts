@@ -1,9 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import java.io.ByteArrayOutputStream
 
 plugins {
     id("java")
-    id("java-library")
     alias(libs.plugins.shadow)
     id("maven-publish")
 }
@@ -16,59 +14,39 @@ base {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
     withSourcesJar()
 }
 
 repositories {
     mavenCentral()
-    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-    maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://repo.dmulloy2.net/repository/public/")
+    maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.7-R0.1-SNAPSHOT")
 
-    // optional dependencies
+    // https://mvnrepository.com/artifact/org.jetbrains/annotations
     compileOnly("org.jetbrains:annotations:26.0.2")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.3.0")
 
-    // test
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.4")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.11.4")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.4")
+    // Unit tests
     testImplementation("org.testcontainers:junit-jupiter:1.20.4")
     testImplementation("org.mockito:mockito-core:5.14.2")
     testImplementation("org.mockito:mockito-junit-jupiter:5.14.2")
-}
 
-fun determinePatchVersion(): Int {
-    // get the name of the last tag
-    val tagInfo = ByteArrayOutputStream()
-    exec {
-        commandLine("git", "describe", "--tags")
-        standardOutput = tagInfo
-    }
-    val tagString = String(tagInfo.toByteArray())
-    if (tagString.contains("-")) {
-        return tagString.split("-")[1].toInt()
-    }
-    return 0
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.4")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.11.4")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.4")
 }
-
-val majorVersion = "1"
-val minorVersion = "0"
-val patchVersion = determinePatchVersion()
-val releaseVersion = "$majorVersion.$minorVersion"
-val projectVersion = "$releaseVersion.$patchVersion"
 
 publishing {
     publications {
         create<MavenPublication>("maven") {
             artifactId = "nexuspowered"
-            version = releaseVersion
 
             from(components["java"])
             pom {
@@ -112,18 +90,24 @@ publishing {
     }
 }
 
+configurations {
+    named("testImplementation") {
+        extendsFrom(configurations.getByName("compileOnly"))
+    }
+}
+
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 
 tasks.processResources {
     filesMatching("plugin.yml") {
-        expand("pluginVersion" to projectVersion)
+        expand("pluginVersion" to "$version")
     }
 }
 
 tasks.shadowJar {
-    archiveFileName = "NexusPowered-${projectVersion}.jar"
+    archiveFileName = "NexusPowered-$version.jar"
     mergeServiceFiles()
     dependencies {
         include(dependency("me.kubbidev:.*"))

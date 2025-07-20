@@ -1,5 +1,14 @@
 package me.kubbidev.nexuspowered.menu;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -9,26 +18,18 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 public class MenuPaginatedFast extends MenuPaginated<ItemStack> {
+
     private final List<ItemStack> contentItems = new ArrayList<>();
 
     private Consumer<InventoryClickEvent> contentHandler;
-    private List<Integer> contentSlots;
+    private List<Integer>                 contentSlots;
 
     public MenuPaginatedFast(int size) {
         this(owner -> Bukkit.createInventory(owner, size));
     }
 
-    public MenuPaginatedFast(int size, String title) {
+    public MenuPaginatedFast(int size, Component title) {
         this(owner -> Bukkit.createInventory(owner, size, title));
     }
 
@@ -36,19 +37,19 @@ public class MenuPaginatedFast extends MenuPaginated<ItemStack> {
         this(owner -> Bukkit.createInventory(owner, type));
     }
 
-    public MenuPaginatedFast(InventoryType type, String title) {
+    public MenuPaginatedFast(InventoryType type, Component title) {
         this(owner -> Bukkit.createInventory(owner, type, title));
     }
 
     public MenuPaginatedFast(Function<InventoryHolder, Inventory> inventoryFunction) {
         super(inventoryFunction);
-        this.contentSlots = IntStream.range(0, Math.max(9, getInventory().getSize() - 9))
-                .boxed()
-                .collect(Collectors.toList());
+        this.contentSlots = IntStream.range(0, Math.max(9, this.getInventory().getSize() - 9))
+            .boxed()
+            .collect(Collectors.toList());
     }
 
     @Override
-    public List<ItemStack> contents() {
+    public List<ItemStack> getContents() {
         return this.contentItems;
     }
 
@@ -62,7 +63,8 @@ public class MenuPaginatedFast extends MenuPaginated<ItemStack> {
     }
 
     /**
-     * Add a list of items to the paginated content with click handlers, the items will be added to the next available slots.
+     * Add a list of items to the paginated content with click handlers, the items will be added to the next available
+     * slots.
      *
      * @param content the list of items to add
      */
@@ -88,8 +90,8 @@ public class MenuPaginatedFast extends MenuPaginated<ItemStack> {
      */
     public void setContent(Collection<ItemStack> content) {
         Objects.requireNonNull(content, "content");
-        clearContent();
-        addContent(content);
+        this.clearContent();
+        this.addContent(content);
     }
 
     /**
@@ -108,7 +110,7 @@ public class MenuPaginatedFast extends MenuPaginated<ItemStack> {
     }
 
     @Override
-    public List<Integer> contentSlots() {
+    public List<Integer> getContentSlots() {
         return this.contentSlots;
     }
 
@@ -123,6 +125,6 @@ public class MenuPaginatedFast extends MenuPaginated<ItemStack> {
 
     @Override
     protected void setItem(int slot, Player viewer, ItemStack item) {
-        setItem(slot, item, getContentHandler());
+        this.setItem(slot, item, getContentHandler());
     }
 }

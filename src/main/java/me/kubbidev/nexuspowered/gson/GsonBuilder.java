@@ -1,9 +1,10 @@
 package me.kubbidev.nexuspowered.gson;
 
-import com.google.gson.*;
-import org.jetbrains.annotations.NotNullByDefault;
-import org.jetbrains.annotations.Nullable;
-
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -11,12 +12,18 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
+import org.jetbrains.annotations.NotNullByDefault;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Builder utilities for creating GSON Objects/Arrays.
  */
 @NotNullByDefault
-public final class JsonBuilder {
+public final class GsonBuilder {
+
+    private GsonBuilder() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
 
     /**
      * Creates a new object builder.
@@ -24,7 +31,7 @@ public final class JsonBuilder {
      * <p>If copy is not true, the passed object will be mutated by the builder methods.</p>
      *
      * @param object the object to base the new builder upon
-     * @param copy if the object should be deep copied, or just referenced.
+     * @param copy   if the object should be deep copied, or just referenced.
      * @return a new builder
      */
     public static JsonObjectBuilder object(JsonObject object, boolean copy) {
@@ -65,7 +72,7 @@ public final class JsonBuilder {
      * <p>If copy is not true, the passed array will be mutated by the builder methods.</p>
      *
      * @param array the array to base the new builder upon
-     * @param copy if the array should be deep copied, or just referenced.
+     * @param copy  if the array should be deep copied, or just referenced.
      * @return a new builder
      */
     public static JsonArrayBuilder array(JsonArray array, boolean copy) {
@@ -216,17 +223,18 @@ public final class JsonBuilder {
     /**
      * Returns a collector which forms a JsonObject using the key and value mappers.
      *
-     * @param keyMapper the function to map from T to {@link String}
+     * @param keyMapper   the function to map from T to {@link String}
      * @param valueMapper the function to map from T to {@link JsonElement}
-     * @param <T> the type
+     * @param <T>         the type
      * @return a new collector
      */
-    public static <T> Collector<T, JsonObjectBuilder, JsonObject> collectToObject(Function<? super T, String> keyMapper, Function<? super T, JsonElement> valueMapper) {
+    public static <T> Collector<T, JsonObjectBuilder, JsonObject> collectToObject(Function<? super T, String> keyMapper,
+                                                                                  Function<? super T, JsonElement> valueMapper) {
         return Collector.of(
-                JsonBuilder::object,
-                (r, t) -> r.add(keyMapper.apply(t), valueMapper.apply(t)),
-                (l, r) -> l.addAll(r.build()),
-                JsonObjectBuilder::build
+            GsonBuilder::object,
+            (r, t) -> r.add(keyMapper.apply(t), valueMapper.apply(t)),
+            (l, r) -> l.addAll(r.build()),
+            JsonObjectBuilder::build
         );
     }
 
@@ -234,15 +242,16 @@ public final class JsonBuilder {
      * Returns a collector which forms a JsonArray using the value mapper.
      *
      * @param valueMapper the function to map from T to {@link JsonElement}
-     * @param <T> the type
+     * @param <T>         the type
      * @return a new collector
      */
-    public static <T> Collector<T, JsonArrayBuilder, JsonArray> collectToArray(Function<? super T, JsonElement> valueMapper) {
+    public static <T> Collector<T, JsonArrayBuilder, JsonArray> collectToArray(
+        Function<? super T, JsonElement> valueMapper) {
         return Collector.of(
-                JsonBuilder::array,
-                (r, t) -> r.add(valueMapper.apply(t)),
-                (l, r) -> l.addAll(r.build()),
-                JsonArrayBuilder::build
+            GsonBuilder::array,
+            (r, t) -> r.add(valueMapper.apply(t)),
+            (l, r) -> l.addAll(r.build()),
+            JsonArrayBuilder::build
         );
     }
 
@@ -253,10 +262,10 @@ public final class JsonBuilder {
      */
     public static Collector<JsonElement, JsonArrayBuilder, JsonArray> collectToArray() {
         return Collector.of(
-                JsonBuilder::array,
-                JsonArrayBuilder::add,
-                (l, r) -> l.addAll(r.build()),
-                JsonArrayBuilder::build
+            GsonBuilder::array,
+            JsonArrayBuilder::add,
+            (l, r) -> l.addAll(r.build()),
+            JsonArrayBuilder::build
         );
     }
 
@@ -267,17 +276,18 @@ public final class JsonBuilder {
      */
     public static Collector<GsonSerializable, JsonArrayBuilder, JsonArray> collectSerializablesToArray() {
         return Collector.of(
-                JsonBuilder::array,
-                JsonArrayBuilder::add,
-                (l, r) -> l.addAll(r.build()),
-                JsonArrayBuilder::build
+            GsonBuilder::array,
+            JsonArrayBuilder::add,
+            (l, r) -> l.addAll(r.build()),
+            JsonArrayBuilder::build
         );
     }
 
     /**
      * A {@link JsonObject} builder utility.
      */
-    public interface JsonObjectBuilder extends BiConsumer<String, JsonElement>, Consumer<Map.Entry<String, JsonElement>> {
+    public interface JsonObjectBuilder extends BiConsumer<String, JsonElement>,
+        Consumer<Map.Entry<String, JsonElement>> {
 
         @Override
         default void accept(Map.Entry<String, JsonElement> entry) {
@@ -323,7 +333,8 @@ public final class JsonBuilder {
         }
 
         default JsonObjectBuilder addIfAbsent(String property, @Nullable GsonSerializable serializable) {
-            return serializable == null ? addIfAbsent(property, nullValue()) : addIfAbsent(property, serializable.serialize());
+            return serializable == null ? addIfAbsent(property, nullValue())
+                : addIfAbsent(property, serializable.serialize());
         }
 
         default JsonObjectBuilder addIfAbsent(String property, @Nullable String value) {
@@ -342,12 +353,10 @@ public final class JsonBuilder {
             return addIfAbsent(property, primitive(value));
         }
 
-        default <T extends JsonElement> JsonObjectBuilder addAll(Iterable<Map.Entry<String, T>> iterable, boolean deepCopy) {
+        default <T extends JsonElement> JsonObjectBuilder addAll(Iterable<Map.Entry<String, T>> iterable,
+                                                                 boolean deepCopy) {
             Objects.requireNonNull(iterable, "iterable");
             for (Map.Entry<String, T> e : iterable) {
-                if (e == null || e.getKey() == null) {
-                    continue;
-                }
                 add(e.getKey(), e.getValue(), deepCopy);
             }
             return this;
@@ -357,14 +366,10 @@ public final class JsonBuilder {
             return addAll(iterable, false);
         }
 
-        default <T extends JsonElement> JsonObjectBuilder addAll(Stream<Map.Entry<String, T>> stream, boolean deepCopy) {
+        default <T extends JsonElement> JsonObjectBuilder addAll(Stream<Map.Entry<String, T>> stream,
+                                                                 boolean deepCopy) {
             Objects.requireNonNull(stream, "stream");
-            stream.forEach(e -> {
-                if (e == null || e.getKey() == null) {
-                    return;
-                }
-                add(e.getKey(), e.getValue(), deepCopy);
-            });
+            stream.forEach(e -> add(e.getKey(), e.getValue(), deepCopy));
             return this;
         }
 
@@ -381,12 +386,10 @@ public final class JsonBuilder {
             return addAll(object, false);
         }
 
-        default <T extends GsonSerializable> JsonObjectBuilder addAllSerializables(Iterable<Map.Entry<String, T>> iterable) {
+        default <T extends GsonSerializable> JsonObjectBuilder addAllSerializables(
+            Iterable<Map.Entry<String, T>> iterable) {
             Objects.requireNonNull(iterable, "iterable");
             for (Map.Entry<String, T> e : iterable) {
-                if (e == null || e.getKey() == null) {
-                    continue;
-                }
                 add(e.getKey(), e.getValue());
             }
             return this;
@@ -395,9 +398,6 @@ public final class JsonBuilder {
         default JsonObjectBuilder addAllStrings(Iterable<Map.Entry<String, String>> iterable) {
             Objects.requireNonNull(iterable, "iterable");
             for (Map.Entry<String, String> e : iterable) {
-                if (e == null || e.getKey() == null) {
-                    continue;
-                }
                 add(e.getKey(), e.getValue());
             }
             return this;
@@ -406,9 +406,6 @@ public final class JsonBuilder {
         default <T extends Number> JsonObjectBuilder addAllNumbers(Iterable<Map.Entry<String, T>> iterable) {
             Objects.requireNonNull(iterable, "iterable");
             for (Map.Entry<String, T> e : iterable) {
-                if (e == null || e.getKey() == null) {
-                    continue;
-                }
                 add(e.getKey(), e.getValue());
             }
             return this;
@@ -417,9 +414,6 @@ public final class JsonBuilder {
         default JsonObjectBuilder addAllBooleans(Iterable<Map.Entry<String, Boolean>> iterable) {
             Objects.requireNonNull(iterable, "iterable");
             for (Map.Entry<String, Boolean> e : iterable) {
-                if (e == null || e.getKey() == null) {
-                    continue;
-                }
                 add(e.getKey(), e.getValue());
             }
             return this;
@@ -428,20 +422,15 @@ public final class JsonBuilder {
         default JsonObjectBuilder addAllCharacters(Iterable<Map.Entry<String, Character>> iterable) {
             Objects.requireNonNull(iterable, "iterable");
             for (Map.Entry<String, Character> e : iterable) {
-                if (e == null || e.getKey() == null) {
-                    continue;
-                }
                 add(e.getKey(), e.getValue());
             }
             return this;
         }
 
-        default <T extends JsonElement> JsonObjectBuilder addAllIfAbsent(Iterable<Map.Entry<String, T>> iterable, boolean deepCopy) {
+        default <T extends JsonElement> JsonObjectBuilder addAllIfAbsent(Iterable<Map.Entry<String, T>> iterable,
+                                                                         boolean deepCopy) {
             Objects.requireNonNull(iterable, "iterable");
             for (Map.Entry<String, T> e : iterable) {
-                if (e == null || e.getKey() == null) {
-                    continue;
-                }
                 addIfAbsent(e.getKey(), e.getValue(), deepCopy);
             }
             return this;
@@ -451,14 +440,10 @@ public final class JsonBuilder {
             return addAllIfAbsent(iterable, false);
         }
 
-        default <T extends JsonElement> JsonObjectBuilder addAllIfAbsent(Stream<Map.Entry<String, T>> stream, boolean deepCopy) {
+        default <T extends JsonElement> JsonObjectBuilder addAllIfAbsent(Stream<Map.Entry<String, T>> stream,
+                                                                         boolean deepCopy) {
             Objects.requireNonNull(stream, "stream");
-            stream.forEach(e -> {
-                if (e == null || e.getKey() == null) {
-                    return;
-                }
-                addIfAbsent(e.getKey(), e.getValue(), deepCopy);
-            });
+            stream.forEach(e -> addIfAbsent(e.getKey(), e.getValue(), deepCopy));
             return this;
         }
 
@@ -475,12 +460,10 @@ public final class JsonBuilder {
             return addAllIfAbsent(object, false);
         }
 
-        default <T extends GsonSerializable> JsonObjectBuilder addAllSerializablesIfAbsent(Iterable<Map.Entry<String, T>> iterable) {
+        default <T extends GsonSerializable> JsonObjectBuilder addAllSerializablesIfAbsent(
+            Iterable<Map.Entry<String, T>> iterable) {
             Objects.requireNonNull(iterable, "iterable");
             for (Map.Entry<String, T> e : iterable) {
-                if (e == null || e.getKey() == null) {
-                    continue;
-                }
                 addIfAbsent(e.getKey(), e.getValue());
             }
             return this;
@@ -489,9 +472,6 @@ public final class JsonBuilder {
         default JsonObjectBuilder addAllStringsIfAbsent(Iterable<Map.Entry<String, String>> iterable) {
             Objects.requireNonNull(iterable, "iterable");
             for (Map.Entry<String, String> e : iterable) {
-                if (e == null || e.getKey() == null) {
-                    continue;
-                }
                 addIfAbsent(e.getKey(), e.getValue());
             }
             return this;
@@ -500,9 +480,6 @@ public final class JsonBuilder {
         default <T extends Number> JsonObjectBuilder addAllNumbersIfAbsent(Iterable<Map.Entry<String, T>> iterable) {
             Objects.requireNonNull(iterable, "iterable");
             for (Map.Entry<String, T> e : iterable) {
-                if (e == null || e.getKey() == null) {
-                    continue;
-                }
                 addIfAbsent(e.getKey(), e.getValue());
             }
             return this;
@@ -511,9 +488,6 @@ public final class JsonBuilder {
         default JsonObjectBuilder addAllBooleansIfAbsent(Iterable<Map.Entry<String, Boolean>> iterable) {
             Objects.requireNonNull(iterable, "iterable");
             for (Map.Entry<String, Boolean> e : iterable) {
-                if (e == null || e.getKey() == null) {
-                    continue;
-                }
                 addIfAbsent(e.getKey(), e.getValue());
             }
             return this;
@@ -522,9 +496,6 @@ public final class JsonBuilder {
         default JsonObjectBuilder addAllCharactersIfAbsent(Iterable<Map.Entry<String, Character>> iterable) {
             Objects.requireNonNull(iterable, "iterable");
             for (Map.Entry<String, Character> e : iterable) {
-                if (e == null || e.getKey() == null) {
-                    continue;
-                }
                 addIfAbsent(e.getKey(), e.getValue());
             }
             return this;
@@ -636,12 +607,7 @@ public final class JsonBuilder {
 
     }
 
-    private static class JsonObjectBuilderImpl implements JsonObjectBuilder {
-        private final JsonObject handle;
-
-        public JsonObjectBuilderImpl(JsonObject handle) {
-            this.handle = handle;
-        }
+    private record JsonObjectBuilderImpl(JsonObject handle) implements JsonObjectBuilder {
 
         @Override
         public JsonObjectBuilder add(String property, @Nullable JsonElement value, boolean copy) {
@@ -675,12 +641,7 @@ public final class JsonBuilder {
         }
     }
 
-    private static class JsonArrayBuilderImpl implements JsonArrayBuilder {
-        private final JsonArray handle;
-
-        public JsonArrayBuilderImpl(JsonArray handle) {
-            this.handle = handle;
-        }
+    private record JsonArrayBuilderImpl(JsonArray handle) implements JsonArrayBuilder {
 
         @Override
         public JsonArrayBuilder add(@Nullable JsonElement value, boolean copy) {
@@ -703,10 +664,6 @@ public final class JsonBuilder {
         public JsonArray build() {
             return this.handle;
         }
-    }
-
-    private JsonBuilder() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 
 }

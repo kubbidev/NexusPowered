@@ -6,8 +6,7 @@ import me.kubbidev.nexuspowered.bucket.Bucket;
  * A function which determines the position of an object within a {@link Bucket}.
  *
  * <p>Functions will not necessarily return consistent results for subsequent
- * calls using the same parameters, as their behaviour usually depends heavily on
- * current bucket state.</p>
+ * calls using the same parameters, as their behaviour usually depends heavily on current bucket state.</p>
  *
  * @param <T> the object type
  */

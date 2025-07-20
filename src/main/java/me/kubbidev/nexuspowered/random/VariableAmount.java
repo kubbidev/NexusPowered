@@ -1,9 +1,8 @@
 package me.kubbidev.nexuspowered.random;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a value which may vary randomly.
@@ -12,8 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public interface VariableAmount {
 
     /**
-     * Creates a new 'fixed' variable amount, calls to {@link #getAmount} will
-     * always return the fixed value.
+     * Creates a new 'fixed' variable amount, calls to {@link #getAmount} will always return the fixed value.
      *
      * @param value The fixed value
      * @return A variable amount representation
@@ -24,8 +22,7 @@ public interface VariableAmount {
     }
 
     /**
-     * Creates a new variable amount which return values between the given min
-     * (inclusive) and max (exclusive).
+     * Creates a new variable amount which return values between the given min (inclusive) and max (exclusive).
      *
      * @param min The minimum of the range (inclusive)
      * @param max The maximum of the range (exclusive)
@@ -37,9 +34,8 @@ public interface VariableAmount {
     }
 
     /**
-     * Creates a new variable about which has a base and variance. The final
-     * amount will be the base amount plus or minus a random amount between zero
-     * (inclusive) and the variance (exclusive).
+     * Creates a new variable about which has a base and variance. The final amount will be the base amount plus or
+     * minus a random amount between zero (inclusive) and the variance (exclusive).
      *
      * @param base     The base value
      * @param variance The variance
@@ -51,9 +47,8 @@ public interface VariableAmount {
     }
 
     /**
-     * Creates a new variable about which has a base and variance. The final
-     * amount will be the base amount plus or minus a random amount between zero
-     * (inclusive) and the variance (exclusive).
+     * Creates a new variable about which has a base and variance. The final amount will be the base amount plus or
+     * minus a random amount between zero (inclusive) and the variance (exclusive).
      *
      * @param base     The base value
      * @param variance The variance
@@ -65,9 +60,8 @@ public interface VariableAmount {
     }
 
     /**
-     * Creates a new variable amount which has a base and an additional amount.
-     * The final amount will be the base amount plus a random amount between
-     * zero (inclusive) and the additional amount (exclusive).
+     * Creates a new variable amount which has a base and an additional amount. The final amount will be the base amount
+     * plus a random amount between zero (inclusive) and the additional amount (exclusive).
      *
      * @param base     The base value
      * @param addition The additional amount
@@ -79,9 +73,8 @@ public interface VariableAmount {
     }
 
     /**
-     * Creates a new variable amount which has a base and an additional amount.
-     * The final amount will be the base amount plus a random amount between
-     * zero (inclusive) and the additional amount (exclusive).
+     * Creates a new variable amount which has a base and an additional amount. The final amount will be the base amount
+     * plus a random amount between zero (inclusive) and the additional amount (exclusive).
      *
      * @param base     The base value
      * @param addition The additional amount
@@ -93,12 +86,10 @@ public interface VariableAmount {
     }
 
     /**
-     * Creates a new variable about which has a base and a chance to apply a
-     * random variance. The chance should be between zero and one with a chance
-     * of one signifying that the variance will always be applied. If the chance
-     * succeeds then the final amount will be the base amount plus or minus a
-     * random amount between zero (inclusive) and the variance (exclusive). If
-     * the chance fails then the final amount will just be the base value.
+     * Creates a new variable about which has a base and a chance to apply a random variance. The chance should be
+     * between zero and one with a chance of one signifying that the variance will always be applied. If the chance
+     * succeeds then the final amount will be the base amount plus or minus a random amount between zero (inclusive) and
+     * the variance (exclusive). If the chance fails then the final amount will just be the base value.
      *
      * @param base     The base value
      * @param variance The variance
@@ -111,12 +102,10 @@ public interface VariableAmount {
     }
 
     /**
-     * Creates a new variable about which has a base and a chance to apply a
-     * random variance. The chance should be between zero and one with a chance
-     * of one signifying that the variance will always be applied. If the chance
-     * succeeds then the final amount will be the base amount plus or minus a
-     * random amount between zero (inclusive) and the variance (exclusive). If
-     * the chance fails then the final amount will just be the base value.
+     * Creates a new variable about which has a base and a chance to apply a random variance. The chance should be
+     * between zero and one with a chance of one signifying that the variance will always be applied. If the chance
+     * succeeds then the final amount will be the base amount plus or minus a random amount between zero (inclusive) and
+     * the variance (exclusive). If the chance fails then the final amount will just be the base value.
      *
      * @param base     The base value
      * @param variance The variance
@@ -129,13 +118,10 @@ public interface VariableAmount {
     }
 
     /**
-     * Creates a new variable about which has a base and a chance to apply a
-     * random additional amount. The chance should be between zero and one with
-     * a chance of one signifying that the additional amount will always be
-     * applied. If the chance succeeds then the final amount will be the base
-     * amount plus a random amount between zero (inclusive) and the additional
-     * amount (exclusive). If the chance fails then the final amount will just
-     * be the base value.
+     * Creates a new variable about which has a base and a chance to apply a random additional amount. The chance should
+     * be between zero and one with a chance of one signifying that the additional amount will always be applied. If the
+     * chance succeeds then the final amount will be the base amount plus a random amount between zero (inclusive) and
+     * the additional amount (exclusive). If the chance fails then the final amount will just be the base value.
      *
      * @param base     The base value
      * @param addition The additional amount
@@ -148,13 +134,10 @@ public interface VariableAmount {
     }
 
     /**
-     * Creates a new variable about which has a base and a chance to apply a
-     * random additional amount. The chance should be between zero and one with
-     * a chance of one signifying that the additional amount will always be
-     * applied. If the chance succeeds then the final amount will be the base
-     * amount plus a random amount between zero (inclusive) and the additional
-     * amount (exclusive). If the chance fails then the final amount will just
-     * be the base value.
+     * Creates a new variable about which has a base and a chance to apply a random additional amount. The chance should
+     * be between zero and one with a chance of one signifying that the additional amount will always be applied. If the
+     * chance succeeds then the final amount will be the base amount plus a random amount between zero (inclusive) and
+     * the additional amount (exclusive). If the chance fails then the final amount will just be the base value.
      *
      * @param base     The base value
      * @param addition The additional amount
@@ -167,8 +150,7 @@ public interface VariableAmount {
     }
 
     /**
-     * Gets an instance of the variable amount depending on the given random
-     * object.
+     * Gets an instance of the variable amount depending on the given random object.
      *
      * @param random The random object
      * @return The amount
@@ -176,8 +158,7 @@ public interface VariableAmount {
     double getAmount(@NotNull Random random);
 
     /**
-     * Gets an instance of the variable amount using the thread's
-     * {@link ThreadLocalRandom} instance.
+     * Gets an instance of the variable amount using the thread's {@link ThreadLocalRandom} instance.
      *
      * @return The amount
      */
@@ -186,8 +167,7 @@ public interface VariableAmount {
     }
 
     /**
-     * Gets the amount as if from {@link #getAmount(Random)} but floored to the
-     * nearest integer equivalent.
+     * Gets the amount as if from {@link #getAmount(Random)} but floored to the nearest integer equivalent.
      *
      * @param random The random object
      * @return The floored amount
@@ -197,8 +177,7 @@ public interface VariableAmount {
     }
 
     /**
-     * Gets the amount as if from {@link #getAmount()} but floored to the
-     * nearest integer equivalent.
+     * Gets the amount as if from {@link #getAmount()} but floored to the nearest integer equivalent.
      *
      * @return The floored amount
      */
@@ -207,10 +186,10 @@ public interface VariableAmount {
     }
 
     /**
-     * Represents a fixed amount, calls to {@link #getAmount} will always return
-     * the same fixed value.
+     * Represents a fixed amount, calls to {@link #getAmount} will always return the same fixed value.
      */
     final class Fixed implements VariableAmount {
+
         private final double amount;
 
         private Fixed(double amount) {
@@ -232,10 +211,9 @@ public interface VariableAmount {
             if (o == this) {
                 return true;
             }
-            if (!(o instanceof Fixed)) {
+            if (!(o instanceof Fixed other)) {
                 return false;
             }
-            Fixed other = (Fixed) o;
             return Double.compare(this.amount, other.amount) == 0;
         }
 
@@ -249,12 +227,12 @@ public interface VariableAmount {
     }
 
     /**
-     * Represents a base amount with a variance, the final amount will be the
-     * base amount plus or minus a random amount between zero (inclusive) and
-     * the variance (exclusive).
+     * Represents a base amount with a variance, the final amount will be the base amount plus or minus a random amount
+     * between zero (inclusive) and the variance (exclusive).
      */
     final class BaseAndVariance implements VariableAmount {
-        private final double base;
+
+        private final double         base;
         private final VariableAmount variance;
 
         private BaseAndVariance(double base, @NotNull VariableAmount variance) {
@@ -278,10 +256,9 @@ public interface VariableAmount {
             if (o == this) {
                 return true;
             }
-            if (!(o instanceof BaseAndVariance)) {
+            if (!(o instanceof BaseAndVariance other)) {
                 return false;
             }
-            BaseAndVariance other = (BaseAndVariance) o;
             return Double.compare(this.base, other.base) == 0 && this.variance.equals(other.variance);
         }
 
@@ -296,12 +273,12 @@ public interface VariableAmount {
     }
 
     /**
-     * Represents a base amount with a random addition, the final amount will be
-     * the base amount plus a random amount between zero (inclusive) and the
-     * addition (exclusive).
+     * Represents a base amount with a random addition, the final amount will be the base amount plus a random amount
+     * between zero (inclusive) and the addition (exclusive).
      */
     final class BaseAndAddition implements VariableAmount {
-        private final double base;
+
+        private final double         base;
         private final VariableAmount addition;
 
         private BaseAndAddition(double base, VariableAmount addition) {
@@ -324,10 +301,9 @@ public interface VariableAmount {
             if (o == this) {
                 return true;
             }
-            if (!(o instanceof BaseAndAddition)) {
+            if (!(o instanceof BaseAndAddition other)) {
                 return false;
             }
-            BaseAndAddition other = (BaseAndAddition) o;
             return Double.compare(this.base, other.base) == 0 && this.addition.equals(other.addition);
         }
 
@@ -342,13 +318,13 @@ public interface VariableAmount {
     }
 
     /**
-     * Represents a variable amount which has a base and a chance of varying.
-     * This wraps another {@link VariableAmount} which it refers to if the
-     * chance succeeds.
+     * Represents a variable amount which has a base and a chance of varying. This wraps another {@link VariableAmount}
+     * which it refers to if the chance succeeds.
      */
     final class OptionalAmount implements VariableAmount {
-        private final double base;
-        private final double chance;
+
+        private final double         base;
+        private final double         chance;
         private final VariableAmount inner;
 
         OptionalAmount(double base, double chance, VariableAmount inner) {
@@ -367,7 +343,8 @@ public interface VariableAmount {
 
         @Override
         public String toString() {
-            return "VariableAmount.OptionalAmount(base=" + this.base + ", chance=" + this.chance + ", inner=" + this.inner + ")";
+            return "VariableAmount.OptionalAmount(base=" + this.base + ", chance=" + this.chance + ", inner="
+                + this.inner + ")";
         }
 
         @Override
@@ -375,11 +352,11 @@ public interface VariableAmount {
             if (o == this) {
                 return true;
             }
-            if (!(o instanceof OptionalAmount)) {
+            if (!(o instanceof OptionalAmount other)) {
                 return false;
             }
-            OptionalAmount other = (OptionalAmount) o;
-            return Double.compare(this.base, other.base) == 0 && Double.compare(this.chance, other.chance) == 0 && this.inner.equals(other.inner);
+            return Double.compare(this.base, other.base) == 0 && Double.compare(this.chance, other.chance) == 0
+                && this.inner.equals(other.inner);
         }
 
         @Override

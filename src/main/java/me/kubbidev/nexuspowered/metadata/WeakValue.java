@@ -1,10 +1,9 @@
 package me.kubbidev.nexuspowered.metadata;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a value wrapped in a {@link WeakReference}
@@ -12,6 +11,12 @@ import java.util.function.Supplier;
  * @param <T> the wrapped value type
  */
 public final class WeakValue<T> implements TransientValue<T> {
+
+    private final WeakReference<T> value;
+
+    private WeakValue(T value) {
+        this.value = new WeakReference<>(value);
+    }
 
     public static <T> WeakValue<T> of(T value) {
         Objects.requireNonNull(value, "value");
@@ -29,15 +34,8 @@ public final class WeakValue<T> implements TransientValue<T> {
         };
     }
 
-    private final WeakReference<T> value;
-
-    private WeakValue(T value) {
-        this.value = new WeakReference<>(value);
-    }
-
-    @Nullable
     @Override
-    public T getOrNull() {
+    public @Nullable T getOrNull() {
         return this.value.get();
     }
 

@@ -27,5 +27,4 @@ public interface ServerThreadLock extends Terminable {
      */
     @Override
     void close();
-
 }

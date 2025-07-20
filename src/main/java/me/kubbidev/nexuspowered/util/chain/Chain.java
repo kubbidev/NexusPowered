@@ -1,14 +1,13 @@
 package me.kubbidev.nexuspowered.util.chain;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.NotNullByDefault;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A simplified version of Java 8's {@link java.util.stream.Stream} API.
@@ -104,8 +103,7 @@ public interface Chain<T> {
     Chain<T> orElseGetIfNull(Supplier<? extends T> supplier);
 
     /**
-     * Returns a new chain instance containing a new value, depending on if the current
-     * object passed the given test.
+     * Returns a new chain instance containing a new value, depending on if the current object passed the given test.
      *
      * @param test      the test
      * @param passValue the value to use if the object passes
@@ -116,8 +114,7 @@ public interface Chain<T> {
     <R> Chain<R> ifElse(Predicate<? super T> test, R passValue, R failValue);
 
     /**
-     * Transforms the backing object, and returns a new chain instance
-     * containing the result of the transformation.
+     * Transforms the backing object, and returns a new chain instance containing the result of the transformation.
      *
      * @param mapper the mapping function
      * @param <R>    the resultant chain type
@@ -126,9 +123,8 @@ public interface Chain<T> {
     <R> Chain<R> map(Function<? super T, ? extends R> mapper);
 
     /**
-     * Transforms the backing object, and returns a new chain instance
-     * containing the result of the transformation function, if the test is passed.
-     * Otherwise, returns a new chain containing the other replacement value.
+     * Transforms the backing object, and returns a new chain instance containing the result of the transformation
+     * function, if the test is passed. Otherwise, returns a new chain containing the other replacement value.
      *
      * @param test         the test
      * @param passedMapper the function to use if the object passes the test
@@ -139,8 +135,8 @@ public interface Chain<T> {
     <R> Chain<R> mapOrElse(Predicate<? super T> test, Function<? super T, ? extends R> passedMapper, R otherValue);
 
     /**
-     * Transforms the backing object, and returns a new chain instance
-     * containing the result of the chosen transformation function.
+     * Transforms the backing object, and returns a new chain instance containing the result of the chosen
+     * transformation function.
      *
      * @param test         the test
      * @param passedMapper the function to use if the object passes the test
@@ -148,12 +144,12 @@ public interface Chain<T> {
      * @param <R>          the resultant chain type
      * @return a new chain containing the result of the mapping
      */
-    <R> Chain<R> mapOrElse(Predicate<? super T> test, Function<? super T, ? extends R> passedMapper, Function<? super T, ? extends R> failedMapper);
+    <R> Chain<R> mapOrElse(Predicate<? super T> test, Function<? super T, ? extends R> passedMapper,
+                           Function<? super T, ? extends R> failedMapper);
 
     /**
-     * Transforms the backing object and returns a new chain instance
-     * containing the result of the transformation, if the backing object is
-     * not null. Otherwise, returns a new chain containing the other value.
+     * Transforms the backing object and returns a new chain instance containing the result of the transformation, if
+     * the backing object is not null. Otherwise, returns a new chain containing the other value.
      *
      * @param nonNullMapper the function to use if the object is not null
      * @param otherValue    the value to use if the object is null
@@ -163,9 +159,8 @@ public interface Chain<T> {
     <R> Chain<R> mapNullSafe(Function<? super T, ? extends R> nonNullMapper, R otherValue);
 
     /**
-     * Transforms the backing object and returns a new chain instance
-     * containing the result of the transformation, if the backing object is
-     * not null. Otherwise, returns a new chain containing the result of the supplier.
+     * Transforms the backing object and returns a new chain instance containing the result of the transformation, if
+     * the backing object is not null. Otherwise, returns a new chain containing the result of the supplier.
      *
      * @param nonNullMapper the function to use if the object is not null
      * @param nullSupplier  the supplier to use if the object is null
@@ -175,8 +170,7 @@ public interface Chain<T> {
     <R> Chain<R> mapNullSafeGet(Function<? super T, ? extends R> nonNullMapper, Supplier<? extends R> nullSupplier);
 
     /**
-     * Transforms the backing object, and returns a new chain instance
-     * containing the result of the transformation.
+     * Transforms the backing object, and returns a new chain instance containing the result of the transformation.
      *
      * @param mapper the mapping function
      * @param <R>    the resultant chain type
@@ -196,7 +190,5 @@ public interface Chain<T> {
      *
      * @return the object (nullable)
      */
-    @Nullable
-    T endOrNull();
-
+    @Nullable T endOrNull();
 }

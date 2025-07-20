@@ -1,13 +1,12 @@
 package me.kubbidev.nexuspowered.metadata;
 
 import com.google.common.reflect.TypeToken;
+import java.util.Objects;
+import java.util.UUID;
 import me.kubbidev.nexuspowered.cooldown.Cooldown;
 import me.kubbidev.nexuspowered.interfaces.TypeAware;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NotNullByDefault;
-
-import java.util.Objects;
-import java.util.UUID;
 
 /**
  * A MetadataKey can be mapped to values in a {@link MetadataMap}.
@@ -22,9 +21,9 @@ public interface MetadataKey<T> extends TypeAware<T> {
     /**
      * Creates a MetadataKey with the given id and type
      *
-     * @param id the id of the key
+     * @param id   the id of the key
      * @param type the type of the value mapped to this key
-     * @param <T> the value type
+     * @param <T>  the value type
      * @return a new metadata key
      */
     static <T> MetadataKey<T> create(String id, TypeToken<T> type) {
@@ -36,9 +35,9 @@ public interface MetadataKey<T> extends TypeAware<T> {
     /**
      * Creates a MetadataKey with the given id and type
      *
-     * @param id the id of the key
+     * @param id    the id of the key
      * @param clazz the class type of the value mapped to this key
-     * @param <T> the value type
+     * @param <T>   the value type
      * @return a new metadata key
      */
     static <T> MetadataKey<T> create(String id, Class<T> clazz) {
@@ -102,8 +101,7 @@ public interface MetadataKey<T> extends TypeAware<T> {
      * @return the type of the value
      */
     @Override
-    @NotNull
-    TypeToken<T> getType();
+    @NotNull TypeToken<T> getType();
 
     /**
      * Attempts to cast the given object to the return type of the key

@@ -2,17 +2,21 @@ package me.kubbidev.nexuspowered.metadata;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("DuplicatedCode")
 final class MetadataMapImpl implements MetadataMap {
-    private final Map<MetadataKey<?>, Object> map = new HashMap<>();
-    private final ReentrantLock lock = new ReentrantLock();
+
+    private final Map<MetadataKey<?>, Object> map  = new HashMap<>();
+    private final ReentrantLock               lock = new ReentrantLock();
 
     @Override
     public <T> void put(@NotNull MetadataKey<T> key, @NotNull T value) {
@@ -39,7 +43,9 @@ final class MetadataMapImpl implements MetadataMap {
             }
 
             if (existing != null && !existing.getType().equals(key.getType())) {
-                throw new ClassCastException("Cannot cast key with id " + key.getId() + " with type " + key.getType().getRawType() + " to existing stored type " + existing.getType().getRawType());
+                throw new ClassCastException(
+                    "Cannot cast key with id " + key.getId() + " with type " + key.getType().getRawType()
+                        + " to existing stored type " + existing.getType().getRawType());
             }
 
             this.map.put(key, value);
@@ -94,9 +100,8 @@ final class MetadataMapImpl implements MetadataMap {
         }
     }
 
-    @NotNull
     @Override
-    public <T> Optional<T> get(@NotNull MetadataKey<T> key) {
+    public <T> @NotNull Optional<T> get(@NotNull MetadataKey<T> key) {
         Objects.requireNonNull(key, "key");
 
         this.lock.lock();
@@ -136,7 +141,9 @@ final class MetadataMapImpl implements MetadataMap {
             }
 
             if (!existing.getKey().getType().equals(key.getType())) {
-                throw new ClassCastException("Cannot cast key with id " + key.getId() + " with type " + key.getType().getRawType() + " to existing stored type " + existing.getKey().getType().getRawType());
+                throw new ClassCastException(
+                    "Cannot cast key with id " + key.getId() + " with type " + key.getType().getRawType()
+                        + " to existing stored type " + existing.getKey().getType().getRawType());
             }
 
             return Optional.of(key.cast(existing.getValue()));
@@ -150,7 +157,7 @@ final class MetadataMapImpl implements MetadataMap {
         Objects.requireNonNull(key, "key");
         Objects.requireNonNull(action, "action");
         Optional<T> opt = get(key);
-        if (!opt.isPresent()) {
+        if (opt.isEmpty()) {
             return false;
         }
 
@@ -164,16 +171,14 @@ final class MetadataMapImpl implements MetadataMap {
         return get(key).orElse(null);
     }
 
-    @NotNull
     @Override
-    public <T> T getOrDefault(@NotNull MetadataKey<T> key, T def) {
+    public <T> @NotNull T getOrDefault(@NotNull MetadataKey<T> key, T def) {
         Objects.requireNonNull(key, "key");
         return get(key).orElse(def);
     }
 
-    @NotNull
     @Override
-    public <T> T getOrPut(@NotNull MetadataKey<T> key, @NotNull Supplier<? extends T> def) {
+    public <T> @NotNull T getOrPut(@NotNull MetadataKey<T> key, @NotNull Supplier<? extends T> def) {
         Objects.requireNonNull(key, "key");
         Objects.requireNonNull(def, "def");
 
@@ -218,7 +223,9 @@ final class MetadataMapImpl implements MetadataMap {
             }
 
             if (!existing.getKey().getType().equals(key.getType())) {
-                throw new ClassCastException("Cannot cast key with id " + key.getId() + " with type " + key.getType().getRawType() + " to existing stored type " + existing.getKey().getType().getRawType());
+                throw new ClassCastException(
+                    "Cannot cast key with id " + key.getId() + " with type " + key.getType().getRawType()
+                        + " to existing stored type " + existing.getKey().getType().getRawType());
             }
 
             return key.cast(existing.getValue());
@@ -227,9 +234,9 @@ final class MetadataMapImpl implements MetadataMap {
         }
     }
 
-    @NotNull
     @Override
-    public <T> T getOrPutExpiring(@NotNull MetadataKey<T> key, @NotNull Supplier<? extends TransientValue<T>> def) {
+    public <T> @NotNull T getOrPutExpiring(@NotNull MetadataKey<T> key,
+                                           @NotNull Supplier<? extends TransientValue<T>> def) {
         Objects.requireNonNull(key, "key");
         Objects.requireNonNull(def, "def");
 
@@ -279,7 +286,9 @@ final class MetadataMapImpl implements MetadataMap {
             }
 
             if (!existing.getKey().getType().equals(key.getType())) {
-                throw new ClassCastException("Cannot cast key with id " + key.getId() + " with type " + key.getType().getRawType() + " to existing stored type " + existing.getKey().getType().getRawType());
+                throw new ClassCastException(
+                    "Cannot cast key with id " + key.getId() + " with type " + key.getType().getRawType()
+                        + " to existing stored type " + existing.getKey().getType().getRawType());
             }
 
             return key.cast(existing.getValue());
@@ -342,9 +351,8 @@ final class MetadataMapImpl implements MetadataMap {
         }
     }
 
-    @NotNull
     @Override
-    public ImmutableMap<MetadataKey<?>, Object> asMap() {
+    public @NotNull ImmutableMap<MetadataKey<?>, Object> asMap() {
         this.lock.lock();
         try {
             return ImmutableMap.copyOf(this.map);

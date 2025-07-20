@@ -1,14 +1,18 @@
 package me.kubbidev.nexuspowered.util;
 
 import com.google.common.collect.ImmutableMap;
-
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
  * An indexing utility.
  */
 public final class Indexing {
+
     private Indexing() {
     }
 
@@ -35,7 +39,8 @@ public final class Indexing {
      * @param <R>           the actual (value) type
      * @return the index
      */
-    public static <I, R> Map<I, R> buildMultiple(Iterable<? extends R> values, Function<? super R, ? extends Iterable<? extends I>> indexFunction) {
+    public static <I, R> Map<I, R> buildMultiple(Iterable<? extends R> values,
+                                                 Function<? super R, ? extends Iterable<? extends I>> indexFunction) {
         Objects.requireNonNull(values, "values");
         Objects.requireNonNull(indexFunction, "indexFunction");
 
@@ -45,7 +50,8 @@ public final class Indexing {
             for (I index : indexes) {
                 R prev = map.put(index, value);
                 if (prev != null) {
-                    throw new IllegalStateException("An index for " + value + " (" + index + ") was already associated with " + prev);
+                    throw new IllegalStateException(
+                        "An index for " + value + " (" + index + ") was already associated with " + prev);
                 }
             }
         }
@@ -75,7 +81,8 @@ public final class Indexing {
      * @param <R>           the actual (value) type
      * @return the index
      */
-    public static <I, R> Map<I, R> buildMultiple(R[] values, Function<? super R, ? extends Iterable<? extends I>> indexFunction) {
+    public static <I, R> Map<I, R> buildMultiple(R[] values,
+                                                 Function<? super R, ? extends Iterable<? extends I>> indexFunction) {
         Objects.requireNonNull(values, "values");
         return buildMultiple(Arrays.asList(values), indexFunction);
     }

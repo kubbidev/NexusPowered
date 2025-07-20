@@ -1,10 +1,13 @@
 package me.kubbidev.nexuspowered;
 
+import java.time.Duration;
+import java.util.Optional;
+import java.util.UUID;
 import me.kubbidev.nexuspowered.command.argument.ArgumentParserRegistry;
 import me.kubbidev.nexuspowered.command.argument.SimpleParserRegistry;
 import me.kubbidev.nexuspowered.command.functional.FunctionalCommandBuilder;
-import me.kubbidev.nexuspowered.util.Numbers;
 import me.kubbidev.nexuspowered.time.DurationParser;
+import me.kubbidev.nexuspowered.util.Numbers;
 import me.kubbidev.nexuspowered.util.Players;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -12,10 +15,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NotNullByDefault;
-
-import java.time.Duration;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * A functional command handling utility.
@@ -25,11 +24,6 @@ public final class Commands {
 
     // Global argument parsers
     private static final ArgumentParserRegistry PARSER_REGISTRY;
-
-    @NotNull
-    public static ArgumentParserRegistry parserRegistry() {
-        return PARSER_REGISTRY;
-    }
 
     static {
         PARSER_REGISTRY = new SimpleParserRegistry();
@@ -43,8 +37,12 @@ public final class Commands {
         PARSER_REGISTRY.register(Double.class, Numbers::parseDoubleOpt);
         PARSER_REGISTRY.register(Byte.class, Numbers::parseByteOpt);
         PARSER_REGISTRY.register(Boolean.class, s -> {
-            if (s.equalsIgnoreCase("true")) return Optional.of(true);
-            if (s.equalsIgnoreCase("false")) return Optional.of(false);
+            if (s.equalsIgnoreCase("true")) {
+                return Optional.of(true);
+            }
+            if (s.equalsIgnoreCase("false")) {
+                return Optional.of(false);
+            }
             return Optional.empty();
         });
         PARSER_REGISTRY.register(UUID.class, s -> {
@@ -72,6 +70,15 @@ public final class Commands {
         PARSER_REGISTRY.register(Duration.class, DurationParser::parseSafely);
     }
 
+    private Commands() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
+
+    @NotNull
+    public static ArgumentParserRegistry parserRegistry() {
+        return PARSER_REGISTRY;
+    }
+
     /**
      * Creates and returns a new command builder.
      *
@@ -79,10 +86,6 @@ public final class Commands {
      */
     public static FunctionalCommandBuilder<CommandSender> create() {
         return FunctionalCommandBuilder.newBuilder();
-    }
-
-    private Commands() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 
 }

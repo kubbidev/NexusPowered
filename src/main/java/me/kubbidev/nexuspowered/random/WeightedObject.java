@@ -1,9 +1,8 @@
 package me.kubbidev.nexuspowered.random;
 
 import com.google.common.base.Preconditions;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a {@link Weighted} object.
@@ -12,18 +11,18 @@ import java.util.Objects;
  */
 public final class WeightedObject<T> implements Weighted {
 
-    @NotNull
-    public static <T> WeightedObject<T> of(@NotNull T object, double weight) {
-        return new WeightedObject<>(object, weight);
-    }
-
-    private final T object;
+    private final T      object;
     private final double weight;
 
     private WeightedObject(T object, double weight) {
         Preconditions.checkArgument(weight >= 0, "weight cannot be negative");
         this.object = Objects.requireNonNull(object, "object");
         this.weight = weight;
+    }
+
+    @NotNull
+    public static <T> WeightedObject<T> of(@NotNull T object, double weight) {
+        return new WeightedObject<>(object, weight);
     }
 
     @NotNull
@@ -41,10 +40,9 @@ public final class WeightedObject<T> implements Weighted {
         if (o == this) {
             return true;
         }
-        if (!(o instanceof WeightedObject<?>)) {
+        if (!(o instanceof WeightedObject<?> other)) {
             return false;
         }
-        WeightedObject<?> other = (WeightedObject<?>) o;
         return this.object.equals(other.object) && Double.compare(this.getWeight(), other.getWeight()) == 0;
     }
 

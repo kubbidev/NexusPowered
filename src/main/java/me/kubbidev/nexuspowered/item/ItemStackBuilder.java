@@ -1,39 +1,48 @@
 package me.kubbidev.nexuspowered.item;
 
-import me.kubbidev.nexuspowered.util.Text;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.NotNullByDefault;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
 
 /**
  * Easily construct {@link ItemStack} instances.
  */
 @NotNullByDefault
 public final class ItemStackBuilder {
+
     private static final ItemFlag[] ALL_FLAGS = new ItemFlag[]{
-            ItemFlag.HIDE_ENCHANTS,
-            ItemFlag.HIDE_ATTRIBUTES,
-            ItemFlag.HIDE_UNBREAKABLE,
-            ItemFlag.HIDE_POTION_EFFECTS,
-            ItemFlag.HIDE_DESTROYS,
-            ItemFlag.HIDE_PLACED_ON
+        ItemFlag.HIDE_ENCHANTS,
+        ItemFlag.HIDE_ATTRIBUTES,
+        ItemFlag.HIDE_UNBREAKABLE,
+        ItemFlag.HIDE_DESTROYS,
+        ItemFlag.HIDE_PLACED_ON,
+        ItemFlag.HIDE_ADDITIONAL_TOOLTIP,
+        ItemFlag.HIDE_DYE,
+        ItemFlag.HIDE_ARMOR_TRIM,
+        ItemFlag.HIDE_STORED_ENCHANTS,
     };
 
-    private final ItemStack itemStack;
+    private ItemStack itemStack;
+
+    private ItemStackBuilder(ItemStack itemStack) {
+        this.itemStack = Objects.requireNonNull(itemStack, "itemStack");
+    }
 
     public static ItemStackBuilder of(Material material) {
-        return new ItemStackBuilder(new ItemStack(material)).hideAttributes();
+        return new ItemStackBuilder(ItemStack.of(material)).hideAttributes();
     }
 
     public static ItemStackBuilder of(ItemStack itemStack) {
@@ -44,8 +53,9 @@ public final class ItemStackBuilder {
         return ItemStackReader.DEFAULT.read(config);
     }
 
-    private ItemStackBuilder(ItemStack itemStack) {
-        this.itemStack = Objects.requireNonNull(itemStack, "itemStack");
+    public ItemStackBuilder operate(UnaryOperator<ItemStack> operator) {
+        this.itemStack = operator.apply(this.itemStack);
+        return this;
     }
 
     public ItemStackBuilder transform(Consumer<ItemStack> is) {
@@ -62,64 +72,39 @@ public final class ItemStackBuilder {
         return this;
     }
 
-    public ItemStackBuilder name(String name) {
-        return transformMeta(meta -> meta.setDisplayName(Text.colorize(name)));
+    public ItemStackBuilder name(Component name) {
+        return this.transformMeta(meta -> meta.displayName(name));
     }
 
     public ItemStackBuilder type(Material material) {
-        return transform(itemStack -> itemStack.setType(material));
+        return this.operate(itemStack -> itemStack.withType(material));
     }
 
-    public ItemStackBuilder lore(String line) {
-        return transformMeta(meta -> {
-            List<String> lore = meta.getLore();
+    public ItemStackBuilder lore(Component line) {
+        return this.transformMeta(meta -> {
+            List<Component> lore = meta.lore();
             if (lore == null) {
                 lore = new ArrayList<>();
             }
-            lore.add(Text.colorize(line));
-            meta.setLore(lore);
-        });
-    }
-
-    @SuppressWarnings("DuplicatedCode")
-    public ItemStackBuilder lore(String... lines) {
-        return transformMeta(meta -> {
-            List<String> lore = meta.getLore();
-            if (lore == null) {
-                lore = new ArrayList<>();
-            }
-
-            for (String line : lines) {
-                lore.add(Text.colorize(line));
-            }
-            meta.setLore(lore);
-        });
-    }
-
-    @SuppressWarnings("DuplicatedCode")
-    public ItemStackBuilder lore(Iterable<String> lines) {
-        return transformMeta(meta -> {
-            List<String> lore = meta.getLore();
-            if (lore == null) {
-                lore = new ArrayList<>();
-            }
-            for (String line : lines) {
-                lore.add(Text.colorize(line));
-            }
-            meta.setLore(lore);
+            lore.add(line);
+            meta.lore(lore);
         });
     }
 
     public ItemStackBuilder clearLore() {
-        return transformMeta(meta -> meta.setLore(new ArrayList<>()));
+        return this.transformMeta(meta -> meta.lore(new ArrayList<>()));
     }
 
     public ItemStackBuilder durability(int durability) {
-        return transform(itemStack -> itemStack.setDurability((short) durability));
+        return this.transformMeta(meta -> {
+            if (meta instanceof Damageable) {
+                ((Damageable) meta).setDamage(durability);
+            }
+        });
     }
 
-    public ItemStackBuilder data(int data) {
-        return this.durability(data);
+    public ItemStackBuilder modelData(int modelData) {
+        return this.transformMeta(meta -> meta.setCustomModelData(modelData));
     }
 
     public ItemStackBuilder amount(int amount) {
@@ -159,7 +144,7 @@ public final class ItemStackBuilder {
     }
 
     public ItemStackBuilder breakable(boolean flag) {
-        return transformMeta(meta -> meta.spigot().setUnbreakable(!flag));
+        return transformMeta(meta -> meta.setUnbreakable(!flag));
     }
 
     public ItemStackBuilder apply(Consumer<ItemStackBuilder> consumer) {

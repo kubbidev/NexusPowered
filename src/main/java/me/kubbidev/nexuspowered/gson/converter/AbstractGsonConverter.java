@@ -4,15 +4,16 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import org.jetbrains.annotations.NotNullByDefault;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
+import org.jetbrains.annotations.Nullable;
 
 @NotNullByDefault
-abstract class AbstractGsonConverter<M extends Map<String, Object>, L extends List<Object>, S extends Set<Object>> implements GsonConverter {
+abstract class AbstractGsonConverter<M extends Map<String, Object>, L extends List<Object>, S extends Set<Object>> implements
+    GsonConverter {
 
     protected abstract MapBuilder<M, String, Object> newMapBuilder();
 
@@ -23,7 +24,7 @@ abstract class AbstractGsonConverter<M extends Map<String, Object>, L extends Li
     // gson --> standard java objects
 
     @Override
-    public M unwrapObject(JsonObject object) {
+    public @NotNull M unwrapObject(JsonObject object) {
         MapBuilder<M, String, Object> builder = newMapBuilder();
         for (Map.Entry<String, JsonElement> e : object.entrySet()) {
             builder.put(e.getKey(), unwrapElement(e.getValue()));
@@ -32,7 +33,7 @@ abstract class AbstractGsonConverter<M extends Map<String, Object>, L extends Li
     }
 
     @Override
-    public L unwrapArray(JsonArray array) {
+    public @NotNull L unwrapArray(JsonArray array) {
         ListBuilder<L, Object> builder = newListBuilder();
         for (JsonElement element : array) {
             builder.add(unwrapElement(element));
@@ -41,7 +42,7 @@ abstract class AbstractGsonConverter<M extends Map<String, Object>, L extends Li
     }
 
     @Override
-    public S unwrapArrayToSet(JsonArray array) {
+    public @NotNull S unwrapArrayToSet(JsonArray array) {
         SetBuilder<S, Object> builder = newSetBuilder();
         for (JsonElement element : array) {
             builder.add(unwrapElement(element));
@@ -63,8 +64,7 @@ abstract class AbstractGsonConverter<M extends Map<String, Object>, L extends Li
     }
 
     @Override
-    @Nullable
-    public Object unwrapElement(JsonElement element) {
+    public @Nullable Object unwrapElement(JsonElement element) {
         if (element.isJsonNull()) {
             return null;
         } else if (element.isJsonArray()) {
@@ -82,51 +82,58 @@ abstract class AbstractGsonConverter<M extends Map<String, Object>, L extends Li
 
     @Override
     public JsonElement wrap(Object object) {
-        if (object instanceof JsonElement) {
-            return ((JsonElement) object);
-        } else if (object instanceof Iterable<?>) {
-            Iterable<?> iterable = (Iterable<?>) object;
-            JsonArray array = new JsonArray();
-            for (Object o : iterable) {
-                array.add(wrap(o));
+        switch (object) {
+            case JsonElement element -> {
+                return element;
             }
-            return array;
-        } else if (object instanceof Map<?, ?>) {
-            Map<?, ?> map = ((Map<?, ?>) object);
-            JsonObject obj = new JsonObject();
-            for (Map.Entry<?, ?> e : map.entrySet()) {
-                if (e.getKey() instanceof String) {
-                    String key = (String) e.getKey();
-                    obj.add(key, wrap(e.getValue()));
+            case Iterable<?> iterable -> {
+                JsonArray array = new JsonArray();
+                for (Object o : iterable) {
+                    array.add(wrap(o));
                 }
+                return array;
             }
-            return obj;
-        } else if (object instanceof String) {
-            return new JsonPrimitive(((String) object));
-        } else if (object instanceof Character) {
-            return new JsonPrimitive(((Character) object));
-        } else if (object instanceof Boolean) {
-            return new JsonPrimitive(((Boolean) object));
-        } else if (object instanceof Number) {
-            return new JsonPrimitive(((Number) object));
-        } else {
-            throw new IllegalArgumentException("Unable to wrap object: " + object.getClass());
+            case Map<?, ?> map -> {
+                JsonObject obj = new JsonObject();
+                for (Map.Entry<?, ?> e : map.entrySet()) {
+                    if (e.getKey() instanceof String key) {
+                        obj.add(key, wrap(e.getValue()));
+                    }
+                }
+                return obj;
+            }
+            case String s -> {
+                return new JsonPrimitive(s);
+            }
+            case Character c -> {
+                return new JsonPrimitive(c);
+            }
+            case Boolean b -> {
+                return new JsonPrimitive(b);
+            }
+            case Number number -> {
+                return new JsonPrimitive(number);
+            }
+            default -> throw new IllegalArgumentException("Unable to wrap object: " + object.getClass());
         }
     }
 
     protected interface MapBuilder<M extends Map<K, V>, K, V> {
+
         void put(@Nullable K key, @Nullable V value);
 
         M build();
     }
 
     protected interface ListBuilder<L extends List<E>, E> {
+
         void add(@Nullable E element);
 
         L build();
     }
 
     protected interface SetBuilder<S extends Set<E>, E> {
+
         void add(@Nullable E element);
 
         S build();

@@ -30,7 +30,7 @@ public interface Subscription extends Terminable {
 
     @Override
     default void close() {
-        unregister();
+        this.unregister();
     }
 
 }

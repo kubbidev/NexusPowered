@@ -1,15 +1,14 @@
 package me.kubbidev.nexuspowered.metadata;
 
 import com.google.common.reflect.TypeToken;
+import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NotNullByDefault;
-
-import java.util.Objects;
 
 @NotNullByDefault
 final class MetadataKeyImpl<T> implements MetadataKey<T> {
 
-    private final String id;
+    private final String       id;
     private final TypeToken<T> type;
 
     MetadataKeyImpl(String id, TypeToken<T> type) {

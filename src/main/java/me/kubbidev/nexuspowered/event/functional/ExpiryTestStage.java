@@ -1,8 +1,7 @@
 package me.kubbidev.nexuspowered.event.functional;
 
 /**
- * Represents when a expiry predicate should be tested relative to the handling
- * of the event.
+ * Represents when a expiry predicate should be tested relative to the handling of the event.
  */
 public enum ExpiryTestStage {
 
