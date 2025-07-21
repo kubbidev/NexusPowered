@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.7-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
 
     // https://mvnrepository.com/artifact/org.jetbrains/annotations
     compileOnly("org.jetbrains:annotations:26.0.2")
